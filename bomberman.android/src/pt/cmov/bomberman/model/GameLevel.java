@@ -5,10 +5,6 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.view.SurfaceView;
 
@@ -88,10 +84,8 @@ public class GameLevel {
 	 * @param canvas - place to draw the game into.
 	 */
 	public void draw(Canvas canvas){
-		if(isPreventDraw()) return;
-		
-		//draws the board and borders
-		board.draw(canvas);
+		if (!isPreventDraw())
+			board.draw(canvas);
 	}
 	
 	
@@ -108,8 +102,8 @@ public class GameLevel {
 		float windowW = v.getWidth();
 		float windowH = v.getHeight();
 
-		float nColumns = windowW / GameObject.DEFAULT_WIDTH;
-		float nRows = windowH / GameObject.DEFAULT_HEIGHT;
+		float nColumns = windowW / Bitmaps.width();
+		float nRows = windowH / Bitmaps.height();
 
 		board = new GameBoard(v, nRows, nColumns);
 	}

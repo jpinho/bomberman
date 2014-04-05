@@ -1,7 +1,6 @@
 package pt.cmov.bomberman;
 
 import pt.cmov.bomberman.model.GameLevel;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,7 +38,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 		// make the GamePanel focusable so it can handle events
 		setFocusable(true);
-
+		
 		// creates the game
 		setCurrentGame(new GameLevel(this));
 		

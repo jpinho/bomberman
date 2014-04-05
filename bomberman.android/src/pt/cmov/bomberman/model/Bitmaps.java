@@ -41,4 +41,11 @@ public class Bitmaps {
 	public static Bitmap getBitmap(int code) {
 		return bitmapTable.get(code);
 	}
+	
+	public static int width() {
+		return bitmapTable.get(components[0]).getWidth();
+	}
+	public static int height() {
+		return bitmapTable.get(components[0]).getHeight();
+	}
 }
