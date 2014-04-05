@@ -10,14 +10,13 @@ public class GameGenerator {
 
 	private static final double ROCKS_DENSITY_FACTOR = 0.15;
 	private static final double WALL_DENSITY_FACTOR = 0.8;
+	
 	private final SurfaceView view;
 	private GameBoard board;
 	private List<Player> players;
 	
-	public GameGenerator(SurfaceView view, GameBoard board, List<Player> players) {
+	public GameGenerator(SurfaceView view) {
 		this.view = view;
-		this.setBoard(board);
-		this.setPlayers(players);
 	}
 	
 
@@ -45,7 +44,11 @@ public class GameGenerator {
 		this.players = players;
 	}
 	
-	public List<GameObject> generateGame() {
+	public List<GameObject> generateGame(GameBoard board, List<Player> players) {
+		
+		this.setBoard(board);
+		this.setPlayers(players);
+		
 		List<GameObject> gameObjects = new ArrayList<GameObject>();
 		
 		//computes the numbers of elements to draw
@@ -88,7 +91,6 @@ public class GameGenerator {
 	
 	private void generatePlayers(List<GameObject> gameObjects, int nPlayersToDraw, ArrayList<int[]> playersCoords) {
 
-		
 		if(playersCoords.size() < nPlayersToDraw)
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		

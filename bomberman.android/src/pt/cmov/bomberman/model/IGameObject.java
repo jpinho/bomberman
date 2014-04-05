@@ -20,5 +20,9 @@ public interface IGameObject {
 
 	public Bitmap getBitmap();
 
-	public void draw(Canvas canvas);
+	public void draw(Canvas canvas, GameBoard board);
+	
+	public void draw(Canvas canvas, float screenX, float screenY);
+	
+	public void draw(Canvas canvas, GameBoard board, int x, int y);
 }
