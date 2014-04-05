@@ -105,16 +105,7 @@ public class GameBoard {
 
 		int nCorners = 2;
 		
-		//draws top-bottom borders
-		for (int i = 0; i < (nColumns + nCorners); i++){
-			//border top
-			border.draw(canvas, xLeft + i * w, yTop);
-			
-			//border bottom
-			border.draw(canvas, xLeft + i * w, yBottom);
-		}
-		
-		int marginRight = -5, marginLeft   = +5;
+		int marginRight = -2, marginLeft   = +2;
 		int marginTop   = +2, marginBottom = +2;
 		
 		//draws left-right borders, without the corners => the first and last
@@ -125,6 +116,15 @@ public class GameBoard {
 			
 			//border right
 			border.draw(canvas, xRight + marginLeft, yTop + marginBottom + i*h);
+		}
+		
+		//draws top-bottom borders
+		for (int i = 0; i < (nColumns + nCorners); i++){
+			//border top
+			border.draw(canvas, xLeft + i * w, yTop);
+			
+			//border bottom
+			border.draw(canvas, xLeft + i * w, yBottom);
 		}
 	}
 

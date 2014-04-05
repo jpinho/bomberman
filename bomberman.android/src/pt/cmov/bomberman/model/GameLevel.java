@@ -5,6 +5,10 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.view.SurfaceView;
 
@@ -62,13 +66,6 @@ public class GameLevel {
 		return view;
 	}
 	
-	public void draw(Canvas canvas){
-		if(isPreventDraw()) return;
-		
-		//draws the board and borders
-		board.draw(canvas);
-	}
-
 	public List<Player> getPlayers() {
 		return players;
 	}
@@ -83,6 +80,18 @@ public class GameLevel {
 
 	public void setPreventDraw(boolean preventDraw) {
 		this.preventDraw = preventDraw;
+	}
+	
+	/**
+	 * Draws the entire game onto the canvas.
+	 * 
+	 * @param canvas - place to draw the game into.
+	 */
+	public void draw(Canvas canvas){
+		if(isPreventDraw()) return;
+		
+		//draws the board and borders
+		board.draw(canvas);
 	}
 	
 	
