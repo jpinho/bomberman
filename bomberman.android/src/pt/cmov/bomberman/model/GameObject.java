@@ -117,8 +117,8 @@ public abstract class GameObject implements IGameObject {
 
 	private void drawGameObject(Canvas canvas,float offsetLeft, float offsetTop, int x, int y) {
 		canvas.drawBitmap(this.getBitmap(), 
-				offsetLeft + x * Bitmaps.width(), 
-				offsetTop + y * Bitmaps.height(), null);
+				offsetLeft + x * getBitmap().getWidth(), 
+				offsetTop + y * getBitmap().getHeight(), null);
 	}
 	
 	/**

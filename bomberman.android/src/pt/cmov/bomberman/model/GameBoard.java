@@ -16,16 +16,18 @@ public class GameBoard {
 
 	private IGameObject[][] board;
 
-	public GameBoard(SurfaceView view, float rows, float cols) {
+	public GameBoard(SurfaceView v) {
+		paviment = new Paviment(v, 0, 0);
+		float windowW = v.getWidth();
+		float windowH = v.getHeight();
+		float columns = windowW / paviment.getBitmap().getWidth();
+		float rows = windowH / paviment.getBitmap().getHeight();		
 		nRows = (int) Math.floor(rows);
-		nColumns = (int) Math.floor(cols);
-
+		nColumns = (int) Math.floor(columns);
 		horizontalExcess = rows - nRows;
-		verticalExcess = cols - nColumns;
-
-		this.view = view;
+		verticalExcess = columns - nColumns;
+		this.view = v;
 		board = new IGameObject[nRows][nColumns];
-		paviment = new Paviment(view, 0, 0);
 	}
 
 	/**

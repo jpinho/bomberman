@@ -98,13 +98,6 @@ public class GameLevel {
 	}
 	
 	private void initializeBoard() {
-		SurfaceView v = getView();
-		float windowW = v.getWidth();
-		float windowH = v.getHeight();
-
-		float nColumns = windowW / Bitmaps.width();
-		float nRows = windowH / Bitmaps.height();
-
-		board = new GameBoard(v, nRows, nColumns);
+		board = new GameBoard(getView());
 	}
 }

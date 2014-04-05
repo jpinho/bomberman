@@ -15,6 +15,8 @@ import android.graphics.BitmapFactory;
  * NOTE: This class MUST be initialized before any other event takes place, namely, map generation,
  * canvas drawing, etc.
  * 
+ * UPDATE: This is deprecated and is not in use anymore. Instead, we rely on the pavement bitmap that is loaded before everything.
+ * 
  * @author filipe
  *
  */

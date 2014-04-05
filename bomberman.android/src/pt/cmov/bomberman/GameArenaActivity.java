@@ -1,6 +1,5 @@
 package pt.cmov.bomberman;
 
-import pt.cmov.bomberman.model.Bitmaps;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +22,7 @@ public class GameArenaActivity extends Activity {
         	WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         // Load images bitmaps into memory
-        Bitmaps.init(this);
+        //Bitmaps.init(this);
         
         // set our MainGamePanel as the View
         setContentView(new MainGamePanel(this));
