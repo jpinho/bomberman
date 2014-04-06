@@ -8,7 +8,8 @@
 
 # Java class files
 *.class
-
+*.project
+*.classpath
 # generated files
 bin/
 gen/
