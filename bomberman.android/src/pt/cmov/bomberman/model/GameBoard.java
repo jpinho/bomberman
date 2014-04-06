@@ -2,9 +2,12 @@ package pt.cmov.bomberman.model;
 
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.view.SurfaceView;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
 
 	private final int nColumns;
@@ -81,9 +84,7 @@ public class GameBoard {
 		return (float) (getHorizontalExcess() / 2.0) * GameObject.DEFAULT_WIDTH;
 	}
 
-	public void draw(Canvas canvas) {
-		drawBorders(canvas, new Rock(getView(), 0, 0));
-
+	public void draw(Canvas canvas) {		
 		// loops all columns
 		for (int i = 0; i < nRows; i++) {
 			// loops all lines of 'i'
@@ -95,43 +96,7 @@ public class GameBoard {
 			}
 		}
 	}
-
-	private void drawBorders(Canvas canvas, IGameObject border) {
-
-		float w = border.getBitmap().getWidth();	
-		float h = border.getBitmap().getHeight();
-		
-		float xLeft = getOffsetLeft() - w;
-		float xRight = getView().getWidth() - getOffsetLeft();
-		
-		float yTop = getOffsetTop() - h;
-		float yBottom = getView().getHeight() - getOffsetTop();
-
-		int nCorners = 2;
-		
-		int marginRight = -2, marginLeft   = +2;
-		int marginTop   = +2, marginBottom = +2;
-		
-		//draws left-right borders, without the corners => the first and last
-		//to prevent the horizontal borders from overlapping the vertical ones.
-		for (int i = 1; i < (nRows + nCorners - 1); i++){
-			//border left
-			border.draw(canvas, xLeft + marginRight, yTop + marginTop + i*h);
-			
-			//border right
-			border.draw(canvas, xRight + marginLeft, yTop + marginBottom + i*h);
-		}
-		
-		//draws top-bottom borders
-		for (int i = 0; i < (nColumns + nCorners); i++){
-			//border top
-			border.draw(canvas, xLeft + i * w, yTop);
-			
-			//border bottom
-			border.draw(canvas, xLeft + i * w, yBottom);
-		}
-	}
-
+	
 	/**
 	 * @return the view
 	 */

@@ -2,6 +2,9 @@ package pt.cmov.bomberman;
 
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.model.GameObject;
+import pt.cmov.bomberman.model.IGameObject;
+import pt.cmov.bomberman.model.Rock;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +12,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Shader.TileMode;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -55,6 +61,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	}
 
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {		
         // initializes default width/height scaled sizes
@@ -67,6 +74,12 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		// we can safely start the game loop
 		thread.setRunning(true);
 		thread.start();
+		
+		// draws the game background in the activity view
+		IGameObject border = new Rock(this, 0, 0);
+		BitmapDrawable bground = new BitmapDrawable(getResources(), border.getBitmap());
+		bground.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
+		this.setBackground(bground);
 	}
 
 	@Override
@@ -103,9 +116,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		
-		// fills the canvas with black
-		canvas.drawColor(Color.BLACK);
 
 		// draws the current game state onto the canvas
 		getCurrentGame().draw(canvas);
