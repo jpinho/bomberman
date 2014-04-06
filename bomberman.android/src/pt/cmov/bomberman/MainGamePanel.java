@@ -1,6 +1,7 @@
 package pt.cmov.bomberman;
 
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.model.GameObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,12 +56,17 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	}
 
 	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
+	public void surfaceCreated(SurfaceHolder holder) {		
+        // initializes default width/height scaled sizes
+        GameObject.initializeDefaults(this);
+        
+        // generates the map and game defaults
+		getCurrentGame().setupGame();
+		
 		// at this point the surface is created and
 		// we can safely start the game loop
 		thread.setRunning(true);
 		thread.start();
-		getCurrentGame().setupGame();
 	}
 
 	@Override
@@ -97,6 +103,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		
 		// fills the canvas with black
 		canvas.drawColor(Color.BLACK);
 

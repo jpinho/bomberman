@@ -3,6 +3,7 @@ package pt.cmov.bomberman;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -14,18 +15,23 @@ public class GameArenaActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         // requesting to turn the title OFF
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         // making it full screen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+        getWindow().setFlags(
+        	WindowManager.LayoutParams.FLAG_FULLSCREEN, 
         	WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        // Load images bitmaps into memory
+        // load images bitmaps into memory
         //Bitmaps.init(this);
         
+        // creates the game view
+        SurfaceView view = new MainGamePanel(this);
+                
         // set our MainGamePanel as the View
-        setContentView(new MainGamePanel(this));
+        setContentView(view);
         
         Log.d(TAG, "View added");
     }
@@ -41,6 +47,4 @@ public class GameArenaActivity extends Activity {
 		Log.d(TAG, "Stopping...");
 		super.onStop();
 	}
-    
-    
 }

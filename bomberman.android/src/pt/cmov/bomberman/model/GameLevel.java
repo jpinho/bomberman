@@ -14,7 +14,6 @@ public class GameLevel {
 	private final SurfaceView view;
 	private final GameGenerator gameGenerator;
 	
-	private boolean preventDraw=true;
 	private GameBoard board;
 	private List<Player> players;
 	
@@ -33,9 +32,7 @@ public class GameLevel {
 	 * Public Methods
 	 */
 	
-	public void setupGame() {
-		setPreventDraw(true);
-		
+	public void setupGame() {		
 		//instantiates a new board
 		this.initializeBoard();
 		
@@ -44,9 +41,6 @@ public class GameLevel {
 		
 		//adds the objects to the game matrix
 		getBoard().setupObjects(gameObjects);
-		
-		//allows the onDraw event to call draw of the game level
-		setPreventDraw(false);
 	}
 
 	public void addPlayer(String name){
@@ -70,22 +64,13 @@ public class GameLevel {
 		this.players = players;
 	}
 	
-	public boolean isPreventDraw() {
-		return preventDraw;
-	}
-
-	public void setPreventDraw(boolean preventDraw) {
-		this.preventDraw = preventDraw;
-	}
-	
 	/**
 	 * Draws the entire game onto the canvas.
 	 * 
 	 * @param canvas - place to draw the game into.
 	 */
 	public void draw(Canvas canvas){
-		if (!isPreventDraw())
-			board.draw(canvas);
+		board.draw(canvas);
 	}
 	
 	

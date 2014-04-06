@@ -20,13 +20,15 @@ public class GameBoard {
 		paviment = new Paviment(v, 0, 0);
 		float windowW = v.getWidth();
 		float windowH = v.getHeight();
-		float columns = windowW / paviment.getBitmap().getWidth();
-		float rows = windowH / paviment.getBitmap().getHeight();		
+		float columns = windowW / GameObject.DEFAULT_WIDTH;
+		float rows = windowH / GameObject.DEFAULT_HEIGHT;
+		
 		nRows = (int) Math.floor(rows);
 		nColumns = (int) Math.floor(columns);
 		horizontalExcess = rows - nRows;
 		verticalExcess = columns - nColumns;
 		this.view = v;
+		
 		board = new IGameObject[nRows][nColumns];
 	}
 

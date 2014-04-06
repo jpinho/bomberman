@@ -9,10 +9,11 @@ import android.view.SurfaceView;
 
 public abstract class GameObject implements IGameObject {
 
-	public static final float DEFAULT_WIDTH = 43;
-	public static final float DEFAULT_HEIGHT = 46;
+	public static float DEFAULT_WIDTH;
+	public static float DEFAULT_HEIGHT;
 	private static Hashtable<Integer, Bitmap> bitmapTable;
-
+	private static boolean isInitialized = false; 
+	
 	private int x; // the X coordinate
 	private int y; // the Y coordinate
 
@@ -22,7 +23,20 @@ public abstract class GameObject implements IGameObject {
 	static {
 		bitmapTable = new Hashtable<Integer, Bitmap>();
 	}
-
+	
+	public static void initializeDefaults(SurfaceView view){
+		if(isInitialized)
+			throw new InternalError("Invalid call to GameObject.initializeDefaults, call was made more than once!");
+		
+		Paviment defaultObject = new Paviment(view, 0, 0);
+		Canvas cv = new Canvas();
+		
+		DEFAULT_WIDTH = defaultObject.getBitmap().getScaledWidth(cv);
+		DEFAULT_HEIGHT = defaultObject.getBitmap().getScaledHeight(cv);
+		isInitialized = true;
+	}
+	
+	
 	public GameObject(SurfaceView view, int bitmapCode, int x, int y) {
 		setX(x);
 		setY(y);
