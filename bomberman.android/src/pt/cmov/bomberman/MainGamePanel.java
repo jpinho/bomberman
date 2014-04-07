@@ -2,8 +2,6 @@ package pt.cmov.bomberman;
 
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.model.GameObject;
-import pt.cmov.bomberman.model.IGameObject;
-import pt.cmov.bomberman.model.Rock;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,8 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Shader.TileMode;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -74,12 +70,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		// we can safely start the game loop
 		thread.setRunning(true);
 		thread.start();
-		
-		// draws the game background in the activity view
-		IGameObject border = new Rock(this, 0, 0);
-		BitmapDrawable bground = new BitmapDrawable(getResources(), border.getBitmap());
-		bground.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
-		this.setBackground(bground);
 	}
 
 	@Override
@@ -107,6 +97,8 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		}
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			// the gestures
+			
+			
 		}
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			// touch was released
@@ -120,9 +112,38 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		// draws the current game state onto the canvas
 		getCurrentGame().draw(canvas);
 		
+		// @author jp
+		// messy code i'm just providing quick UI elements this needs to be organized!!!
 		if(controllerPaint!=null){
+			
+			//right controller (bomb planting)
+			controllerPaint.setColor(Color.argb(80, 0, 190, 0));
+			controllerPaint.setStyle(Style.FILL);
 			canvas.drawCircle(getWidth() - 35, getHeight() - 35, 30, controllerPaint);
+			
+			controllerPaint.setColor(Color.argb(127, 0, 255, 0));
+			controllerPaint.setStyle(Style.STROKE);
+			canvas.drawCircle(getWidth() - 35, getHeight() - 35, 30, controllerPaint);
+			
 			canvas.drawBitmap(bombBitmap, getWidth()-55, getHeight()-57, null);
+			
+			
+			//left controller (movement controller)
+			controllerPaint.setColor(Color.argb(80, 0, 190, 0));
+			controllerPaint.setStyle(Style.FILL);
+			canvas.drawCircle(
+					(float)(GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0), 
+					(float)(this.getHeight() - (GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0)), 
+					(float)(GameObject.DEFAULT_WIDTH*2.0), 
+					controllerPaint);
+			
+			controllerPaint.setColor(Color.argb(127, 0, 255, 0));
+			controllerPaint.setStyle(Style.STROKE);
+			canvas.drawCircle(
+					(float)(GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0), 
+					(float)(this.getHeight() - (GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0)), 
+					(float)(GameObject.DEFAULT_WIDTH*2.0), 
+					controllerPaint);
 		}
 	}
 

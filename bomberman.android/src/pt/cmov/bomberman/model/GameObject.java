@@ -113,7 +113,7 @@ public abstract class GameObject implements IGameObject {
 		float offsetTop = board.getOffsetTop();
 		float offsetLeft = board.getOffsetLeft();
 
-		drawGameObject(canvas, offsetTop, offsetLeft, this.getX(), this.getY());
+		drawGameObject(canvas, offsetLeft, offsetTop, this.getX(), this.getY());
 	}
 	
 	@Override
@@ -121,7 +121,7 @@ public abstract class GameObject implements IGameObject {
 		float offsetTop = board.getOffsetTop();
 		float offsetLeft = board.getOffsetLeft();
 		
-		drawGameObject(canvas, offsetTop, offsetLeft, x, y);
+		drawGameObject(canvas, offsetLeft, offsetTop, x, y);
 	}
 	
 	@Override

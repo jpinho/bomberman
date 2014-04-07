@@ -28,8 +28,8 @@ public class GameBoard {
 		
 		nRows = (int) Math.floor(rows);
 		nColumns = (int) Math.floor(columns);
-		horizontalExcess = rows - nRows;
-		verticalExcess = columns - nColumns;
+		horizontalExcess = columns - nColumns;
+		verticalExcess = rows - nRows;
 		this.view = v;
 		
 		board = new IGameObject[nRows][nColumns];
@@ -84,16 +84,33 @@ public class GameBoard {
 		return (float) (getHorizontalExcess() / 2.0) * GameObject.DEFAULT_WIDTH;
 	}
 
-	public void draw(Canvas canvas) {		
-		// loops all columns
+	public void draw(Canvas canvas) {
+		
 		for (int i = 0; i < nRows; i++) {
-			// loops all lines of 'i'
-			for (int j = 0; j < nColumns; j++) {
+			for (int j = 0; j < nColumns; j++) {				
 				paviment.draw(canvas, this, j, i);
 
 				if (board[i][j] != null)
 					board[i][j].draw(canvas, this);
 			}
+		}
+		
+		drawBorders(canvas);
+	}
+
+	private void drawBorders(Canvas canvas) {
+		IGameObject border = new Rock(view, 0, 0);
+
+		//border-top/bottom
+		for (int j = 0; j < nColumns+1; j++) {	
+			border.draw(canvas, j*GameObject.DEFAULT_WIDTH, -GameObject.DEFAULT_HEIGHT +getOffsetTop());
+			border.draw(canvas, j*GameObject.DEFAULT_WIDTH, getOffsetTop()+ (nRows*GameObject.DEFAULT_HEIGHT));
+		}
+		
+		//border-left/right
+		for (int j = 0; j < nRows; j++) {	
+			border.draw(canvas, -GameObject.DEFAULT_WIDTH +getOffsetLeft(), getOffsetTop()+ j*GameObject.DEFAULT_HEIGHT);
+			border.draw(canvas, +getOffsetLeft() + nColumns*GameObject.DEFAULT_WIDTH, getOffsetTop()+ j*GameObject.DEFAULT_HEIGHT);
 		}
 	}
 	
