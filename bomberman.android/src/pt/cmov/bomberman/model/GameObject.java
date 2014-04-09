@@ -1,41 +1,17 @@
 package pt.cmov.bomberman.model;
 
-import java.util.Hashtable;
-
+import pt.cmov.bomberman.util.Bitmaps;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.SurfaceView;
 
 public abstract class GameObject implements IGameObject {
 
-	public static float DEFAULT_WIDTH;
-	public static float DEFAULT_HEIGHT;
-	private static Hashtable<Integer, Bitmap> bitmapTable;
-	private static boolean isInitialized = false; 
-	
-	private int x; // the X coordinate
-	private int y; // the Y coordinate
+	private int x;
+	private int y;
 
 	private int bitmapCode;
 	private SurfaceView view;
-
-	static {
-		bitmapTable = new Hashtable<Integer, Bitmap>();
-	}
-	
-	public static void initializeDefaults(SurfaceView view){
-		if(isInitialized)
-			throw new InternalError("Invalid call to GameObject.initializeDefaults, call was made more than once!");
-		
-		Paviment defaultObject = new Paviment(view, 0, 0);
-		Canvas cv = new Canvas();
-		
-		DEFAULT_WIDTH = defaultObject.getBitmap().getScaledWidth(cv);
-		DEFAULT_HEIGHT = defaultObject.getBitmap().getScaledHeight(cv);
-		isInitialized = true;
-	}
-	
 	
 	public GameObject(SurfaceView view, int bitmapCode, int x, int y) {
 		setX(x);
@@ -100,12 +76,7 @@ public abstract class GameObject implements IGameObject {
 	 */
 	@Override
 	public Bitmap getBitmap() {
-		// caching of bitmaps :)
-		if (bitmapTable.get(getBitmapCode()) == null)
-			bitmapTable.put(getBitmapCode(),
-					BitmapFactory.decodeResource(view.getResources(), getBitmapCode()));
-
-		return bitmapTable.get(getBitmapCode());
+		return Bitmaps.getBitmap(bitmapCode);
 	}
 
 	@Override

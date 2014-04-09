@@ -2,6 +2,7 @@ package pt.cmov.bomberman.model;
 
 import java.util.List;
 
+import pt.cmov.bomberman.util.Bitmaps;
 import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.os.Build;
@@ -14,24 +15,20 @@ public class GameBoard {
 	private final int nRows;
 	private final float horizontalExcess;
 	private final float verticalExcess;
-	private final Paviment paviment;
+	private final Pavement pavement;
 	private final SurfaceView view;
 
 	private IGameObject[][] board;
 
 	public GameBoard(SurfaceView v) {
-		paviment = new Paviment(v, 0, 0);
-		float windowW = v.getWidth();
-		float windowH = v.getHeight();
-		float columns = windowW / GameObject.DEFAULT_WIDTH;
-		float rows = windowH / GameObject.DEFAULT_HEIGHT;
-		
+		pavement = new Pavement(v, 0, 0);
+		float columns = (v.getWidth()*1.0f)/Bitmaps.width();
+		float rows = (v.getHeight()*1.0f)/Bitmaps.height();
 		nRows = (int) Math.floor(rows);
 		nColumns = (int) Math.floor(columns);
 		horizontalExcess = columns - nColumns;
 		verticalExcess = rows - nRows;
 		this.view = v;
-		
 		board = new IGameObject[nRows][nColumns];
 	}
 
@@ -77,18 +74,18 @@ public class GameBoard {
 	}
 
 	public float getOffsetTop() {
-		return (float) (getVerticalExcess() / 2.0) * GameObject.DEFAULT_HEIGHT;
+		return (getVerticalExcess()/2.0f)*Bitmaps.height();
 	}
 
 	public float getOffsetLeft() {
-		return (float) (getHorizontalExcess() / 2.0) * GameObject.DEFAULT_WIDTH;
+		return (getHorizontalExcess()/2.0f)*Bitmaps.width();
 	}
 
 	public void draw(Canvas canvas) {
 		
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nColumns; j++) {				
-				paviment.draw(canvas, this, j, i);
+				pavement.draw(canvas, this, j, i);
 
 				if (board[i][j] != null)
 					board[i][j].draw(canvas, this);
@@ -103,14 +100,14 @@ public class GameBoard {
 
 		//border-top/bottom
 		for (int j = 0; j < nColumns+1; j++) {	
-			border.draw(canvas, j*GameObject.DEFAULT_WIDTH, -GameObject.DEFAULT_HEIGHT +getOffsetTop());
-			border.draw(canvas, j*GameObject.DEFAULT_WIDTH, getOffsetTop()+ (nRows*GameObject.DEFAULT_HEIGHT));
+			border.draw(canvas, j*Bitmaps.width(),-Bitmaps.width()+getOffsetTop());
+			border.draw(canvas, j*Bitmaps.height(), getOffsetTop()+ (nRows*Bitmaps.height()));
 		}
 		
 		//border-left/right
 		for (int j = 0; j < nRows; j++) {	
-			border.draw(canvas, -GameObject.DEFAULT_WIDTH +getOffsetLeft(), getOffsetTop()+ j*GameObject.DEFAULT_HEIGHT);
-			border.draw(canvas, +getOffsetLeft() + nColumns*GameObject.DEFAULT_WIDTH, getOffsetTop()+ j*GameObject.DEFAULT_HEIGHT);
+			border.draw(canvas, -Bitmaps.width()+getOffsetLeft(), getOffsetTop()+ j*Bitmaps.height());
+			border.draw(canvas, +getOffsetLeft() + nColumns*Bitmaps.width(), getOffsetTop()+ j*Bitmaps.height());
 		}
 	}
 	

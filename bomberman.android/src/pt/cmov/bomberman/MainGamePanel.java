@@ -1,7 +1,7 @@
 package pt.cmov.bomberman;
 
 import pt.cmov.bomberman.model.GameLevel;
-import pt.cmov.bomberman.model.GameObject;
+import pt.cmov.bomberman.util.Bitmaps;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,6 +36,8 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		// adding the callback (this) to the surface holder to intercept events
 		getHolder().addCallback(this);
 
+		Bitmaps.init(getResources());
+		
 		// create the game loop thread
 		thread = new MainThread(getHolder(), this);
 
@@ -59,13 +61,11 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
-	public void surfaceCreated(SurfaceHolder holder) {		
-        // initializes default width/height scaled sizes
-        GameObject.initializeDefaults(this);
-        
+	public void surfaceCreated(SurfaceHolder holder) {
+		/* The first step is to load the pavement into a bitmap. */
+		Bitmaps.loadBitmap(R.drawable.pavement);
         // generates the map and game defaults
-		getCurrentGame().setupGame();
-		
+		getCurrentGame().buildLevel();
 		// at this point the surface is created and
 		// we can safely start the game loop
 		thread.setRunning(true);
@@ -132,17 +132,17 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 			controllerPaint.setColor(Color.argb(80, 0, 190, 0));
 			controllerPaint.setStyle(Style.FILL);
 			canvas.drawCircle(
-					(float)(GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0), 
-					(float)(this.getHeight() - (GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0)), 
-					(float)(GameObject.DEFAULT_WIDTH*2.0), 
+					(Bitmaps.width()*2.0f+Bitmaps.width()/3.0f), 
+					(this.getHeight() - (Bitmaps.width()*2.0f+Bitmaps.width()/3.0f)), 
+					(Bitmaps.width()*2.0f), 
 					controllerPaint);
 			
 			controllerPaint.setColor(Color.argb(127, 0, 255, 0));
 			controllerPaint.setStyle(Style.STROKE);
 			canvas.drawCircle(
-					(float)(GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0), 
-					(float)(this.getHeight() - (GameObject.DEFAULT_WIDTH*2.0 + GameObject.DEFAULT_WIDTH/3.0)), 
-					(float)(GameObject.DEFAULT_WIDTH*2.0), 
+					(Bitmaps.width()*2.0f+Bitmaps.width()/3.0f), 
+					(this.getHeight() - (Bitmaps.width()*2.0f+Bitmaps.width()/3.0f)), 
+					(Bitmaps.width()*2.0f), 
 					controllerPaint);
 		}
 	}

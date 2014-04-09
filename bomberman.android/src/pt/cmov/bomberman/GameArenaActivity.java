@@ -24,9 +24,6 @@ public class GameArenaActivity extends Activity {
         	WindowManager.LayoutParams.FLAG_FULLSCREEN, 
         	WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        // load images bitmaps into memory
-        //Bitmaps.init(this);
-        
         // creates the game view
         SurfaceView view = new MainGamePanel(this);
                 

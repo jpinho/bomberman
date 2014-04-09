@@ -32,7 +32,7 @@ public class GameLevel {
 	 * Public Methods
 	 */
 	
-	public void setupGame() {		
+	public void buildLevel() {		
 		//instantiates a new board
 		this.initializeBoard();
 		
