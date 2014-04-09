@@ -95,7 +95,7 @@ public class GameGenerator {
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		
 		for(int i=0; i < nPlayersToDraw; i++){
-			Player p = new Player(getView(), playersCoords.get(i)[0], playersCoords.get(i)[1]);
+			Player p = new Player(playersCoords.get(i)[0], playersCoords.get(i)[1]);
 			gameObjects.add(p);
 		}		
 	}
@@ -106,7 +106,7 @@ public class GameGenerator {
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		
 		for(int i=0; i < nRocksToDraw; i++){
-			Rock r = new Rock(getView(), rocksCoords.get(i)[0], rocksCoords.get(i)[1]);
+			Rock r = new Rock(rocksCoords.get(i)[0], rocksCoords.get(i)[1]);
 			gameObjects.add(r);
 		}
 	}
@@ -117,7 +117,7 @@ public class GameGenerator {
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		
 		for(int i=0; i < nWallsToDraw; i++){
-			Wall w = new Wall(getView(), wallsCoords.get(i)[0], wallsCoords.get(i)[1]);
+			Wall w = new Wall(wallsCoords.get(i)[0], wallsCoords.get(i)[1]);
 			gameObjects.add(w);
 		}
 	}

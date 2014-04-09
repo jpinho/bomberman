@@ -45,7 +45,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		setFocusable(true);
 		
 		// creates the game
-		setCurrentGame(new GameLevel(this));
+		currentGame = new GameLevel(this);
 		
 		controllerPaint = new Paint();
 		controllerPaint.setStyle(Style.STROKE);
@@ -65,7 +65,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		/* The first step is to load the pavement into a bitmap. */
 		Bitmaps.loadBitmap(R.drawable.pavement);
         // generates the map and game defaults
-		getCurrentGame().buildLevel();
+		currentGame.buildLevel();
 		// at this point the surface is created and
 		// we can safely start the game loop
 		thread.setRunning(true);
@@ -110,10 +110,11 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	protected void onDraw(Canvas canvas) {
 
 		// draws the current game state onto the canvas
-		getCurrentGame().draw(canvas);
+		currentGame.draw(canvas);
 		
 		// @author jp
 		// messy code i'm just providing quick UI elements this needs to be organized!!!
+		/*
 		if(controllerPaint!=null){
 			
 			//right controller (bomb planting)
@@ -145,21 +146,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 					(Bitmaps.width()*2.0f), 
 					controllerPaint);
 		}
+		*/
 	}
-
-	/**
-	 * @return the currentGame
-	 */
-	public GameLevel getCurrentGame() {
-		return currentGame;
-	}
-
-	/**
-	 * @param currentGame
-	 *            the currentGame to set
-	 */
-	public void setCurrentGame(GameLevel currentGame) {
-		this.currentGame = currentGame;
-	}
-
 }

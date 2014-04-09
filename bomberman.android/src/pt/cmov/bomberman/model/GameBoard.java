@@ -21,7 +21,7 @@ public class GameBoard {
 	private IGameObject[][] board;
 
 	public GameBoard(SurfaceView v) {
-		pavement = new Pavement(v, 0, 0);
+		pavement = new Pavement(0, 0);
 		float columns = (v.getWidth()*1.0f)/Bitmaps.width();
 		float rows = (v.getHeight()*1.0f)/Bitmaps.height();
 		nRows = (int) Math.floor(rows);
@@ -32,37 +32,10 @@ public class GameBoard {
 		board = new IGameObject[nRows][nColumns];
 	}
 
-	/**
-	 * @return the board
-	 */
-	public IGameObject[][] getBoard() {
-		return board;
-	}
-
-	/**
-	 * @return the horizontalExcess
-	 */
-	public float getHorizontalExcess() {
-		return horizontalExcess;
-	}
-
-	/**
-	 * @return the verticalExcess
-	 */
-	public float getVerticalExcess() {
-		return verticalExcess;
-	}
-
-	/**
-	 * @return the nColumns
-	 */
 	public int getColumnsCount() {
 		return nColumns;
 	}
 
-	/**
-	 * @return the nRows
-	 */
 	public int getRowsCount() {
 		return nRows;
 	}
@@ -74,11 +47,11 @@ public class GameBoard {
 	}
 
 	public float getOffsetTop() {
-		return (getVerticalExcess()/2.0f)*Bitmaps.height();
+		return (verticalExcess/2.0f)*Bitmaps.height();
 	}
 
 	public float getOffsetLeft() {
-		return (getHorizontalExcess()/2.0f)*Bitmaps.width();
+		return (horizontalExcess/2.0f)*Bitmaps.width();
 	}
 
 	public void draw(Canvas canvas) {
@@ -96,7 +69,7 @@ public class GameBoard {
 	}
 
 	private void drawBorders(Canvas canvas) {
-		IGameObject border = new Rock(view, 0, 0);
+		IGameObject border = new Rock(0, 0);
 
 		//border-top/bottom
 		for (int j = 0; j < nColumns+1; j++) {	

@@ -1,6 +1,6 @@
 package pt.cmov.bomberman.model;
 
-public interface IMoveableObject {
+public interface IMovableObject {
 
 	public void handleActionUp(int eventX, int eventY);
 

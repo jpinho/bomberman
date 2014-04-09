@@ -1,13 +1,12 @@
 package pt.cmov.bomberman.model;
 
 import pt.cmov.bomberman.R;
-import android.view.SurfaceView;
 
-public class Robot extends GameObject implements IMoveableObject{
+public class Robot extends GameObject implements IMovableObject {
 	
-	public Robot(SurfaceView view, int x, int y) {
+	public Robot(int x, int y) {
 		//TODO: create icon for the robot
-		super(view, R.drawable.bman_down, x, y);
+		super(R.drawable.bman_down, x, y);
 	}
 
 	@Override
