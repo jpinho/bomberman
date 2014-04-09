@@ -4,8 +4,6 @@ import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.util.Bitmaps;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,37 +14,24 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-/**
- * This is the main surface that handles the ontouch events and draws the image
- * to the screen.
- */
 public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback {
-
-	private final Bitmap bombBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.bomb);
+	//private final Bitmap bombBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.bomb);
 	private static final String TAG = MainGamePanel.class.getSimpleName();
 	public static final int MAX_PLAYERS = 4;
 
 	private MainThread thread;
-	private GameLevel currentGame;
+	private GameLevel currentGameLevel;
 	private Paint controllerPaint;
 	
 	public MainGamePanel(Context context) {
 		super(context);
-
-		// adding the callback (this) to the surface holder to intercept events
+		
 		getHolder().addCallback(this);
-
 		Bitmaps.init(getResources());
-		
-		// create the game loop thread
 		thread = new MainThread(getHolder(), this);
-
-		// make the GamePanel focusable so it can handle events
 		setFocusable(true);
-		
-		// creates the game
-		currentGame = new GameLevel(this);
-		
+		currentGameLevel = new GameLevel(this);
+
 		controllerPaint = new Paint();
 		controllerPaint.setStyle(Style.STROKE);
 		controllerPaint.setColor(Color.argb(127, 0, 255, 0));
@@ -62,12 +47,18 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		/* The first step is to load the pavement into a bitmap. */
+		/* The first step is to load the pavement into a bitmap. 
+		 * This is necessary because the code needs to know the width and height
+		 * of a loaded bitmap, so that it can calculate how many rows and columns to draw according to
+		 * the screen size. 
+		 */
 		Bitmaps.loadBitmap(R.drawable.pavement);
-        // generates the map and game defaults
-		currentGame.buildLevel();
-		// at this point the surface is created and
-		// we can safely start the game loop
+
+		currentGameLevel.buildLevel();
+		
+		/* At this point the surface is created and
+		    we can safely start the game loop
+		 */
 		thread.setRunning(true);
 		thread.start();
 	}
@@ -75,8 +66,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d(TAG, "Surface is being destroyed");
-		// tell the thread to shut down and wait for it to finish
-		// this is a clean shutdown
 		boolean retry = true;
 		while (retry) {
 			try {
@@ -84,7 +73,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 				retry = false;
 			}
 			catch (InterruptedException e) {
-				// try again shutting down the thread
+				// Just keep trying.
 			}
 		}
 		Log.d(TAG, "Thread was shut down cleanly");
@@ -108,10 +97,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-
-		// draws the current game state onto the canvas
-		currentGame.draw(canvas);
-		
+		currentGameLevel.draw(canvas);
 		// @author jp
 		// messy code i'm just providing quick UI elements this needs to be organized!!!
 		/*
