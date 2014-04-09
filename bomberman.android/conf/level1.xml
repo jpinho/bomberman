@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- Time units is second -->
+<level>
+	<name>Level 1</name>
+	<duration>300</duration>
+	<explosion>
+	    <timeout>3</timeout>
+	    <duration>2</duration>
+	    <!-- How many neighbor cells are affected by an explosion -->
+	    <range>1</range>
+	</explosion>
+	<!-- Enemy speed is in cells/second -->
+	<enemy_speed>1</enemy_speed>
+	<scoring>
+	    <!-- Score earned on killing robot -->
+	    <robot>5</robot>
+	    <!-- Score earned on killing opponent -->
+	    <opponent>10</opponent>
+	</scoring>
+	<!-- Maximum number of players on this level.
+	     For each player, there must be a corresponding initial position in the map layout.
+	 -->
+	<players>3</players>
+	<map>
+	    <!-- The map is a set of rows. Each row must have the same number of columns.
+	    	 A dash denotes an empty position, 'R' represents a fixed rock which cannot be destroyed, 
+	    	 'W' is a piece of wood that will be destroyed if hit by an explosion, and a number N (1 <= N <= players)
+	    	 represents the initial position of player N in this map. There must be an initial position for every player. 
+	     -->
+	     <row>W-2----R-----W----R</row>
+	     <row>--W--W----------W-1</row>
+	     <row>W-R-------R--------</row>
+	     <row>-----W--W---W-----R</row>
+	     <row>-W----R-------R----</row>
+	     <row>-------------------</row>
+	     <row>---------W--------W</row>
+	     <row>W-W-W-W-W-W-WRW-W-W</row>
+	     <row>----W---R---R3R--W-</row>
+	     <row>------W---W-----W--</row>
+	     <row>-------------------</row>
+	     <row>--R--R--W---W-R--W-</row>
+	     <row>----------W--------</row>
+	</map>
+</level>
