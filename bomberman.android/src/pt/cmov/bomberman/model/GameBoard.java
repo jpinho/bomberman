@@ -100,8 +100,8 @@ public class GameBoard {
 
 		//border-top/bottom
 		for (int j = 0; j < nColumns+1; j++) {	
-			border.draw(canvas, j*Bitmaps.width(),-Bitmaps.width()+getOffsetTop());
-			border.draw(canvas, j*Bitmaps.height(), getOffsetTop()+ (nRows*Bitmaps.height()));
+			border.draw(canvas, j*Bitmaps.width(),-Bitmaps.height()+getOffsetTop());
+			border.draw(canvas, j*Bitmaps.width(), getOffsetTop()+ (nRows*Bitmaps.height()));
 		}
 		
 		//border-left/right
