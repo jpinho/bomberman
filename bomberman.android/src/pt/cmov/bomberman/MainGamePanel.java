@@ -43,7 +43,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		 * It is crucial to call loadLevel() before enabling the rendering thread and picking bitmaps, because we need 
 		 * to view the map dimensions to decide the scaling factor and the borders size. 
 		 */
-		LevelFileParser.loadLevel(getResources(), "level1", getWidth(), getHeight(), currentGameLevel);
+		LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), currentGameLevel);
 		
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		thread.setRunning(true);
