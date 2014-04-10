@@ -46,7 +46,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		currentGameLevel.loadLevel(getResources(), "level1.xml", getWidth(), getHeight());
+		currentGameLevel.loadLevel(getResources(), "level2", getWidth(), getHeight());
 		thread.setRunning(true);
 		thread.start();
 	}

@@ -78,17 +78,46 @@ public class GameBoard {
 
 	private void drawBorders(Canvas canvas) {
 		Bitmap border = Bitmaps.getBitmap(R.drawable.rock);
-		//border-top/bottom
-		for (int j = 0; j < nCols+1; j++) {
-			canvas.drawBitmap(border, (float) horizontalExcess+j*object_width, (float) verticalExcess-object_height, null);
-			canvas.drawBitmap(border, (float) horizontalExcess+j*object_width, (float) verticalExcess+nRows*object_height, null);
-		}
+
+		float y;
+		// Top
+		y = (float) verticalExcess;
+		do {
+			y -= object_height;
+			drawLeftRightBorder(canvas, border, y);
+			for (float x = (float) horizontalExcess; x < horizontalExcess+nCols*object_width; x += object_width) {
+				canvas.drawBitmap(border, x, y, null);
+			}
+		} while (y >= 0);
 		
-		//border-left/right
-		for (int j = 0; j < nRows; j++) {
-			canvas.drawBitmap(border, (float) horizontalExcess-object_width, (float) verticalExcess+j*object_height, null);
-			canvas.drawBitmap(border, (float) horizontalExcess+nCols*object_width, (float) verticalExcess+j*object_height, null);
-		}
+		// Left and Right
+		for (y = (float) verticalExcess; y <= verticalExcess+(nRows-1)*object_height; y += object_height)
+			drawLeftRightBorder(canvas, border, y);
+		
+		// Bottom
+		y = (float) verticalExcess+(nRows-1)*object_height;
+		float y_limit = (float) verticalExcess*2+nRows*object_height; 
+		do {
+			y += object_height;
+			drawLeftRightBorder(canvas, border, y);
+			for (float x = (float) horizontalExcess; x < horizontalExcess+nCols*object_width; x += object_width) {
+				canvas.drawBitmap(border, x, y, null);
+			}
+		} while (y <= y_limit);
+	}
+	
+	private void drawLeftRightBorder(Canvas canvas, Bitmap border, float y) {
+		float x = (float) horizontalExcess;
+		do {
+			x -= object_width;
+			canvas.drawBitmap(border, x, y, null);
+		} while (x >= 0);
+		x = (float) horizontalExcess+(nCols-1)*object_width;
+		float x_limit = (float) horizontalExcess*2+nCols*object_width;
+		do {
+			x += object_width;
+			canvas.drawBitmap(border, x, y, null);
+		} while (x <= x_limit);
 	}
 	
 	private boolean fitsIn(int max_width, int max_height, int object_w, int object_h) {
