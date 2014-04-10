@@ -4,7 +4,11 @@ package pt.cmov.bomberman;
 import pt.cmov.bomberman.model.JoyStick;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -63,7 +67,43 @@ public class GameArenaActivity extends Activity {
         game.addView(gameView);
         game.addView(buttons);
         setContentView(game);
-}
+	    buttons.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				js.drawStick(arg1);
+				if(arg1.getAction() == MotionEvent.ACTION_DOWN
+						|| arg1.getAction() == MotionEvent.ACTION_MOVE) {
+					Log.d(TAG, "X : " + String.valueOf(js.getX()));
+					Log.d(TAG, "Y : " + String.valueOf(js.getY()));
+					Log.d(TAG, "Angle : " + String.valueOf(js.getAngle()));
+					Log.d(TAG, String.valueOf(js.getDistance()));
+					int direction = js.get8Direction();
+					if(direction == JoyStick.STICK_UP) {
+						Log.d(TAG, "js direction up");
+					} else if(direction == JoyStick.STICK_UPRIGHT) {
+						Log.d(TAG, "Direction : Up Right");
+					} else if(direction == JoyStick.STICK_RIGHT) {
+						Log.d(TAG, "Direction : Right");
+					} else if(direction == JoyStick.STICK_DOWNRIGHT) {
+						Log.d(TAG, "Direction : Down Right");
+					} else if(direction == JoyStick.STICK_DOWN) {
+						Log.d(TAG, "Direction : Down");
+					} else if(direction == JoyStick.STICK_DOWNLEFT) {
+						Log.d(TAG, "Direction : Down left");
+					} else if(direction == JoyStick.STICK_LEFT) {
+						Log.d(TAG, "Direction : Left");
+					} else if(direction == JoyStick.STICK_UPLEFT) {
+						Log.d(TAG, "Direction : up left");
+					} else if(direction == JoyStick.STICK_NONE) {
+						Log.d(TAG, "Direction : Center");
+					}
+				}
+				return true;
+			}
+        });
+        Log.d(TAG, "View added");
+    }
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
