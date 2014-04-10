@@ -14,16 +14,26 @@ import android.graphics.BitmapFactory;
  * NOTE: This class MUST be initialized before any other event takes place, namely, map generation,
  * canvas drawing, etc.
  * 
- * @author filipe
- *
+ * The initialization is performed by calling init() and by making sure that setWidht() and setHeight()
+ * are called before any getBitmap() request is issued. This is necessary because the class needs to
+ * know the width and height for a bitmap so that it can resize bitmaps when they are created.
+ * 
+ * setWidht() and setHeight() are called by the level generator when reading a level configuration's file.
+ * Thus, it is imperative that level parsing is ALWAYS performed before activating the render loop or even before
+ * calling getBitmap().
  */
 public class Bitmaps {
-	
+	/* Width and height of raw image files */
 	public static final int ORIGINAL_WIDTH = 43;
 	public static final int ORIGINAL_HEIGHT = 46;
 	
 	private static Hashtable<Integer, Bitmap> bitmapTable = new Hashtable<Integer, Bitmap>();
 	private static Resources resources;
+	
+	/* Width and height of the bitmaps. This is determined by the level file parser when reading the map
+	 * configuration, which calculates the final width and height each bitmap image must have in order to draw
+	 * the map on the device's screen.
+	 */
 	private static int width;
 	private static int height;
 
@@ -52,7 +62,6 @@ public class Bitmaps {
 	public static void setWidth(int w) {
 		width = w;
 	}
-	
 	public static void setHeight(int h) {
 		height = h;
 	}
