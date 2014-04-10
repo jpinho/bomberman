@@ -30,8 +30,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
-		currentGameLevel = new GameLevel(this);
-
+		currentGameLevel = new GameLevel();
 		controllerPaint = new Paint();
 		controllerPaint.setStyle(Style.STROKE);
 		controllerPaint.setColor(Color.argb(127, 0, 255, 0));
@@ -47,18 +46,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		/* The first step is to load the pavement into a bitmap. 
-		 * This is necessary because the code needs to know the width and height
-		 * of a loaded bitmap, so that it can calculate how many rows and columns to draw according to
-		 * the screen size. 
-		 */
-		Bitmaps.loadBitmap(R.drawable.pavement);
-
-		currentGameLevel.buildLevel();
-		
-		/* At this point the surface is created and
-		    we can safely start the game loop
-		 */
+		currentGameLevel.loadLevel(getResources(), "level1.xml", getWidth(), getHeight());
 		thread.setRunning(true);
 		thread.start();
 	}

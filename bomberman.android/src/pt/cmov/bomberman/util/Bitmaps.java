@@ -19,11 +19,14 @@ import android.graphics.BitmapFactory;
  */
 public class Bitmaps {
 	
+	public static final int ORIGINAL_WIDTH = 43;
+	public static final int ORIGINAL_HEIGHT = 46;
+	
 	private static Hashtable<Integer, Bitmap> bitmapTable = new Hashtable<Integer, Bitmap>();
 	private static Resources resources;
 	private static int width;
 	private static int height;
-	
+
 	public static void init(Resources r) {
 		resources = r;
 		width = -1;
@@ -33,38 +36,24 @@ public class Bitmaps {
 	public static Bitmap getBitmap(int code) {
 		Bitmap res;
 		if ((res = bitmapTable.get(code)) == null) {
-			res = BitmapFactory.decodeResource(resources, code);
+			Bitmap b = BitmapFactory.decodeResource(resources, code); 
+			res = Bitmap.createScaledBitmap(b, width, height, false);
 			bitmapTable.put(code, res);
-		}
-		if (width == -1) {
-			initializeWidth(res.getWidth(), res.getHeight());
 		}
 		return res;
 	}
 	
-	public static void loadBitmap(int code) {
-		if (bitmapTable.get(code) != null)
-			return;
-		Bitmap b;
-		bitmapTable.put(code, b = BitmapFactory.decodeResource(resources, code));
-		if (width == -1) {
-			initializeWidth(b.getWidth(), b.getHeight());
-		}
-	}
-	
 	public static int width() {
-		if (width == -1)
-			throw new InternalError("width and height are not initialized.");
 		return width;
 	}
 	public static int height() {
-		if (height == -1)
-			throw new InternalError("width and height are not initialized.");
 		return height;
 	}
-	
-	private static void initializeWidth(int w, int h) {
+	public static void setWidth(int w) {
 		width = w;
+	}
+	
+	public static void setHeight(int h) {
 		height = h;
 	}
 }

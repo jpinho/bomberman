@@ -5,33 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public abstract class GameObject implements IGameObject {
-
-	private int x;
-	private int y;
-
 	private int bitmapCode;
-	
-	public GameObject(int bitmapCode, int x, int y) {
-		this.x = x;
-		this.y = y;
+	public GameObject(int bitmapCode) {
 		this.bitmapCode = bitmapCode;
-	}
-
-	@Override
-	public int getX() {
-		return x;
-	}
-
-	@Override
-	public int getY() {
-		return y;
 	}
 
 	@Override
 	public Bitmap getBitmap() {
 		return Bitmaps.getBitmap(bitmapCode);
 	}
+	
+	@Override
+	public void draw(Canvas canvas, float x, float y) {
+		canvas.drawBitmap(getBitmap(), x, y, null);
+	}
 
+	/*
 	@Override
 	public void draw(Canvas canvas, GameBoard board) {
 		float offsetTop = board.getOffsetTop();
@@ -58,4 +47,5 @@ public abstract class GameObject implements IGameObject {
 				offsetLeft + x * getBitmap().getWidth(), 
 				offsetTop + y * getBitmap().getHeight(), null);
 	}
+	*/
 }

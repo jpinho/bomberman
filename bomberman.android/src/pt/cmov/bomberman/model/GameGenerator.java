@@ -1,6 +1,5 @@
 package pt.cmov.bomberman.model;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,18 +89,19 @@ public class GameGenerator {
 	 */
 	
 	private void generatePlayers(List<GameObject> gameObjects, int nPlayersToDraw, ArrayList<int[]> playersCoords) {
-
+		/*
 		if(playersCoords.size() < nPlayersToDraw)
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		
 		for(int i=0; i < nPlayersToDraw; i++){
 			Player p = new Player(playersCoords.get(i)[0], playersCoords.get(i)[1]);
 			gameObjects.add(p);
-		}		
+		}
+		*/		
 	}
 
 	private void generateRocks(List<GameObject> gameObjects, int nRocksToDraw, ArrayList<int[]> rocksCoords) {
-			
+		/*
 		if(rocksCoords.size() < nRocksToDraw)
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		
@@ -109,10 +109,11 @@ public class GameGenerator {
 			Rock r = new Rock(rocksCoords.get(i)[0], rocksCoords.get(i)[1]);
 			gameObjects.add(r);
 		}
+		*/
 	}
 
 	private void generateWalls(List<GameObject> gameObjects, int nWallsToDraw, ArrayList<int[]> wallsCoords) {
-		
+		/*
 		if(wallsCoords.size() < nWallsToDraw)
 			throw new InvalidParameterException("The number os coordinates must match the number of elements");
 		
@@ -120,6 +121,7 @@ public class GameGenerator {
 			Wall w = new Wall(wallsCoords.get(i)[0], wallsCoords.get(i)[1]);
 			gameObjects.add(w);
 		}
+		*/
 	}
 	
 	private void generateUniqueRndPositions(int nPositions, ArrayList<int[]> globalPositions, List<int[]> outputPositions) {

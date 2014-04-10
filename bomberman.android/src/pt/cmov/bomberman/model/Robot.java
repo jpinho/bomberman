@@ -4,9 +4,9 @@ import pt.cmov.bomberman.R;
 
 public class Robot extends GameObject implements IMovableObject {
 	
-	public Robot(int x, int y) {
+	public Robot() {
 		//TODO: create icon for the robot
-		super(R.drawable.bman_down, x, y);
+		super(R.drawable.bman_down);
 	}
 
 	@Override

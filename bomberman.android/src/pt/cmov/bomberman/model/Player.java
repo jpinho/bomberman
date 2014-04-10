@@ -1,22 +1,18 @@
 package pt.cmov.bomberman.model;
 
 import pt.cmov.bomberman.R;
-import android.view.SurfaceView;
 
 public class Player extends GameObject implements IMovableObject{
 	
 	public static final String DEFAULT_NAME = "Player";
 	private PlayerScore scoreBoard;
 	private String name;
+	private int player_number;
 		
-	public Player(int x, int y) {
-		super(R.drawable.bman_down, x, y);
-	}
-
-	public Player(SurfaceView view, String name) {
-		this(0, 0);
-		this.name = name;
+	public Player(int player) {
+		super(R.drawable.bman_down);
 		scoreBoard = new PlayerScore();
+		player_number = player;
 	}
 	
 	@Override
