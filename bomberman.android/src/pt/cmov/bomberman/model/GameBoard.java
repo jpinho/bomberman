@@ -62,18 +62,16 @@ public class GameBoard {
 
 	public void draw(Canvas canvas) {
 		drawBorders(canvas);
-		/*
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
-				double x = horizontalExcess+object_width*i;
-				double y = verticalExcess+object_height*j;
+				double x = horizontalExcess+object_width*j;
+				double y = verticalExcess+object_height*i;
 				if (board[i][j] != null)
 					board[i][j].draw(canvas, (float) x, (float) y);
 				else
 					pavement.draw(canvas, (float) x, (float) y);
 			}
-		}
-		*/	
+		}	
 	}
 
 	private void drawBorders(Canvas canvas) {

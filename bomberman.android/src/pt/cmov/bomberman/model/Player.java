@@ -1,6 +1,8 @@
 package pt.cmov.bomberman.model;
 
+import android.graphics.Canvas;
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.util.Bitmaps;
 
 public class Player extends GameObject implements IMovableObject{
 	
@@ -13,6 +15,12 @@ public class Player extends GameObject implements IMovableObject{
 		super(R.drawable.bman_down);
 		scoreBoard = new PlayerScore();
 		player_number = player;
+	}
+	
+	@Override
+	public void draw(Canvas canvas, float x, float y) {
+		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
+		super.draw(canvas, x, y);
 	}
 	
 	@Override
