@@ -6,9 +6,6 @@ import pt.cmov.bomberman.util.LevelFileParser;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,7 +17,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	private MainThread thread;
 	private GameLevel currentGameLevel;
-	private Paint controllerPaint;
 	
 	public MainGamePanel(Context context) {
 		super(context);
@@ -30,11 +26,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
 		currentGameLevel = new GameLevel();
-		controllerPaint = new Paint();
-		controllerPaint.setStyle(Style.STROKE);
-		controllerPaint.setColor(Color.argb(127, 0, 255, 0));
-		controllerPaint.setStrokeWidth(3);
-		controllerPaint.setAntiAlias(true);
 	}
 
 	@Override
