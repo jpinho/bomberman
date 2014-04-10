@@ -17,7 +17,6 @@ public class GameLevel {
 	private int robot_score;
 	private int opponent_score;
 	
-	
 	public void setBoard(GameBoard board) {
 		this.board = board;
 	}
@@ -50,5 +49,32 @@ public class GameLevel {
 	}
 	public void draw(Canvas canvas) {
 		board.draw(canvas);
+	}
+	public int getMax_players() {
+		return max_players;
+	}
+	public int getDuration() {
+		return duration;
+	}
+	public String getLevel_name() {
+		return level_name;
+	}
+	public int getExplosion_timeout() {
+		return explosion_timeout;
+	}
+	public int getExplosion_range() {
+		return explosion_range;
+	}
+	public int getExplosion_duration() {
+		return explosion_duration;
+	}
+	public int getEnemy_speed() {
+		return enemy_speed;
+	}
+	public int getRobot_score() {
+		return robot_score;
+	}
+	public int getOpponent_score() {
+		return opponent_score;
 	}
 }

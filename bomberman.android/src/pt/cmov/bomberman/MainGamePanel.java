@@ -7,13 +7,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback {
-	private static final String TAG = MainGamePanel.class.getSimpleName();
+	//private static final String TAG = MainGamePanel.class.getSimpleName();
 
 	private MainThread thread;
 	private GameLevel currentGameLevel;
@@ -36,14 +35,23 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		LevelFileParser.loadLevel(getResources(), "level3", getWidth(), getHeight(), currentGameLevel);
+		/* Upon surface creation, we must call loadLevel() to load the bootstrap level.
+		 * The parser will read the level file and build the level accordingly; level attributes
+		 * are stored in currentGameLevel, and the map layout is retrieved and turned into a board
+		 * that is hold by currentGameLevel.
+		 * 
+		 * It is crucial to call loadLevel() before enabling the rendering thread and picking bitmaps, because we need 
+		 * to view the map dimensions to decide the scaling factor and the borders size. 
+		 */
+		LevelFileParser.loadLevel(getResources(), "level1", getWidth(), getHeight(), currentGameLevel);
+		
+		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		thread.setRunning(true);
 		thread.start();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.d(TAG, "Surface is being destroyed");
 		boolean retry = true;
 		while (retry) {
 			try {
@@ -54,7 +62,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 				// Just keep trying.
 			}
 		}
-		Log.d(TAG, "Thread was shut down cleanly");
 	}
 
 	@Override

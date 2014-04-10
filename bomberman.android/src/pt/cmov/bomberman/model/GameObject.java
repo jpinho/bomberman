@@ -16,36 +16,8 @@ public abstract class GameObject implements IGameObject {
 	}
 	
 	@Override
+	// Screen coordinates
 	public void draw(Canvas canvas, float x, float y) {
 		canvas.drawBitmap(getBitmap(), x, y, null);
 	}
-
-	/*
-	@Override
-	public void draw(Canvas canvas, GameBoard board) {
-		float offsetTop = board.getOffsetTop();
-		float offsetLeft = board.getOffsetLeft();
-
-		drawGameObject(canvas, offsetLeft, offsetTop, x, y);
-	}
-	
-	@Override
-	public void draw(Canvas canvas, GameBoard board, int x, int y){
-		float offsetTop = board.getOffsetTop();
-		float offsetLeft = board.getOffsetLeft();
-		
-		drawGameObject(canvas, offsetLeft, offsetTop, x, y);
-	}
-	
-	@Override
-	public void draw(Canvas canvas, float screenX, float screenY){
-		canvas.drawBitmap(this.getBitmap(), screenX, screenY,null);
-	}
-	
-	private void drawGameObject(Canvas canvas,float offsetLeft, float offsetTop, int x, int y) {
-		canvas.drawBitmap(this.getBitmap(), 
-				offsetLeft + x * getBitmap().getWidth(), 
-				offsetTop + y * getBitmap().getHeight(), null);
-	}
-	*/
 }

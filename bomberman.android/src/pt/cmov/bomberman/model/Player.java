@@ -7,14 +7,15 @@ import pt.cmov.bomberman.util.Bitmaps;
 public class Player extends GameObject implements IMovableObject{
 	
 	public static final String DEFAULT_NAME = "Player";
+	/*
 	private PlayerScore scoreBoard;
 	private String name;
 	private int player_number;
-		
+	*/
 	public Player(int player) {
 		super(R.drawable.bman_down);
-		scoreBoard = new PlayerScore();
-		player_number = player;
+	//	scoreBoard = new PlayerScore();
+	//	player_number = player;
 	}
 	
 	@Override
