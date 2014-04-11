@@ -28,7 +28,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
-		currentGameLevel = new GameLevel();
+		currentGameLevel = GameLevel.getInstance();
 	}
 
 	@Override

@@ -67,6 +67,7 @@ public class GameArenaActivity extends Activity {
         game.addView(gameView);
         game.addView(buttons);
         setContentView(game);
+
 	    buttons.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View arg0, MotionEvent arg1) {

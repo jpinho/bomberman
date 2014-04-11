@@ -5,7 +5,8 @@ import android.graphics.Canvas;
 import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.DONUT)
-public class GameLevel {	
+public class GameLevel {
+	private static GameLevel INSTANCE = new GameLevel();
 	private GameBoard board;
 	private int max_players;
 	private int duration;
@@ -16,7 +17,10 @@ public class GameLevel {
 	private int enemy_speed;
 	private int robot_score;
 	private int opponent_score;
-	
+
+	private GameLevel(){
+
+	}
 	public void setBoard(GameBoard board) {
 		this.board = board;
 	}
@@ -77,4 +81,8 @@ public class GameLevel {
 	public int getOpponent_score() {
 		return opponent_score;
 	}
+
+    public static GameLevel getInstance(){
+        return INSTANCE;
+  }
 }
