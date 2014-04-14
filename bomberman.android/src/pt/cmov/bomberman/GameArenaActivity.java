@@ -68,9 +68,25 @@ public class GameArenaActivity extends Activity {
         setContentView(game);
 
 	    buttons.setOnTouchListener(new OnTouchListener() {
+	    	private boolean moved;
 			@Override
 			public boolean onTouch(View arg0, MotionEvent arg1) {
 				js.drawStick(arg1);
+				if (arg1.getAction() == MotionEvent.ACTION_DOWN || arg1.getAction() == MotionEvent.ACTION_UP) {
+					moved = false;
+				}
+				if ((arg1.getAction() == MotionEvent.ACTION_DOWN || arg1.getAction() == MotionEvent.ACTION_MOVE)
+						&& !moved) {
+					int direction = js.get8Direction();
+					if (direction == JoyStick.STICK_DOWN
+							|| direction == JoyStick.STICK_UP
+							|| direction == JoyStick.STICK_LEFT
+							|| direction == JoyStick.STICK_RIGHT) {
+						moved = true;
+						gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
+					}
+				}
+				/*
 				if(arg1.getAction() == MotionEvent.ACTION_DOWN
 						|| arg1.getAction() == MotionEvent.ACTION_MOVE) {
 					Log.d(TAG, "X : " + String.valueOf(js.getX()));
@@ -80,25 +96,32 @@ public class GameArenaActivity extends Activity {
 					int direction = js.get8Direction();
 					if(direction == JoyStick.STICK_UP) {
 						Log.d(TAG, "js direction up");
+						move = true;
 					} else if(direction == JoyStick.STICK_UPRIGHT) {
 						Log.d(TAG, "Direction : Up Right");
 					} else if(direction == JoyStick.STICK_RIGHT) {
 						Log.d(TAG, "Direction : Right");
+						move = true;
 					} else if(direction == JoyStick.STICK_DOWNRIGHT) {
 						Log.d(TAG, "Direction : Down Right");
 					} else if(direction == JoyStick.STICK_DOWN) {
 						Log.d(TAG, "Direction : Down");
+						move = true;
 					} else if(direction == JoyStick.STICK_DOWNLEFT) {
 						Log.d(TAG, "Direction : Down left");
 					} else if(direction == JoyStick.STICK_LEFT) {
 						Log.d(TAG, "Direction : Left");
+						move = true;
 					} else if(direction == JoyStick.STICK_UPLEFT) {
 						Log.d(TAG, "Direction : up left");
 					} else if(direction == JoyStick.STICK_NONE) {
 						Log.d(TAG, "Direction : Center");
 					}
-					gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
+					if (move) {
+						gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
+					}
 				}
+				*/
 				return true;
 			}
         });
