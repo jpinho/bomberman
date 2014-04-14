@@ -86,7 +86,10 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-
 		currentGameLevel.draw(canvas);
+	}
+	
+	public GameLevel getCurrentGameLevel() {
+		return currentGameLevel;
 	}
 }

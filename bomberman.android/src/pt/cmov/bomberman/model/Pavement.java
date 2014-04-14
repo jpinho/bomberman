@@ -6,4 +6,9 @@ public class Pavement extends GameObject {
 	public Pavement() {
 		super(R.drawable.pavement);
 	}
+	
+	@Override
+	public boolean isSolid() {
+		return false;
+	}
 }

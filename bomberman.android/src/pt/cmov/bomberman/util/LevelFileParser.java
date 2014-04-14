@@ -27,6 +27,7 @@ public class LevelFileParser {
 	
 	private static void buildLevel(GameLevel level, int view_width, int view_height, BufferedReader reader) throws IOException {
 		int rows, cols;
+		int max_players = 0;
 		String line;
 		for (line = reader.readLine(); !line.matches("MAP.*"); line = reader.readLine()) {
 			if (line.matches("LN.*")) {
@@ -54,19 +55,19 @@ public class LevelFileParser {
 				level.setOpponent_score(Integer.parseInt(line.substring(3, line.length())));
 			}
 			else if (line.matches("MP.*")) {
-				level.setMax_players(Integer.parseInt(line.substring(3, line.length())));
+				max_players = Integer.parseInt(line.substring(3, line.length()));
 			}
 		}
 		int i;
 		for (i = 4; line.charAt(i) != ','; i++);
 		rows = Integer.parseInt(line.substring(4, i));
 		cols = Integer.parseInt(line.substring(i+1, line.length()));
-		GameBoard board = process_map(level, view_width, view_height, rows, cols, reader);
+		GameBoard board = process_map(level, view_width, view_height, rows, cols, reader, max_players);
 		board.setScreenDimensions(view_width, view_height);
 		level.setBoard(board);
 	}
-	private static GameBoard process_map(GameLevel level, int view_width, int view_height, int rows, int cols, BufferedReader reader) throws IOException {
-		GameBoard board = new GameBoard(rows, cols);
+	private static GameBoard process_map(GameLevel level, int view_width, int view_height, int rows, int cols, BufferedReader reader, int max_players) throws IOException {
+		GameBoard board = new GameBoard(rows, cols, max_players);
 		int row = 0;
 		for (String map_entry = reader.readLine(); map_entry != null; map_entry = reader.readLine(), row++) {
 			process_map_line(map_entry, row, board);
@@ -87,7 +88,9 @@ public class LevelFileParser {
 	    	}
 	    	else {
 	    		p = Character.getNumericValue(line.charAt(col));
-				board.setPosition(row, col, new Player(p));
+	    		Player player = new Player(p, row, col);
+				board.setPosition(row, col, player);
+				board.addPlayer(player);
 	    	}
 		}
 	}

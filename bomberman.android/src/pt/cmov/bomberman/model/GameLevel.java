@@ -8,7 +8,6 @@ import android.os.Build;
 public class GameLevel {
 	private static GameLevel INSTANCE = new GameLevel();
 	private GameBoard board;
-	private int max_players;
 	private int duration;
 	private String level_name;
 	private int explosion_timeout;
@@ -23,9 +22,6 @@ public class GameLevel {
 	}
 	public void setBoard(GameBoard board) {
 		this.board = board;
-	}
-	public void setMax_players(int max_players) {
-		this.max_players = max_players;
 	}
 	public void setDuration(int duration) {
 		this.duration = duration;
@@ -54,9 +50,6 @@ public class GameLevel {
 	public void draw(Canvas canvas) {
 		board.draw(canvas);
 	}
-	public int getMax_players() {
-		return max_players;
-	}
 	public int getDuration() {
 		return duration;
 	}
@@ -81,8 +74,10 @@ public class GameLevel {
 	public int getOpponent_score() {
 		return opponent_score;
 	}
-
-    public static GameLevel getInstance(){
+    public GameBoard getBoard() {
+		return board;
+	}
+	public static GameLevel getInstance() {
         return INSTANCE;
   }
 }

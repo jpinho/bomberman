@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
@@ -22,7 +21,7 @@ public class GameArenaActivity extends Activity {
 
 	RelativeLayout game;
 	JoyStick js;
-	SurfaceView gameView;
+	MainGamePanel gameView;
 	RelativeLayout buttons;
 
     @Override
@@ -98,6 +97,7 @@ public class GameArenaActivity extends Activity {
 					} else if(direction == JoyStick.STICK_NONE) {
 						Log.d(TAG, "Direction : Center");
 					}
+					gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
 				}
 				return true;
 			}
