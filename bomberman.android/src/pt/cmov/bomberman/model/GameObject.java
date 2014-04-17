@@ -27,4 +27,10 @@ public abstract class GameObject {
 	public void draw(Canvas canvas, float x, float y) {
 		canvas.drawBitmap(getBitmap(), x, y, null);
 	}
+	/* Called when an explosion hits this object
+	 * Returns true if the object must be destroyed; false otherwise
+	 */
+	public boolean notifyExplosion() {
+		 return false;
+	}
 }

@@ -45,11 +45,7 @@ public class GameArenaActivity extends Activity {
         RelativeLayout.LayoutParams mainGame = new LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
         game.setLayoutParams(mainGame);
         buttons = new RelativeLayout(this);
-        RelativeLayout.LayoutParams b1 = new LayoutParams(
-        200,
-        200);
-
-
+        RelativeLayout.LayoutParams b1 = new LayoutParams(200, 200);
         b1.addRule(RelativeLayout.BELOW, gameView.getId());
         b1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         b1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -81,9 +77,21 @@ public class GameArenaActivity extends Activity {
 					if (direction == JoyStick.STICK_DOWN
 							|| direction == JoyStick.STICK_UP
 							|| direction == JoyStick.STICK_LEFT
-							|| direction == JoyStick.STICK_RIGHT) {
+							|| direction == JoyStick.STICK_RIGHT
+							/* TEMP - we MUST add a button to place a bomb */
+							|| direction == JoyStick.STICK_DOWNRIGHT
+							/* End TEMP */
+							) {
 						moved = true;
-						gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
+						
+						/* Also temp */
+						if (direction == JoyStick.STICK_DOWNRIGHT) {
+							gameView.getCurrentGameLevel().getBoard().placeBomb(1);
+						}
+						/* End temp */
+						else {
+							gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
+						}
 					}
 				}
 				/*

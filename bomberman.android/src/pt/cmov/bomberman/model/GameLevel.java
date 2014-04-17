@@ -17,7 +17,7 @@ public class GameLevel {
 	private int robot_score;
 	private int opponent_score;
 
-	private GameLevel(){
+	private GameLevel() {
 
 	}
 	public void setBoard(GameBoard board) {

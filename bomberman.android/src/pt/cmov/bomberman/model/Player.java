@@ -10,12 +10,20 @@ public class Player extends GameObject implements IMovableObject {
 	private int player_number;
 	private int x;
 	private int y;
+	/* This pair of values stores the direction of the last movement performed.
+	 * It is used to determine where to place a bomb.
+	 */
+	private int v_x;
+	private int v_y;
 	/*
 	private PlayerScore scoreBoard;
 	private String name;
 	*/
 	public Player(int player, int x, int y) {
 		super(R.drawable.bman_down);
+		/* bman_down -> (1, 0) */
+		v_x = 1;
+		v_y = 0;
 	//	scoreBoard = new PlayerScore();
 		player_number = player;
 		this.x = x;
@@ -60,12 +68,18 @@ public class Player extends GameObject implements IMovableObject {
 	public int getY() {
 		return y;
 	}
-
-	public void setX(int x) {
+	public void setPosition(int x, int y) {
+		v_x = x - this.x;
+		v_y = y - this.y;
 		this.x = x;
+		this.y = y;
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	public int getV_x() {
+		return v_x;
+	}
+
+	public int getV_y() {
+		return v_y;
 	}
 }

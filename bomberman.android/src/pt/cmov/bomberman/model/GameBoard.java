@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.util.Bitmaps;
+import pt.cmov.bomberman.util.Tuple;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.os.Handler;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -28,6 +30,8 @@ public class GameBoard {
 	private final int nRows;
 
 	private final Pavement pavement;
+	
+	private GameLevel level;
 
 	public GameBoard(int rows, int cols, int max_players) {
 		board = new GameObject[rows][cols];
@@ -71,11 +75,66 @@ public class GameBoard {
 			int new_y = p.getY() + v_y;
 			board[p.getX()][p.getY()] = null;
 			board[new_x][new_y] = p;
-			p.setX(new_x);
-			p.setY(new_y);
+			p.setPosition(new_x, new_y);
+		}
+	}
+	
+	public void placeBomb(int player) {
+		Player p;
+		if ((p = findPlayer(player)) == null)
+			return;
+		final int bomb_x = p.getX() + p.getV_x();
+		final int bomb_y = p.getY() + p.getV_y();
+		if (validPosition(bomb_x, bomb_y)) {
+			/* TODO Implement bomb draw, timer, etc */
+			final Bomb b = new Bomb(bomb_x, bomb_y);
+			board[bomb_x][bomb_y] = b;
+			Handler bhandler = new Handler();
+			bhandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					bombExploded(b);
+				}
+			}, 5000 /* TODO Replace this with explosion timeout */);
 		}
 	}
 
+	private void bombExploded(Bomb b) {
+		board[b.getX()][b.getY()] = new BombFire();
+		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
+		// TODO Replace range by appropriate value
+		pos_to_clear = propagateFire(b.getX(), b.getY(), 1, 1, 0); // Goes down
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), 1, -1, 0)); // Goes up
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), 1, 0, 1)); // Goes to the right
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), 1, 0, -1)); //Goes to the left
+		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
+		Handler endExplosion = new Handler();
+		endExplosion.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				clearFire(pos_to_clear);					
+			}
+		}, 2000 /* TODO Replace this with explosion duration */);
+	}
+	
+	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
+		for (Tuple<Integer, Integer> t : lst)
+			board[t.x][t.y] = null;
+	}
+	
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
+		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
+		while (inBoard(x += x_step, y += y_step) && range-- > 0) {
+			if (board[x][y] == null || board[x][y].notifyExplosion()) {
+				board[x][y] = new BombFire();
+				positions.add(new Tuple<Integer, Integer>(x, y));
+			}
+			else
+				break;
+		}
+		return positions;
+	}
+	
 	private Player findPlayer(int id) {
 		int i;
 		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
@@ -85,9 +144,13 @@ public class GameBoard {
 	private boolean isValidMove(int x_from, int y_from, int v_x, int v_y) {
 		int new_x = x_from + v_x;
 		int new_y = y_from + v_y;
-		return inBoard(new_x, new_y) && (board[new_x][new_y] == null || !board[new_x][new_y].isSolid());
+		return validPosition(new_x, new_y);
 	}
 
+	private boolean validPosition(int x, int y) {
+		return inBoard(x, y) && (board[x][y] == null || !board[x][y].isSolid());
+	}
+	
 	private boolean inBoard(int x, int y) {
 		return 0 <= x && x < nRows && 0 <= y && y < nCols;
 	}
