@@ -33,4 +33,7 @@ public abstract class GameObject {
 	public boolean notifyExplosion() {
 		 return false;
 	}
+	public void setBitmapCode(int bitmapCode) {
+		this.bitmapCode = bitmapCode;
+	}
 }

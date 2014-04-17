@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.util.Bitmaps;
 
-public class Player extends GameObject implements IMovableObject {
+public class Player extends GameObject {
 	
 	public static final String DEFAULT_NAME = "Player";
 	private int player_number;
@@ -35,27 +35,6 @@ public class Player extends GameObject implements IMovableObject {
 		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
 		super.draw(canvas, x, y);
 	}
-	
-	@Override
-	public void handleActionUp(int eventX, int eventY) {
-		//setBitmap(BitmapFactory.decodeResource(getView().getResources(), R.drawable.bman_up));
-
-	}
-
-	@Override
-	public void handleActionDown(int eventX, int eventY) {
-		//setBitmap(BitmapFactory.decodeResource(getView().getResources(), R.drawable.bman_down));
-	}
-
-	@Override
-	public void handleActionLeft(int eventX, int eventY) {
-		//setBitmap(BitmapFactory.decodeResource(getView().getResources(), R.drawable.bman_left));
-	}
-
-	@Override
-	public void handleActionRight(int eventX, int eventY) {
-		//setBitmap(BitmapFactory.decodeResource(getView().getResources(), R.drawable.bman_right));
-	}
 
 	public int getPlayer_number() {
 		return player_number;
@@ -73,6 +52,7 @@ public class Player extends GameObject implements IMovableObject {
 		v_y = y - this.y;
 		this.x = x;
 		this.y = y;
+		updatePic();
 	}
 
 	public int getV_x() {
@@ -81,5 +61,19 @@ public class Player extends GameObject implements IMovableObject {
 
 	public int getV_y() {
 		return v_y;
+	}
+	private void updatePic() {
+		if (v_x == 1 && v_y == 0) {
+			setBitmapCode(R.drawable.bman_down);
+		}
+		else if (v_x == -1 && v_y == 0) {
+			setBitmapCode(R.drawable.bman_up);
+		}
+		else if (v_x == 0 && v_y == 1) {
+			setBitmapCode(R.drawable.bman_right);
+		}
+		else if (v_x == 0 && v_y == -1) {
+			setBitmapCode(R.drawable.bman_left);
+		}
 	}
 }
