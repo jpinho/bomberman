@@ -121,13 +121,16 @@ public class GameBoard {
 	
 	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
-		while (inBoard(x += x_step, y += y_step) && range-- > 0) {
+		boolean hit = false;
+		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
 			if (board[x][y] == null || board[x][y].notifyExplosion()) {
+				if (board[x][y] != null)
+					hit = true;
 				board[x][y] = new BombFire();
 				positions.add(new Tuple<Integer, Integer>(x, y));
 			}
 			else
-				break;
+				hit = true;
 		}
 		return positions;
 	}
