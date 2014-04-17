@@ -1,9 +1,9 @@
 LN=Level 4
 GD=300
-ET=10
-ED=8
-ER=10
-RS=1
+ET=3
+ED=2
+ER=5
+RS=5
 PR=5
 PO=10
 MP=3

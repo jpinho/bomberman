@@ -66,6 +66,7 @@ public class LevelFileParser {
 		GameBoard board = process_map(level, view_width, view_height, rows, cols, reader, max_players);
 		board.setScreenDimensions(view_width, view_height);
 		level.setBoard(board);
+		board.notifyFinishedParse();
 	}
 	private static GameBoard process_map(GameLevel level, int view_width, int view_height, int rows, int cols, BufferedReader reader, int max_players) throws IOException {
 		GameBoard board = new GameBoard(rows, cols, max_players);
@@ -88,8 +89,9 @@ public class LevelFileParser {
 	    		board.setPosition(row, col, new Wall());
 	    	}
 	    	else if (line.charAt(col) == 'E') {
-	    		board.setPosition(row, col, new Enemy(row, col));
-	    		
+	    		Enemy e = new Enemy(row, col);
+	    		board.setPosition(row, col, e);
+	    		board.addEnemy(e);
 	    	}
 	    	else {
 	    		p = Character.getNumericValue(line.charAt(col));

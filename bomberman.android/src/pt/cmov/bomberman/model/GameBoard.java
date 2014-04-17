@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.util.Bitmaps;
+import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -26,6 +28,7 @@ public class GameBoard {
 	private GameObject[][] board; // Stores game objects in world coordinates
 	private ArrayList<Player> players;
 	private ArrayList<Enemy> enemies;
+	private int enemies_timer_interval;
 	/* The board's dimensions */
 	private final int nCols;
 	private final int nRows;
@@ -35,6 +38,7 @@ public class GameBoard {
 	public GameBoard(int rows, int cols, int max_players) {
 		board = new GameObject[rows][cols];
 		players = new ArrayList<Player>(max_players);
+		enemies = new ArrayList<Enemy>();
 		pavement = new Pavement();
 		nRows = rows;
 		nCols = cols;
@@ -159,6 +163,49 @@ public class GameBoard {
 	private boolean inBoard(int x, int y) {
 		return 0 <= x && x < nRows && 0 <= y && y < nCols;
 	}
+	
+	private void moveEnemies() {
+		Log.d("LevelFileParser", "In moveEnemies()");
+		for (Enemy e : enemies) {
+			Tuple<Integer, Integer> new_pos = chooseNextPosition(e.getX(), e.getY());
+			if (new_pos != null) {
+				Log.d("LevelFileParser", "New pos = " + new_pos.x + "," + new_pos.y);
+				board[e.getX()][e.getY()] = null;
+				board[new_pos.x][new_pos.y]= e;
+				e.setPosition(new_pos.x, new_pos.y);
+			}
+			else { Log.d("LevelFileParser", "new_pos = NULL"); }
+		}
+		Handler enemiesHandler = new Handler();
+		enemiesHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				moveEnemies();
+			}
+		}, enemies_timer_interval);
+	}
+	
+	private Tuple<Integer, Integer> chooseNextPosition(int e_x, int e_y) {
+		int total_attempts = 0;
+		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
+		                  /* | Up | Down | Left | Right */ 
+		boolean directions_tried[] = { false, false, false, false };
+		                             /*  Up    Down   Left   Right */
+		int direction;
+		int x;
+		int y;
+		do {
+			direction = Misc.randInt(0, directions_tried.length-1);
+			if (directions_tried[direction] == false) {
+				directions_tried[direction] = true;
+				total_attempts++;
+			}
+			x = directions[direction*2]+e_x;
+			y = directions[direction*2+1]+e_y;
+		} while (total_attempts < directions_tried.length && !validPosition(x, y));
+		
+		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y) : null;
+	}
 
 	/*
 	 * This is called by the level parser routine when it is reading a
@@ -273,5 +320,15 @@ public class GameBoard {
 	private boolean fitsIn(int max_width, int max_height, int object_w,
 			int object_h) {
 		return object_w <= max_width && object_h <= max_height;
+	}
+	
+	public void notifyFinishedParse() {
+		Handler enemiesHandler = new Handler();
+		enemiesHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				moveEnemies();
+			}
+		}, enemies_timer_interval = 1000/GameLevel.getInstance().getEnemy_speed());
 	}
 }
