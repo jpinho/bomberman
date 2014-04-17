@@ -30,8 +30,6 @@ public class GameBoard {
 	private final int nRows;
 
 	private final Pavement pavement;
-	
-	private GameLevel level;
 
 	public GameBoard(int rows, int cols, int max_players) {
 		board = new GameObject[rows][cols];
@@ -86,7 +84,6 @@ public class GameBoard {
 		final int bomb_x = p.getX() + p.getV_x();
 		final int bomb_y = p.getY() + p.getV_y();
 		if (validPosition(bomb_x, bomb_y)) {
-			/* TODO Implement bomb draw, timer, etc */
 			final Bomb b = new Bomb(bomb_x, bomb_y);
 			board[bomb_x][bomb_y] = b;
 			Handler bhandler = new Handler();
@@ -95,18 +92,18 @@ public class GameBoard {
 				public void run() {
 					bombExploded(b);
 				}
-			}, 5000 /* TODO Replace this with explosion timeout */);
+			}, GameLevel.getInstance().getExplosion_timeout()*1000);
 		}
 	}
 
 	private void bombExploded(Bomb b) {
 		board[b.getX()][b.getY()] = new BombFire();
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
-		// TODO Replace range by appropriate value
-		pos_to_clear = propagateFire(b.getX(), b.getY(), 1, 1, 0); // Goes down
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), 1, -1, 0)); // Goes up
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), 1, 0, 1)); // Goes to the right
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), 1, 0, -1)); //Goes to the left
+		int range = GameLevel.getInstance().getExplosion_range();
+		pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes down
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes up
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes to the right
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); //Goes to the left
 		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
 		Handler endExplosion = new Handler();
 		endExplosion.postDelayed(new Runnable() {
@@ -114,7 +111,7 @@ public class GameBoard {
 			public void run() {
 				clearFire(pos_to_clear);					
 			}
-		}, 2000 /* TODO Replace this with explosion duration */);
+		}, GameLevel.getInstance().getExplosion_duration()*1000);
 	}
 	
 	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
