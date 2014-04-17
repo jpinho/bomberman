@@ -25,6 +25,7 @@ public class GameBoard {
 
 	private GameObject[][] board; // Stores game objects in world coordinates
 	private ArrayList<Player> players;
+	private ArrayList<Enemy> enemies;
 	/* The board's dimensions */
 	private final int nCols;
 	private final int nRows;
@@ -45,6 +46,10 @@ public class GameBoard {
 
 	public void addPlayer(Player p) {
 		players.add(p);
+	}
+	
+	public void addEnemy(Enemy e) {
+		enemies.add(e);
 	}
 
 	public void actionMovePlayer(int pid, int dir) {

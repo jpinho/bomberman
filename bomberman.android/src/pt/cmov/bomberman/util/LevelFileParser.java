@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import pt.cmov.bomberman.model.Enemy;
 import pt.cmov.bomberman.model.GameBoard;
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.model.Player;
@@ -85,6 +86,10 @@ public class LevelFileParser {
 	    	}
 	    	else if (line.charAt(col) == 'W') {
 	    		board.setPosition(row, col, new Wall());
+	    	}
+	    	else if (line.charAt(col) == 'E') {
+	    		board.setPosition(row, col, new Enemy(row, col));
+	    		
 	    	}
 	    	else {
 	    		p = Character.getNumericValue(line.charAt(col));
