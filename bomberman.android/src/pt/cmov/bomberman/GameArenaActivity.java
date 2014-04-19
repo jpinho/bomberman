@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 public class GameArenaActivity extends Activity {
@@ -23,6 +25,8 @@ public class GameArenaActivity extends Activity {
 	JoyStick js;
 	MainGamePanel gameView;
 	RelativeLayout buttons;
+	private Button bombButton;
+	private RelativeLayout fireButtons;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,17 +44,29 @@ public class GameArenaActivity extends Activity {
 
         // creates the game view
         gameView = new MainGamePanel(this);
+
         //LinearLayout GameWidgets = new LinearLayout(this);
         game = new RelativeLayout(this);
+
         RelativeLayout.LayoutParams mainGame = new LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
         game.setLayoutParams(mainGame);
         buttons = new RelativeLayout(this);
+        fireButtons = new RelativeLayout(this);
+
         RelativeLayout.LayoutParams b1 = new LayoutParams(200, 200);
         b1.addRule(RelativeLayout.BELOW, gameView.getId());
         b1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         b1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        RelativeLayout.LayoutParams b2 = new LayoutParams(100, 100);
+        b2.addRule(RelativeLayout.BELOW, gameView.getId());
+        b2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        b2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        fireButtons.setLayoutParams(b2);
+
         buttons.setLayoutParams(b1);
         buttons.setBackgroundResource(R.drawable.image_button_bg);
+
         js = new JoyStick(this, buttons, R.drawable.image_button);
 	    js.setStickSize(150, 150);
 	    js.setLayoutSize(500, 500);
@@ -58,10 +74,22 @@ public class GameArenaActivity extends Activity {
 	    js.setStickAlpha(100);
 	    js.setOffset(90);
 	    js.setMinimumDistance(50);
-
+	    RelativeLayout.LayoutParams fireParams = new LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+	    bombButton = new Button(this);
+	    bombButton.setLayoutParams(fireParams);
+	    bombButton.setText("Bomb");
         game.addView(gameView);
+        fireButtons.addView(bombButton);
+        game.addView(fireButtons);
         game.addView(buttons);
         setContentView(game);
+
+	    bombButton.setOnClickListener(new OnClickListener() {
+	        @Override
+			public void onClick(View v)
+	        {
+	        	gameView.getCurrentGameLevel().getBoard().placeBomb(1);	        }
+	    });
 
 	    buttons.setOnTouchListener(new OnTouchListener() {
 	    	private boolean moved;
@@ -83,15 +111,7 @@ public class GameArenaActivity extends Activity {
 							/* End TEMP */
 							) {
 						moved = true;
-						
-						/* Also temp */
-						if (direction == JoyStick.STICK_DOWNRIGHT) {
-							gameView.getCurrentGameLevel().getBoard().placeBomb(1);
-						}
-						/* End temp */
-						else {
-							gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
-						}
+						gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
 					}
 				}
 				/*
@@ -133,6 +153,8 @@ public class GameArenaActivity extends Activity {
 				return true;
 			}
         });
+
+
         Log.d(TAG, "View added");
     }
 
