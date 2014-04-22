@@ -1,6 +1,7 @@
 package pt.cmov.bomberman.presenter;
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.util.ClientComunicatorTask;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -21,7 +22,7 @@ public class GameStartActivity extends ActionBarActivity {
 
 		if(getActionBar() != null)
 			getActionBar().hide();
-		
+
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.ctnScreenContainer, new PlaceholderFragment()).commit();
@@ -43,8 +44,15 @@ public class GameStartActivity extends ActionBarActivity {
 		}
 	}
 
-	public void btnNewGame_Click(View v) {
+	public void buttonSinglePlayer(View v) {
 		Intent intent = new Intent(this, GameArenaActivity.class);
 		startActivity(intent);
+	}
+
+	public void buttonMultiPlayer(View v) {
+		Intent intent = new Intent(this, GameArenaActivity.class);
+		startActivity(intent);
+        String message = "coisas";
+        new ClientComunicatorTask().execute(message);
 	}
 }

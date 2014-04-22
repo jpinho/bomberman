@@ -36,14 +36,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
                     android:text="New Game"
-                    android:onClick="btnNewGame_Click" />
+                    android:onClick="buttonSinglePlayer" />
 
                 <Button
                     android:id="@+id/btnPlayOnline"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Play Online" />
+                    android:text="Play Online" 
+                    android:onClick="buttonMultiPlayer"/>
             </LinearLayout>
 
         </RelativeLayout>
