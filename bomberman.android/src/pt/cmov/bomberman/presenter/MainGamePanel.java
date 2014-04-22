@@ -1,4 +1,4 @@
-package pt.cmov.bomberman;
+package pt.cmov.bomberman.presenter;
 
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.util.Bitmaps;
@@ -50,8 +50,8 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), currentGameLevel);
 
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
-		thread.setRunning(true);
-		thread.start();
+		getThread().setRunning(true);
+		getThread().start();
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		boolean retry = true;
 		while (retry) {
 			try {
-				thread.join();
+				getThread().join();
 				retry = false;
 			}
 			catch (InterruptedException e) {
@@ -75,8 +75,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		}
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			// the gestures
-
-
 		}
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			// touch was released
@@ -91,5 +89,12 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	
 	public GameLevel getCurrentGameLevel() {
 		return currentGameLevel;
+	}
+
+	/**
+	 * @return the thread
+	 */
+	public MainThread getThread() {
+		return thread;
 	}
 }

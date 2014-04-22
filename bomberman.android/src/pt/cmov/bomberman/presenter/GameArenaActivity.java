@@ -1,6 +1,7 @@
-package pt.cmov.bomberman;
+package pt.cmov.bomberman.presenter;
 
 
+import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.JoyStick;
 import android.app.Activity;
 import android.os.Bundle;
@@ -162,8 +163,22 @@ public class GameArenaActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 	}
+	
 	@Override
 	protected void onStop() {
 		super.onStop();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		try {
+			gameView.getThread().setRunning(false);
+			gameView.getThread().join();
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		super.onBackPressed();
 	}
 }

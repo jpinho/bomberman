@@ -1,4 +1,4 @@
-package pt.cmov.bomberman;
+package pt.cmov.bomberman.presenter;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
