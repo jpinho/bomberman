@@ -18,7 +18,7 @@ public class ClientComunicatorTask extends AsyncTask<String, Void, Integer> {
                 }
                 // connect to the server and send the message
                 try {
-                        client = new Socket("10.0.2.2", 4444);
+                        client = new Socket("10.0.2.2", 4889);
                         printwriter = new PrintWriter(client.getOutputStream(),true);
                         printwriter.write(strings[0]);
                         printwriter.flush();
