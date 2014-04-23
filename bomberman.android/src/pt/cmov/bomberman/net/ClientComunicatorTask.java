@@ -1,4 +1,4 @@
-package pt.cmov.bomberman.util;
+package pt.cmov.bomberman.net;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class ClientComunicatorTask extends AsyncTask<String, Void, Integer> {
         private Socket client;
@@ -18,7 +19,7 @@ public class ClientComunicatorTask extends AsyncTask<String, Void, Integer> {
                 }
                 // connect to the server and send the message
                 try {
-                        client = new Socket("10.0.2.2", 4889);
+                        client = new Socket("192.168.1.77", 4889);
                         printwriter = new PrintWriter(client.getOutputStream(),true);
                         printwriter.write(strings[0]);
                         printwriter.flush();

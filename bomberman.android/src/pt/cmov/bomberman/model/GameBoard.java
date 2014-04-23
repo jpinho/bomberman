@@ -32,6 +32,9 @@ public class GameBoard {
 	/* The board's dimensions */
 	private final int nCols;
 	private final int nRows;
+	
+	private int max_players;
+	private int current_players;
 
 	private final Pavement pavement;
 
@@ -42,6 +45,8 @@ public class GameBoard {
 		pavement = new Pavement();
 		nRows = rows;
 		nCols = cols;
+		this.max_players = max_players;
+		current_players = 1;
 	}
 
 	public void setPosition(int x, int y, GameObject item) {
@@ -55,6 +60,13 @@ public class GameBoard {
 	public void addEnemy(Enemy e) {
 		enemies.add(e);
 	}
+	
+	public int playerJoined() {
+		// TODO Implement
+		return ++current_players;
+	}
+	
+	public int getCurrent_players() { return current_players; }
 
 	public void actionMovePlayer(int pid, int dir) {
 		Player p;
@@ -331,4 +343,5 @@ public class GameBoard {
 			}
 		}, enemies_timer_interval = 1000/GameLevel.getInstance().getEnemy_speed());
 	}
+	public int getMax_players() { return max_players; }
 }

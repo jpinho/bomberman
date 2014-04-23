@@ -35,14 +35,7 @@ public class ClientThread implements Runnable {
 	}
 
 	private String parse_msg(String[] msg) {
-		if (msg.length < 1)
-			return "";
-		if (msg[0].equalsIgnoreCase("server"))
-			return parse_msg_to_server(msg);
-		else if (msg[0].equalsIgnoreCase("game"))
-			return parse_msg_to_game(msg);
-		else
-			return "";
+
 	}
 
 	private String parse_msg_to_server(String[] msg) {
