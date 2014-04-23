@@ -1,12 +1,14 @@
 package pt.cmov.bomberman.presenter;
 
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.net.ServerThread;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.LevelFileParser;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -18,17 +20,26 @@ import android.view.SurfaceView;
 public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback {
 	//private static final String TAG = MainGamePanel.class.getSimpleName();
 
-	private final MainThread thread;
-	private final GameLevel currentGameLevel;
+	private MainThread thread;
+	private GameLevel currentGameLevel;
+	private boolean isServer;
 
+	/* Used for players that host a game */
 	public MainGamePanel(Context context) {
 		super(context);
-
+		isServer = true;
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
 		currentGameLevel = GameLevel.getInstance();
+	}
+	
+	/* Used for players joining on a game hosted by someone else */
+	public MainGamePanel(Context context, String ip, int port) {
+		super(context);
+		isServer = false;
+		// TODO Implement this
 	}
 
 	@Override
@@ -39,16 +50,24 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		/* Upon surface creation, we must call loadLevel() to load the bootstrap level.
-		 * The parser will read the level file and build the level accordingly; level attributes
-		 * are stored in currentGameLevel, and the map layout is retrieved and turned into a board
-		 * that is hold by currentGameLevel.
-		 *
-		 * It is crucial to call loadLevel() before enabling the rendering thread and picking bitmaps, because we need
-		 * to view the map dimensions to decide the scaling factor and the borders size.
-		 */
-		LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), currentGameLevel);
-
+		if (isServer) {
+			/* Upon surface creation, we must call loadLevel() to load the bootstrap level.
+			 * The parser will read the level file and build the level accordingly; level attributes
+			 * are stored in currentGameLevel, and the map layout is retrieved and turned into a board
+			 * that is hold by currentGameLevel.
+			 *
+			 * It is crucial to call loadLevel() before enabling the rendering thread and picking bitmaps, because we need
+			 * to view the map dimensions to decide the scaling factor and the borders size.
+			 */
+			LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), currentGameLevel);
+			currentGameLevel.getBoard().newPlayer(); // Activates player 1 (the host)
+			/* We can now accept new players */
+			Thread server = new Thread(new ServerThread());
+			server.start();
+			Log.d("ServerHost", "Created new game room on port " + ServerThread.SERVER_PORT);
+		} else {
+			// TODO Implement client - must grab current game state from server
+		}
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		getThread().setRunning(true);
 		getThread().start();

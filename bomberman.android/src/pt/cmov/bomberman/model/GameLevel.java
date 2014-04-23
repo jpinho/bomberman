@@ -78,7 +78,7 @@ public class GameLevel {
 		return board;
 	}
     public synchronized int isJoinable() {
-    	return board.getCurrent_players() < board.getMax_players() ? board.playerJoined() : -1;
+    	return board.getCurrent_players() < board.getMax_players() ? board.newPlayer() : -1;
     }
 	public static GameLevel getInstance() {
         return INSTANCE;

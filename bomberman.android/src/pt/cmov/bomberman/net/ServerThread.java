@@ -7,7 +7,7 @@ import java.net.Socket;
 import pt.cmov.bomberman.model.GameLevel;
 
 public class ServerThread implements Runnable {
-	private static final int SERVER_PORT = 4889;
+	public static final int SERVER_PORT = 4889;
 	private ServerSocket serverSocket;
 	
 	@Override

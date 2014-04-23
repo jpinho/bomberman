@@ -61,9 +61,11 @@ public class GameBoard {
 		enemies.add(e);
 	}
 	
-	public int playerJoined() {
-		// TODO Implement
-		return ++current_players;
+	public int newPlayer() {
+		Player player = findPlayer(current_players);
+		if (player != null)
+			player.activate();
+		return current_players++;
 	}
 	
 	public int getCurrent_players() { return current_players; }

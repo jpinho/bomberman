@@ -50,9 +50,9 @@ public class GameStartActivity extends ActionBarActivity {
 	}
 
 	public void buttonCreateRoom(View v) {
-				
-		/*Intent intent = new Intent(this, GameArenaActivity.class);
-		startActivity(intent);*/
+		Intent intent = new Intent(this, GameArenaActivity.class);
+		intent.putExtra("isHost", true);
+		startActivity(intent);
 	}
 
 	public void buttonMultiPlayer(View v) {
