@@ -172,8 +172,9 @@ public class GameBoardServer extends GameBoard {
 	 *                 ENEMIES MOVEMENT
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
 	 */
-	private void moveEnemies() {
+	private synchronized void moveEnemies() {
 		StringBuilder new_positions = new StringBuilder();
+		new_positions.append("ENEMY ");
 		for (Enemy e : enemies) {
 			new_positions.append(e.getX()).append(" ").append(e.getY()).append(" -> ");
 			Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
@@ -182,7 +183,7 @@ public class GameBoardServer extends GameBoard {
 				board[new_pos.x][new_pos.y]= e;
 				e.setPosition(new_pos.x, new_pos.y);
 			}
-			new_positions.append(e.getX()).append(" ").append(e.getY()).append("\n");
+			new_positions.append(e.getX()).append(" ").append(e.getY()).append(" ");
 		}
 		Handler enemiesHandler = new Handler();
 		enemiesHandler.postDelayed(new Runnable() {
@@ -191,9 +192,10 @@ public class GameBoardServer extends GameBoard {
 				moveEnemies();
 			}
 		}, enemies_timer_interval);
+		Server.getInstance().broadcastEnemiesPositions(player, new_positions.toString());
 	}
 	
-	private Tuple<Integer, Integer> chooseNextEnemyPosition(int e_x, int e_y) {
+	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(int e_x, int e_y) {
 		int total_attempts = 0;
 		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
 		                  /* | Up | Down | Left | Right */ 

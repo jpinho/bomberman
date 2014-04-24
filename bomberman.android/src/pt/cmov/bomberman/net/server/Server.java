@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import pt.cmov.bomberman.model.Bomb;
 import pt.cmov.bomberman.model.Player;
-import android.util.Log;
 
 public class Server {
 	// The list of clients
@@ -39,9 +38,13 @@ public class Server {
 		broadcastMsg(player, message);
 	}
 	
+	public void broadcastEnemiesPositions(Player from, String positions) {
+		broadcastMsg(from, positions);
+	}
+	
 	private void broadcastMsg(Player from, String msg) {
-		Log.d("ServerHost", "Sending new message:");
-		Log.d("ServerHost", msg);
+		//Log.d("ServerHost", "Sending new message:");
+		//Log.d("ServerHost", msg);
 		synchronized (players) {
 			for (RemotePlayer p : players)
 				if (p.getPlayer_id() != from.getPlayer_number())
