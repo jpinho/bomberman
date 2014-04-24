@@ -42,15 +42,15 @@ public class GameArenaActivity extends Activity {
         	WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 	    Bundle extras = getIntent().getExtras();
-	    boolean isServer = false;
-	    if (extras != null)
-	    	isServer = extras.getBoolean("isHost");
+	    boolean isServer = extras.getBoolean("isHost");
         
 	    if (isServer) {
 	    	gameView = new MainGamePanel(this);
 	    }
 	    else {
-	    	gameView = new MainGamePanel(this, "", 0); // TODO Add proper IP and port (read from intent extras?)
+	    	String ip = extras.getString("BombermanServerIP");
+	    	int port = extras.getInt("BombermanServerPort");
+	    	gameView = new MainGamePanel(this, ip, port);
 	    }
 
         //LinearLayout GameWidgets = new LinearLayout(this);

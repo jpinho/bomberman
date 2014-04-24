@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import pt.cmov.bomberman.model.GameLevel;
-import pt.cmov.bomberman.net.client.CommunicationThread;
 import android.util.Log;
 
 public class ServerThread implements Runnable {
@@ -25,6 +24,7 @@ public class ServerThread implements Runnable {
 				Socket clientSocket = serverSocket.accept();
 				int new_player_id;
 				if ((new_player_id = GameLevel.getInstance().isJoinable()) != -1) {
+					Log.d("ServerHost", "Accepted new player, id = " + new_player_id);
 					CommunicationThread commThread = new CommunicationThread(clientSocket, new_player_id);
 					new Thread(commThread).start();
 				} else {

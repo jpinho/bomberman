@@ -1,4 +1,4 @@
-package pt.cmov.bomberman.net;
+package pt.cmov.bomberman.net.client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,12 +19,15 @@ public class ClientComunicatorTask extends AsyncTask<String, Void, Integer> {
                 }
                 // connect to the server and send the message
                 try {
-                        client = new Socket("192.168.1.77", 4889);
-                        printwriter = new PrintWriter(client.getOutputStream(),true);
-                        printwriter.write(strings[0]);
-                        printwriter.flush();
-                        printwriter.close();
+                		Log.d("ClientHost", "Going to connect");
+                        client = new Socket("10.0.2.2", 6000);
+                        Log.d("ClientHost", "Connected to server.");
+                        //printwriter = new PrintWriter(client.getOutputStream(),true);
+                        //printwriter.write(strings[0]);
+                        //printwriter.flush();
+                        //printwriter.close();
                         client.close();
+                        Log.d("ClientHost", "Disconnected from server.");
                 } catch (UnknownHostException e) {
                         e.printStackTrace();
                 } catch (IOException e) {

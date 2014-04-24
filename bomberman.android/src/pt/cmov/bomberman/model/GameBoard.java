@@ -179,10 +179,12 @@ public class GameBoard {
 			for (int j = 0; j < nCols; j++) {
 				double x = horizontalExcess + object_width * j;
 				double y = verticalExcess + object_height * i;
-				if (board[i][j] != null)
-					board[i][j].draw(canvas, (float) x, (float) y);
-				else
-					pavement.draw(canvas, (float) x, (float) y);
+				synchronized (board) {
+					if (board[i][j] != null)
+						board[i][j].draw(canvas, (float) x, (float) y);
+					else
+						pavement.draw(canvas, (float) x, (float) y);
+				}
 			}
 		}
 	}

@@ -1,12 +1,18 @@
 package pt.cmov.bomberman.presenter;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.net.client.ClientComunicatorTask;
+import pt.cmov.bomberman.net.client.ClientThread;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.LevelFileParser;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -40,7 +46,10 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		this.ip = ip;
 		this.port = port;
 		isServer = false;
-		// TODO Implement this
+		getHolder().addCallback(this);
+		Bitmaps.init(getResources());
+		thread = new MainThread(getHolder(), this);
+		setFocusable(true);
 	}
 
 	@Override
@@ -51,6 +60,14 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		// TEMP
+		if (!isServer) {
+			new Thread(new ClientThread()).start();
+            isServer = true;
+		}
+		
+		
+		
 		/* Upon surface creation, we must call loadLevel() to load the bootstrap level.
 		 * The parser will read the level file and build the level accordingly; level attributes
 		 * are stored in currentGameLevel, and the map layout is retrieved and turned into a board

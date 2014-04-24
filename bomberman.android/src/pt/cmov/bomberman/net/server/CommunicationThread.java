@@ -1,13 +1,10 @@
-package pt.cmov.bomberman.net.client;
+package pt.cmov.bomberman.net.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
-import pt.cmov.bomberman.net.server.RemotePlayer;
-import pt.cmov.bomberman.net.server.Server;
 
 public class CommunicationThread implements Runnable {
         private Socket clientSocket;

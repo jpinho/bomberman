@@ -1,6 +1,7 @@
 package pt.cmov.bomberman.presenter;
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.net.server.ServerThread;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -56,13 +57,11 @@ public class GameStartActivity extends ActionBarActivity {
 	}
 
 	public void buttonMultiPlayer(View v) {
-		// TODO Show form to connect to existing server
-		/*
+		// TODO Show form to connect to existing server (temporarily hardcoded)
 		Intent intent = new Intent(this, GameArenaActivity.class);
+		intent.putExtra("BombermanServerIP", "10.0.2.2");
+		intent.putExtra("BombermanServerPort", 6000);
 		startActivity(intent);
-		String message = "coisas";
-		new ClientComunicatorTask().execute(message);
-		*/
 	}
 
 	protected void onStop() {

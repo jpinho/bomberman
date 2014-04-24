@@ -7,6 +7,7 @@ import pt.cmov.bomberman.net.server.ServerThread;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
 import android.os.Handler;
+import android.util.Log;
 
 /** 
  * A GameBoardServer controls everything that happens in a game.
@@ -45,12 +46,16 @@ public class GameBoardServer extends GameBoard {
 	
 	@Override
 	public synchronized Player newPlayer() {
+		Log.d("ServerHost", "In newPlayer()");
 		Player player = findPlayer(current_players);
 		if (player != null) {
-			player.activate();
+			synchronized (board) {
+				player.activate();
+			}
 			current_players++;
 			// TODO Notify others that new player arrived
 		}
+		Log.d("ServerHost", "player is null? " + (player == null ? "yes" : "no"));
 		return player;
 	}
 	

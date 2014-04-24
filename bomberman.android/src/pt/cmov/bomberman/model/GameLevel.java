@@ -78,7 +78,11 @@ public class GameLevel {
 		return board;
 	}
     public synchronized int isJoinable() {
-    	return board.newPlayer().getPlayer_number();
+    	Player p = board.newPlayer();
+    	if (p != null)
+    		return p.getPlayer_number();
+    	else
+    		return -1;
     }
 	public static GameLevel getInstance() {
         return INSTANCE;
