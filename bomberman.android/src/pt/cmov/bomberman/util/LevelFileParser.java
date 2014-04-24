@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 
 import pt.cmov.bomberman.model.Enemy;
 import pt.cmov.bomberman.model.GameBoard;
+import pt.cmov.bomberman.model.GameBoardClient;
+import pt.cmov.bomberman.model.GameBoardServer;
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.model.Player;
 import pt.cmov.bomberman.model.Rock;
@@ -14,22 +16,23 @@ import pt.cmov.bomberman.model.Wall;
 import android.content.res.Resources;
 
 public class LevelFileParser {
-	public static void loadLevel(Resources res, String levelFile, int view_width, int view_height, GameLevel level) {		
+	public static void loadLevel(Resources res, String levelFile, int view_width, int view_height, boolean isServer) {		
 		InputStream levelConf;
 		try {
 			levelConf = res.getAssets().open(levelFile);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(levelConf));
-			buildLevel(level, view_width, view_height, reader);
+			buildLevel(view_width, view_height, reader, isServer);
 		}
 		catch (IOException e) {
 			throw new InternalError("Can't read level input file: " + e.getMessage());
 		}
 	}
 	
-	private static void buildLevel(GameLevel level, int view_width, int view_height, BufferedReader reader) throws IOException {
+	private static void buildLevel(int view_width, int view_height, BufferedReader reader, boolean isServer) throws IOException {
 		int rows, cols;
 		int max_players = 0;
 		String line;
+		GameLevel level = GameLevel.getInstance();
 		for (line = reader.readLine(); !line.matches("MAP.*"); line = reader.readLine()) {
 			if (line.matches("LN.*")) {
 				level.setLevel_name(line.substring(3, line.length()));
@@ -63,12 +66,16 @@ public class LevelFileParser {
 		for (i = 4; line.charAt(i) != ','; i++);
 		rows = Integer.parseInt(line.substring(4, i));
 		cols = Integer.parseInt(line.substring(i+1, line.length()));
-		GameBoard board = process_map(level, view_width, view_height, rows, cols, reader, max_players);
+		GameBoard board = process_map(view_width, view_height, rows, cols, reader, max_players, isServer);
 		board.setScreenDimensions(view_width, view_height);
 		level.setBoard(board);
 	}
-	private static GameBoard process_map(GameLevel level, int view_width, int view_height, int rows, int cols, BufferedReader reader, int max_players) throws IOException {
-		GameBoard board = new GameBoard(rows, cols, max_players);
+	private static GameBoard process_map(int view_width, int view_height, int rows, int cols, BufferedReader reader, int max_players, boolean isServer) throws IOException {
+		GameBoard board;
+		if (isServer)
+			board = new GameBoardServer(rows, cols, max_players);
+		else
+			board = new GameBoardClient(rows, cols, max_players);
 		int row = 0;
 		for (String map_entry = reader.readLine(); map_entry != null; map_entry = reader.readLine(), row++) {
 			process_map_line(map_entry, row, board);

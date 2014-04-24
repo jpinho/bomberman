@@ -1,10 +1,12 @@
-package pt.cmov.bomberman.net;
+package pt.cmov.bomberman.net.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.net.CommunicationThread;
+import android.util.Log;
 
 public class ServerThread implements Runnable {
 	public static final int SERVER_PORT = 4889;
@@ -17,6 +19,7 @@ public class ServerThread implements Runnable {
 		} catch (IOException e) {
 			return;
 		}
+		Log.d("ServerHost", "Initialized new server on port " + SERVER_PORT);
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				Socket clientSocket = serverSocket.accept();

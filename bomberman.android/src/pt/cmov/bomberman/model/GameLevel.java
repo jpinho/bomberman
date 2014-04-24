@@ -78,25 +78,13 @@ public class GameLevel {
 		return board;
 	}
     public synchronized int isJoinable() {
-    	return board.getCurrent_players() < board.getMax_players() ? board.newPlayer() : -1;
+    	//return board.getCurrent_players() < board.getMax_players() ? board.newPlayer() : -1;
+    	return 0;
     }
 	public static GameLevel getInstance() {
         return INSTANCE;
     }
-	public boolean requestMovePlayer(int pid, int dir) {
-		return board.actionMovePlayer(pid, dir);
-	}
-	public boolean requestPlaceBomb(int player) {
-		return board.placeBomb(player);
-	}
 	public void initClient(String ip, int port) {
 		// TODO Implement
-	}
-	/* This is called after a level has been loaded from the level file.
-	 * Since we're the server, we will be responsible for moving enemies around.
-	 */
-	public void initServer() {
-		board.newPlayer(); // Activates player 1 (the host)
-		board.startMoveEnemiesTimer();
 	}
 }

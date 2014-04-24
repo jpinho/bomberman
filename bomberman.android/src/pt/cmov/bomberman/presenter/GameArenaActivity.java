@@ -2,10 +2,8 @@ package pt.cmov.bomberman.presenter;
 
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.model.JoyStick;
-import pt.cmov.bomberman.net.GameBoardController;
-import pt.cmov.bomberman.net.GameBoardControllerClient;
-import pt.cmov.bomberman.net.GameBoardControllerServer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,8 +29,6 @@ public class GameArenaActivity extends Activity {
 	RelativeLayout buttons;
 	private Button bombButton;
 	private RelativeLayout fireButtons;
-	
-	private GameBoardController boardController;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,12 +47,10 @@ public class GameArenaActivity extends Activity {
 	    	isServer = extras.getBoolean("isHost");
         
 	    if (isServer) {
-	    	boardController = new GameBoardControllerServer();
-	    	gameView = new MainGamePanel(this, boardController);
+	    	gameView = new MainGamePanel(this);
 	    }
 	    else {
-	    	boardController = new GameBoardControllerClient();
-	    	gameView = new MainGamePanel(this, "", 0, boardController); // TODO Add proper IP and port (read from intent extras?)
+	    	gameView = new MainGamePanel(this, "", 0); // TODO Add proper IP and port (read from intent extras?)
 	    }
 
         //LinearLayout GameWidgets = new LinearLayout(this);
@@ -102,7 +96,7 @@ public class GameArenaActivity extends Activity {
 	        @Override
 			public void onClick(View v)
 	        {
-	        	boardController.requestPlaceBomb(1); // TODO Figure out our player number
+	        	GameLevel.getInstance().getBoard().actionPlaceBomb(1); // TODO Figure out our player number
 	        }
 	    });
 
@@ -122,7 +116,7 @@ public class GameArenaActivity extends Activity {
 							|| direction == JoyStick.STICK_LEFT
 							|| direction == JoyStick.STICK_RIGHT) {
 						moved = true;
-						boardController.requestMovePlayer(1, direction);
+						GameLevel.getInstance().getBoard().actionMovePlayer(1, direction); // TODO Player number
 					}
 				}
 				return true;

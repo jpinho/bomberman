@@ -1,4 +1,4 @@
-package pt.cmov.bomberman.net;
+package pt.cmov.bomberman.net.server;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
