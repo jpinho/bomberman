@@ -275,6 +275,7 @@ public class GameBoard {
 			return;
 		
 		drawBorders(canvas);
+		
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
 				double x = horizontalExcess + object_width * j;

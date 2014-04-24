@@ -36,14 +36,14 @@
                 android:layout_marginRight="15dp"
                 android:text="000"
                 tools:ignore="HardcodedText" />
-
+            
             <TextView
                 android:id="@+id/lblTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/time"
                 android:textColor="@android:color/black" />
-
+	
             <TextView
                 android:id="@+id/txtTime"
                 android:layout_width="wrap_content"

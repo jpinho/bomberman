@@ -16,14 +16,18 @@ import android.view.SurfaceView;
  * to the screen.
  */
 public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback {
-	//private static final String TAG = MainGamePanel.class.getSimpleName();
-
+	
 	private final MainThread thread;
 	private final GameLevel currentGameLevel;
+	private OnGameStateChange gameStateChangeListener;
 
+	public static interface OnGameStateChange {
+		public void onStateChange(GameLevel gameLevel);
+	}	
+	
 	public MainGamePanel(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
-
+		
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
@@ -31,6 +35,10 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		currentGameLevel = GameLevel.getInstance();
 	}
 
+	public void onGameStateChange(OnGameStateChange listener){
+		this.gameStateChangeListener = listener;
+	}
+	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) { }
 
@@ -69,6 +77,10 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	protected void onDraw(Canvas canvas) {
 		currentGameLevel.draw(canvas);
+		
+		// fire event game state changed
+		if(gameStateChangeListener != null)
+			this.gameStateChangeListener.onStateChange(currentGameLevel);
 	}
 	
 	public GameLevel getCurrentGameLevel() {

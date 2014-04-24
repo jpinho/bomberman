@@ -2,7 +2,6 @@ package pt.cmov.bomberman.presenter.activity;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
-import pt.cmov.bomberman.util.ClientComunicatorTask;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;

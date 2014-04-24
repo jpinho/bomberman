@@ -5,33 +5,26 @@ import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.presenter.view.JoystickView.OnJoystickMoveListener;
 import pt.cmov.bomberman.presenter.view.MainGamePanel;
+import pt.cmov.bomberman.presenter.view.proxy.GameStatusViewProxy;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class GameArenaActivity extends Activity 
 {
     /** Called when the activity is first created. */
 	RelativeLayout game;
 	JoystickView jsv;
-	MainGamePanel gameView;
 	MediaPlayer playerGameSound;
-	private TextView txtTime;
-	
+	MainGamePanel gameView;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,27 +43,21 @@ public class GameArenaActivity extends Activity
         
         // the surface view where the game is being drawn
         gameView = (MainGamePanel)this.findViewById(R.id.gameSurface);
-        txtTime = (TextView)this.findViewById(R.id.txtTime);
-        ((TextView)this.findViewById(R.id.txtPlayerName)).setText(GameLevel.getInstance().getPlayer_name());
         
-		setupControls();        
+        setupGameStatusUpdate();        
+		setupControls();
         setupSounds();
-		setupGameCountDownTime();
     }
 
-	private void setupGameCountDownTime() {
-		int second = 1000;
-		
-		new CountDownTimer(second * 100, second) {
-            public void onTick(long millisUntilFinished) {
-            	txtTime.setText("" + ((int)millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-            	txtTime.setText("000");
-            	//TODO: next level or game over!
-            }
-         }.start();
+	private void setupGameStatusUpdate() {
+		final GameStatusViewProxy gameStatusProxy = new GameStatusViewProxy(this.findViewById(R.id.gameTitleContainer));
+        
+        gameView.onGameStateChange(new MainGamePanel.OnGameStateChange() {	
+			@Override
+			public void onStateChange(GameLevel gameLevel) {
+				gameStatusProxy.update(gameLevel);
+			}
+		});
 	}
     
     @Override
