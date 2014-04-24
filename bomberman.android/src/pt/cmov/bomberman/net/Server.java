@@ -3,6 +3,8 @@ package pt.cmov.bomberman.net;
 import java.io.PrintWriter;
 import java.util.HashSet;
 
+import android.util.Log;
+
 public class Server {
 
 	private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
@@ -16,14 +18,27 @@ public class Server {
 	}
 	
 	public synchronized static void notifyMovePlayer(int pid, int dir) {
+		Log.d("ServerHost", "New message: " + "MOVE " + pid + " " + dir);
 		for (PrintWriter w : writers) {
 			w.println("MOVE " + pid + " " + dir);
+			w.flush();
 		}
 	}
 	
 	public synchronized static void notifyPlaceBomb(int player) {
+		Log.d("ServerHost", "New message: " + "BOMB " + player);
 		for (PrintWriter w : writers) {
 			w.println("BOMB " + player);
+			w.flush();
+		}
+	}
+	
+	public synchronized static void sendEnemies(String new_positions) {
+		/*Log.d("ServerHost", "New message:");
+		Log.d("ServerHost", new_positions);*/
+		for (PrintWriter w : writers) {
+			w.print(new_positions);
+			w.flush();
 		}
 	}
 	

@@ -83,10 +83,10 @@ public class GameLevel {
 	public static GameLevel getInstance() {
         return INSTANCE;
     }
-	public synchronized boolean requestMovePlayer(int pid, int dir) {
+	public boolean requestMovePlayer(int pid, int dir) {
 		return board.actionMovePlayer(pid, dir);
 	}
-	public synchronized boolean requestPlaceBomb(int player) {
+	public boolean requestPlaceBomb(int player) {
 		return board.placeBomb(player);
 	}
 	public void initClient(String ip, int port) {

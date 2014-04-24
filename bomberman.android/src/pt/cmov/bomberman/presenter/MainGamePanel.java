@@ -1,6 +1,7 @@
 package pt.cmov.bomberman.presenter;
 
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.net.GameBoardController;
 import pt.cmov.bomberman.net.ServerThread;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.LevelFileParser;
@@ -27,10 +28,13 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private int port;
 	private boolean isServer;
 
+	private GameBoardController boardController;
+	
 	/* Used for players that host a game */
-	public MainGamePanel(Context context) {
+	public MainGamePanel(Context context, GameBoardController boardController) {
 		super(context);
 		isServer = true;
+		this.boardController = boardController;
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
@@ -39,11 +43,12 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	}
 	
 	/* Used for players joining on a game hosted by someone else */
-	public MainGamePanel(Context context, String ip, int port) {
+	public MainGamePanel(Context context, String ip, int port, GameBoardController boardController) {
 		super(context);
 		isServer = false;
 		this.ip = ip;
 		this.port = port;
+		this.boardController = boardController;
 		// TODO Implement this
 	}
 
@@ -66,6 +71,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 			 */
 			LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), currentGameLevel);
 			currentGameLevel.initServer();
+			currentGameLevel.getBoard().setBoardController(boardController);
 			/* We can now accept new players */
 			Thread server = new Thread(new ServerThread());
 			server.start();

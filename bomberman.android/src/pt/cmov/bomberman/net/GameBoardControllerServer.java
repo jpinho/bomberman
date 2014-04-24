@@ -21,4 +21,8 @@ public class GameBoardControllerServer extends GameBoardController {
 		}
 		return res;
 	}
+	
+	public void sendEnemiesPositions(String new_positions) {
+		Server.sendEnemies(new_positions);
+	}
 }

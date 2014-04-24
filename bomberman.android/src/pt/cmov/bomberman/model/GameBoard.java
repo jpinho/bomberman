@@ -3,6 +3,8 @@ package pt.cmov.bomberman.model;
 import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.net.GameBoardController;
+import pt.cmov.bomberman.net.GameBoardControllerServer;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
@@ -36,6 +38,8 @@ public class GameBoard {
 	private int current_players;
 
 	private final Pavement pavement;
+	
+	private GameBoardControllerServer boardController;
 
 	public GameBoard(int rows, int cols, int max_players) {
 		board = new GameObject[rows][cols];
@@ -46,6 +50,10 @@ public class GameBoard {
 		nCols = cols;
 		this.max_players = max_players;
 		current_players = 1;
+	}
+	
+	public void setBoardController(GameBoardController boardController) {
+		this.boardController = (GameBoardControllerServer) boardController;
 	}
 
 	public void setPosition(int x, int y, GameObject item) {
@@ -69,7 +77,7 @@ public class GameBoard {
 	
 	public int getCurrent_players() { return current_players; }
 
-	public boolean actionMovePlayer(int pid, int dir) {
+	public synchronized boolean actionMovePlayer(int pid, int dir) {
 		Player p;
 		if ((p = findPlayer(pid)) == null) {
 			return false;
@@ -101,7 +109,7 @@ public class GameBoard {
 		return false;
 	}
 	
-	public boolean placeBomb(int player) {
+	public synchronized boolean placeBomb(int player) {
 		Player p;
 		if ((p = findPlayer(player)) == null)
 			return false;
@@ -182,13 +190,16 @@ public class GameBoard {
 	}
 	
 	private void moveEnemies() {
+		StringBuilder new_positions = new StringBuilder();
 		for (Enemy e : enemies) {
+			new_positions.append(e.getX()).append(" ").append(e.getY()).append(" -> ");
 			Tuple<Integer, Integer> new_pos = chooseNextPosition(e.getX(), e.getY());
 			if (new_pos != null) {
 				board[e.getX()][e.getY()] = null;
 				board[new_pos.x][new_pos.y]= e;
 				e.setPosition(new_pos.x, new_pos.y);
 			}
+			new_positions.append(e.getX()).append(" ").append(e.getY()).append("\n");
 		}
 		Handler enemiesHandler = new Handler();
 		enemiesHandler.postDelayed(new Runnable() {
@@ -197,6 +208,7 @@ public class GameBoard {
 				moveEnemies();
 			}
 		}, enemies_timer_interval);
+		boardController.sendEnemiesPositions(new_positions.toString());
 	}
 	
 	public void startMoveEnemiesTimer() {

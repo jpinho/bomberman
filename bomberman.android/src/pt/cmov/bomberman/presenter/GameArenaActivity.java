@@ -51,12 +51,12 @@ public class GameArenaActivity extends Activity {
 	    	isServer = extras.getBoolean("isHost");
         
 	    if (isServer) {
-	    	gameView = new MainGamePanel(this);
 	    	boardController = new GameBoardControllerServer();
+	    	gameView = new MainGamePanel(this, boardController);
 	    }
 	    else {
-	    	gameView = new MainGamePanel(this, "", 0); // TODO Add proper IP and port (read from intent extras?)
 	    	boardController = new GameBoardControllerClient();
+	    	gameView = new MainGamePanel(this, "", 0, boardController); // TODO Add proper IP and port (read from intent extras?)
 	    }
 
         //LinearLayout GameWidgets = new LinearLayout(this);
