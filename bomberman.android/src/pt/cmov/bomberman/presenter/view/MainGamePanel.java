@@ -1,10 +1,6 @@
 package pt.cmov.bomberman.presenter.view;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
 import pt.cmov.bomberman.model.GameLevel;
-import pt.cmov.bomberman.net.client.ClientComunicatorTask;
 import pt.cmov.bomberman.net.client.ClientThread;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.LevelFileParser;
@@ -12,8 +8,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,15 +18,12 @@ import android.view.SurfaceView;
  */
 public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback {
 	//private static final String TAG = MainGamePanel.class.getSimpleName();
-
-	private MainThread thread;
 	
 	private String ip;
 	private int port;
 	private boolean isServer;
 	
 	private final MainThread thread;
-	private final GameLevel currentGameLevel;
 	private OnGameStateChange gameStateChangeListener;
 
 	public static interface OnGameStateChange {
@@ -119,7 +110,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		GameLevel.getInstance().draw(canvas);
 		// fire event game state changed
 		if(gameStateChangeListener != null)
-			this.gameStateChangeListener.onStateChange(currentGameLevel);
+			this.gameStateChangeListener.onStateChange(GameLevel.getInstance());
 	}
 	
 	public MainThread getThread() {

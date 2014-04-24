@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.net.server.ServerThread;
+import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
 import android.os.Handler;
@@ -65,16 +66,16 @@ public class GameBoardServer extends GameBoard {
 		int v_x, v_y;
 		v_x = v_y = 0;
 		switch (dir) {
-		case JoyStick.STICK_DOWN:
+		case JoystickView.BOTTOM:
 			v_x = 1;
 			break;
-		case JoyStick.STICK_UP:
+		case JoystickView.UP:
 			v_x = -1;
 			break;
-		case JoyStick.STICK_LEFT:
+		case JoystickView.LEFT:
 			v_y = -1;
 			break;
-		case JoyStick.STICK_RIGHT:
+		case JoystickView.RIGHT:
 			v_y = 1;
 			break;
 		}

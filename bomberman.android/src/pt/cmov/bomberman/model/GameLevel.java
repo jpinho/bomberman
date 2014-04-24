@@ -115,10 +115,6 @@ public class GameLevel {
 		// TODO Implement
 	}
 
-	public static GameLevel getInstance() {
-		return INSTANCE;
-	}
-
 	/**
 	 * @return the player_name
 	 */

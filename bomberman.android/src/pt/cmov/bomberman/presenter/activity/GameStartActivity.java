@@ -32,18 +32,20 @@ public class GameStartActivity extends Activity {
 		
 		setContentView(R.layout.activity_game_start);
 	}
-
-	public void buttonSinglePlayer(View v) {
+	
+	public void buttonCreateRoom(View v) {
 		Intent intent = new Intent(this, GameArenaActivity.class);
-		queryPlayerName(intent);	
+		intent.putExtra("isHost", true);
+		startActivity(intent);
 	}
 
 	public void buttonMultiPlayer(View v) {
+		// TODO Show form to connect to existing server (temporarily hardcoded)
 		Intent intent = new Intent(this, GameArenaActivity.class);
+		intent.putExtra("BombermanServerIP", "10.0.2.2");
+		intent.putExtra("BombermanServerPort", 6000);
 		queryPlayerName(intent);
-				
-        //String message = "coisas";
-        //new ClientComunicatorTask().execute(message);
+		startActivity(intent);
 	}
 	
 	private void queryPlayerName(final Intent intent) {

@@ -63,19 +63,19 @@ public class GameArenaActivity extends Activity
     @Override
     public boolean onKeyUp(int keyCode, android.view.KeyEvent event) {    	
     	if(keyCode == KeyEvent.KEYCODE_W){
-    		gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, JoystickView.FRONT);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.UP);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_S){
-    		gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, JoystickView.BOTTOM);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.BOTTOM);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_A){
-    		gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, JoystickView.RIGHT);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.RIGHT);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_D){
-    		gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, JoystickView.LEFT);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.LEFT);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_ENTER){
@@ -127,17 +127,17 @@ public class GameArenaActivity extends Activity
         btnBombPlant.setOnClickListener(new OnClickListener() {
 	        @Override
 			public void onClick(View v){
-	        	gameView.getCurrentGameLevel().getBoard().placeBomb(1);	        
+	        	GameLevel.getInstance().getBoard().actionPlaceBomb();	        
 	        }
 	    });
         
         jsv.setOnJoystickMoveListener(new OnJoystickMoveListener() {
 			@Override
 			public void onValueChanged(int angle, int power, int direction) {
-				if (direction == JoystickView.BOTTOM || direction == JoystickView.FRONT || 
+				if (direction == JoystickView.BOTTOM || direction == JoystickView.UP || 
 					direction == JoystickView.LEFT || direction == JoystickView.RIGHT) { 
 					
-					gameView.getCurrentGameLevel().getBoard().actionMovePlayer(1, direction);
+					GameLevel.getInstance().getBoard().actionMovePlayer(direction);
 				}
 			}
 		});
