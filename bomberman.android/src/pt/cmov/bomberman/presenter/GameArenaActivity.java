@@ -96,7 +96,7 @@ public class GameArenaActivity extends Activity {
 	        @Override
 			public void onClick(View v)
 	        {
-	        	GameLevel.getInstance().getBoard().actionPlaceBomb(1); // TODO Figure out our player number
+	        	GameLevel.getInstance().getBoard().actionPlaceBomb();
 	        }
 	    });
 
@@ -116,7 +116,7 @@ public class GameArenaActivity extends Activity {
 							|| direction == JoyStick.STICK_LEFT
 							|| direction == JoyStick.STICK_RIGHT) {
 						moved = true;
-						GameLevel.getInstance().getBoard().actionMovePlayer(1, direction); // TODO Player number
+						GameLevel.getInstance().getBoard().actionMovePlayer(direction);
 					}
 				}
 				return true;

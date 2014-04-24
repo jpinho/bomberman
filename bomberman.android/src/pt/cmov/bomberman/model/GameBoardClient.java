@@ -7,20 +7,25 @@ package pt.cmov.bomberman.model;
  * be redirected to the server, who will decide if it can be fulfilled.
  */
 public class GameBoardClient extends GameBoard {
-	private int player_number; /* Client can be any player other than 1 */
 	
 	public GameBoardClient(int rows, int cols, int max_players) {
 		super(rows, cols, max_players);
-		player_number = -1; /* Will be set on startLevel() */
 	}
 	
 	public void startLevel() {
 		// TODO Pick current board state from server
 		// TODO Pick a player number from board
+		// player_id = ...
 	}
 	
 	@Override
-	public boolean actionMovePlayer(int pid, int dir) {
+	public boolean actionMovePlayer(Player player, int dir) {
+		// TODO Update board state with new data arrived from server
+		return false;
+	}
+	
+	@Override
+	public boolean actionMovePlayer(int dir) {
 		// TODO Send request to server and wait for acknowledgement
 		return false;
 	}
@@ -30,4 +35,13 @@ public class GameBoardClient extends GameBoard {
 		// TODO Send request to server and wait for acknowledgement
 		return false;
 	}
+	
+	@Override
+	public boolean actionPlaceBomb() {
+		// TODO Implement
+		return false;
+	}
+	
+	@Override
+	public Player newPlayer() { return null; }
 }

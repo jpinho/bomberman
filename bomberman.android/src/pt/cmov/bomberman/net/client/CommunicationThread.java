@@ -1,4 +1,4 @@
-package pt.cmov.bomberman.net;
+package pt.cmov.bomberman.net.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import pt.cmov.bomberman.net.server.RemotePlayer;
 import pt.cmov.bomberman.net.server.Server;
 
 public class CommunicationThread implements Runnable {
@@ -20,16 +21,19 @@ public class CommunicationThread implements Runnable {
     			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
     			BufferedReader in = new BufferedReader(new InputStreamReader(
     					clientSocket.getInputStream()));
-    			Server.addNewClient(out);
+    			RemotePlayer remotePlayer = new RemotePlayer(player_id, out);
+    			Server.getInstance().addNewClient(remotePlayer);
     			String inputLine;
     			while ((inputLine = in.readLine()) != null) {
     				String reply;
-    				if ((reply = Server.parse_msg(inputLine.split(" "))) != null) {
-    					out.println(reply);
-    					out.flush();
+    				if ((reply = Server.getInstance().parse_msg(inputLine.split(" "))) != null) {
+    					synchronized (out) {
+    						out.println(reply);
+    						out.flush();
+    					}
     				}
     			}
-    			Server.delClient(out);
+    			Server.getInstance().delClient(remotePlayer);
     			clientSocket.close();
     		} catch (IOException e) {
     			// TODO Auto-generated catch block

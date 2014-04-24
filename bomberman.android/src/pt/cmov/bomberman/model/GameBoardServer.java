@@ -2,6 +2,7 @@ package pt.cmov.bomberman.model;
 
 import java.util.ArrayList;
 
+import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.net.server.ServerThread;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
@@ -37,26 +38,25 @@ public class GameBoardServer extends GameBoard {
 				moveEnemies();
 			}
 		}, enemies_timer_interval = 1000/GameLevel.getInstance().getEnemy_speed());
-		newPlayer(); // Activates player 1, the game owner
+		player = newPlayer(); // Activates player 1, the game owner
 		Thread server = new Thread(new ServerThread());
 		server.start();
 	}
 	
-	public synchronized int newPlayer() {
+	@Override
+	public synchronized Player newPlayer() {
 		Player player = findPlayer(current_players);
 		if (player != null) {
 			player.activate();
-			return current_players++;
+			current_players++;
+			// TODO Notify others that new player arrived
 		}
-		return -1;
+		return player;
 	}
 	
 	@Override
-	public boolean actionMovePlayer(int pid, int dir) {
-		Player p;
-		if ((p = findPlayer(pid)) == null) {
-			return false;
-		}
+	/** Called when a player wants to move. */
+	public boolean actionMovePlayer(Player p, int dir) {
 		int v_x, v_y;
 		v_x = v_y = 0;
 		switch (dir) {
@@ -79,13 +79,20 @@ public class GameBoardServer extends GameBoard {
 			board[p.getX()][p.getY()] = null;
 			board[new_x][new_y] = p;
 			p.setPosition(new_x, new_y);
-			// TODO Notify everyone of the new movement
 			return true;
 		}
 		return false;
 	}
 	
-	
+	@Override
+	/** Called when the owner of the game wants to move his player */
+	public boolean actionMovePlayer(int dir) {
+		boolean res = actionMovePlayer(player, dir);
+		if (res) {
+			Server.getInstance().broadcastPlayerMoved(player);
+		}
+		return res;
+	}
 	
 	
 	
@@ -115,6 +122,13 @@ public class GameBoardServer extends GameBoard {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean actionPlaceBomb() {
+		// TODO Implement
+		return false;
+	}
+	
 	private void bombExploded(Bomb b) {
 		board[b.getX()][b.getY()] = new BombFire();
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;

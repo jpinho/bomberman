@@ -25,6 +25,8 @@ public class GameBoard {
 	protected ArrayList<Player> players;
 	protected ArrayList<Enemy> enemies;
 	protected int max_players; /* Size of players array */
+	
+	protected Player player; /* This player */
 	/* The board's dimensions */
 	protected final int nCols;
 	protected final int nRows;
@@ -40,6 +42,12 @@ public class GameBoard {
 		nCols = cols;
 	}
 
+	protected Player findPlayer(int id) {
+		int i;
+		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
+		return i < players.size() ? players.get(i) : null;
+	}
+	
 	/* Begin: methods used by LevelFileParser to build board
 	 * Do NOT call / use this outside of LevelFileParser 
 	 */
@@ -59,21 +67,32 @@ public class GameBoard {
 	/* Overridden methods. These methods are different depending on whether this is a client
 	 * or a server. 
 	 */
-	public synchronized boolean actionMovePlayer(int pid, int dir) {
-		return false;
-	}
-	public synchronized boolean actionPlaceBomb(int player) {
+	public boolean actionMovePlayer(Player p, int dir) {
 		return false;
 	}
 	
-	protected Player findPlayer(int id) {
-		int i;
-		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
-		return i < players.size() ? players.get(i) : null;
+	public boolean actionMovePlayer(int dir) {
+		return false;
 	}
+	
+	public boolean actionPlaceBomb(int player) {
+		return false;
+	}
+	
+	public boolean actionPlaceBomb() {
+		return false;
+	}
+
 	public void startLevel() { }
+	public Player newPlayer() { return null; }
 	/* End methods overridden */
 
+	/* Called when a new player wants to join this game. Only useful for GameBoardServer.
+	 * Returns player ID of new player, or -1 if there is no space for a new player.
+	 */
+	public int join() {
+		return -1;
+	}
 	
 	/* Misc. */
 	protected boolean isValidMove(int x_from, int y_from, int v_x, int v_y) {

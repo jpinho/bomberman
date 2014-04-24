@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import pt.cmov.bomberman.model.GameLevel;
-import pt.cmov.bomberman.net.CommunicationThread;
+import pt.cmov.bomberman.net.client.CommunicationThread;
 import android.util.Log;
 
 public class ServerThread implements Runnable {
