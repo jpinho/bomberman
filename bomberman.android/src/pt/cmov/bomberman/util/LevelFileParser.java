@@ -66,7 +66,6 @@ public class LevelFileParser {
 		GameBoard board = process_map(level, view_width, view_height, rows, cols, reader, max_players);
 		board.setScreenDimensions(view_width, view_height);
 		level.setBoard(board);
-		board.notifyFinishedParse();
 	}
 	private static GameBoard process_map(GameLevel level, int view_width, int view_height, int rows, int cols, BufferedReader reader, int max_players) throws IOException {
 		GameBoard board = new GameBoard(rows, cols, max_players);

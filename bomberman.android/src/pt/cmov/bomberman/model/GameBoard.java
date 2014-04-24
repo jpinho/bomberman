@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -70,10 +69,10 @@ public class GameBoard {
 	
 	public int getCurrent_players() { return current_players; }
 
-	public void actionMovePlayer(int pid, int dir) {
+	public boolean actionMovePlayer(int pid, int dir) {
 		Player p;
 		if ((p = findPlayer(pid)) == null) {
-			return;
+			return false;
 		}
 		int v_x, v_y;
 		v_x = v_y = 0;
@@ -97,13 +96,15 @@ public class GameBoard {
 			board[p.getX()][p.getY()] = null;
 			board[new_x][new_y] = p;
 			p.setPosition(new_x, new_y);
+			return true;
 		}
+		return false;
 	}
 	
-	public void placeBomb(int player) {
+	public boolean placeBomb(int player) {
 		Player p;
 		if ((p = findPlayer(player)) == null)
-			return;
+			return false;
 		final int bomb_x = p.getX() + p.getV_x();
 		final int bomb_y = p.getY() + p.getV_y();
 		if (validPosition(bomb_x, bomb_y)) {
@@ -116,7 +117,9 @@ public class GameBoard {
 					bombExploded(b);
 				}
 			}, GameLevel.getInstance().getExplosion_timeout()*1000);
+			return true;
 		}
+		return false;
 	}
 
 	private void bombExploded(Bomb b) {
@@ -179,16 +182,13 @@ public class GameBoard {
 	}
 	
 	private void moveEnemies() {
-		Log.d("LevelFileParser", "In moveEnemies()");
 		for (Enemy e : enemies) {
 			Tuple<Integer, Integer> new_pos = chooseNextPosition(e.getX(), e.getY());
 			if (new_pos != null) {
-				Log.d("LevelFileParser", "New pos = " + new_pos.x + "," + new_pos.y);
 				board[e.getX()][e.getY()] = null;
 				board[new_pos.x][new_pos.y]= e;
 				e.setPosition(new_pos.x, new_pos.y);
 			}
-			else { Log.d("LevelFileParser", "new_pos = NULL"); }
 		}
 		Handler enemiesHandler = new Handler();
 		enemiesHandler.postDelayed(new Runnable() {
@@ -197,6 +197,16 @@ public class GameBoard {
 				moveEnemies();
 			}
 		}, enemies_timer_interval);
+	}
+	
+	public void startMoveEnemiesTimer() {
+		Handler enemiesHandler = new Handler();
+		enemiesHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				moveEnemies();
+			}
+		}, enemies_timer_interval = 1000/GameLevel.getInstance().getEnemy_speed());
 	}
 	
 	private Tuple<Integer, Integer> chooseNextPosition(int e_x, int e_y) {
@@ -335,15 +345,6 @@ public class GameBoard {
 			int object_h) {
 		return object_w <= max_width && object_h <= max_height;
 	}
-	
-	public void notifyFinishedParse() {
-		Handler enemiesHandler = new Handler();
-		enemiesHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				moveEnemies();
-			}
-		}, enemies_timer_interval = 1000/GameLevel.getInstance().getEnemy_speed());
-	}
+
 	public int getMax_players() { return max_players; }
 }

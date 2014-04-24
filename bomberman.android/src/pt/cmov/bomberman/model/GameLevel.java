@@ -83,4 +83,20 @@ public class GameLevel {
 	public static GameLevel getInstance() {
         return INSTANCE;
     }
+	public synchronized boolean requestMovePlayer(int pid, int dir) {
+		return board.actionMovePlayer(pid, dir);
+	}
+	public synchronized boolean requestPlaceBomb(int player) {
+		return board.placeBomb(player);
+	}
+	public void initClient(String ip, int port) {
+		// TODO Implement
+	}
+	/* This is called after a level has been loaded from the level file.
+	 * Since we're the server, we will be responsible for moving enemies around.
+	 */
+	public void initServer() {
+		board.newPlayer(); // Activates player 1 (the host)
+		board.startMoveEnemiesTimer();
+	}
 }

@@ -15,6 +15,18 @@ public class Server {
 		writers.remove(writer);
 	}
 	
+	public synchronized static void notifyMovePlayer(int pid, int dir) {
+		for (PrintWriter w : writers) {
+			w.println("MOVE " + pid + " " + dir);
+		}
+	}
+	
+	public synchronized static void notifyPlaceBomb(int player) {
+		for (PrintWriter w : writers) {
+			w.println("BOMB " + player);
+		}
+	}
+	
 	public static String parse_msg(String[] msg) {
 		if (msg.length < 1)
 			return null;
@@ -26,13 +38,7 @@ public class Server {
 	}
 
 	private static String parse_msg_to_server(String[] msg) {
-		if (msg.length < 2)
-			return null;
-		boolean result;
-        if (msg[1].equalsIgnoreCase("leave") && msg.length >= 2) {
-        	// TODO Implement
-		}
-		return null;
+		return "";
 	}
 
 	private static String parse_msg_to_game(String[] msg) {

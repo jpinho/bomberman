@@ -22,6 +22,9 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 	private MainThread thread;
 	private GameLevel currentGameLevel;
+	
+	private String ip;
+	private int port;
 	private boolean isServer;
 
 	/* Used for players that host a game */
@@ -39,6 +42,8 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	public MainGamePanel(Context context, String ip, int port) {
 		super(context);
 		isServer = false;
+		this.ip = ip;
+		this.port = port;
 		// TODO Implement this
 	}
 
@@ -60,13 +65,14 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 			 * to view the map dimensions to decide the scaling factor and the borders size.
 			 */
 			LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), currentGameLevel);
-			currentGameLevel.getBoard().newPlayer(); // Activates player 1 (the host)
+			currentGameLevel.initServer();
 			/* We can now accept new players */
 			Thread server = new Thread(new ServerThread());
 			server.start();
 			Log.d("ServerHost", "Created new game room on port " + ServerThread.SERVER_PORT);
 		} else {
 			// TODO Implement client - must grab current game state from server
+			currentGameLevel.initClient(ip, port);
 		}
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		getThread().setRunning(true);
@@ -110,9 +116,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		return currentGameLevel;
 	}
 
-	/**
-	 * @return the thread
-	 */
 	public MainThread getThread() {
 		return thread;
 	}
