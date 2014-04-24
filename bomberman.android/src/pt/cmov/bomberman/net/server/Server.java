@@ -2,6 +2,7 @@ package pt.cmov.bomberman.net.server;
 
 import java.util.HashSet;
 
+import pt.cmov.bomberman.model.Bomb;
 import pt.cmov.bomberman.model.Player;
 import android.util.Log;
 
@@ -30,12 +31,21 @@ public class Server {
 	
 	public void broadcastPlayerMoved(Player player) {
 		String message = "MOVE " + player.getPlayer_number() + " " + player.getX() + " " + player.getY();
+		broadcastMsg(player, message);
+	}
+	
+	public void broadcastPlayerPlantedBomb(Player player, Bomb bomb) {
+		String message = "BOMB " + player.getPlayer_number() + " " + bomb.getX() + " " + bomb.getY();
+		broadcastMsg(player, message);
+	}
+	
+	private void broadcastMsg(Player from, String msg) {
 		Log.d("ServerHost", "Sending new message:");
-		Log.d("ServerHost", message);
+		Log.d("ServerHost", msg);
 		synchronized (players) {
 			for (RemotePlayer p : players)
-				if (p.getPlayer_id() != player.getPlayer_number())
-					p.sendMsg(message);
+				if (p.getPlayer_id() != from.getPlayer_number())
+					p.sendMsg(msg);
 		}
 	}
 }

@@ -75,7 +75,7 @@ public class GameBoard {
 		return false;
 	}
 	
-	public boolean actionPlaceBomb(int player) {
+	public boolean actionPlaceBomb(Player p) {
 		return false;
 	}
 	
@@ -86,6 +86,14 @@ public class GameBoard {
 	public void startLevel() { }
 	public Player newPlayer() { return null; }
 	/* End methods overridden */
+	
+	public boolean actionMovePlayer(int pid, int dir) {
+		return actionMovePlayer(findPlayer(pid), dir);
+	}
+	
+	public boolean actionPlaceBomb(int pid) {
+		return actionPlaceBomb(findPlayer(pid));
+	}
 
 	/* Called when a new player wants to join this game. Only useful for GameBoardServer.
 	 * Returns player ID of new player, or -1 if there is no space for a new player.
