@@ -1,4 +1,4 @@
-package pt.cmov.bomberman.presenter;
+package pt.cmov.bomberman.presenter.view;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
@@ -31,10 +31,12 @@ public class MainThread extends Thread {
 			canvas = null;
 			try {
 				canvas = this.surfaceHolder.lockCanvas();
+			
 				synchronized (surfaceHolder) {
-					this.gamePanel.onDraw(canvas);				
+					this.gamePanel.onDraw(canvas);
 				}
-			} finally {
+			} 
+			finally {
 				if (canvas != null) {
 					surfaceHolder.unlockCanvasAndPost(canvas);
 				}

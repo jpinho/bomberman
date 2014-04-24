@@ -1,24 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <LinearLayout
-        android:id="@+id/layout_joystick"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:orientation="vertical"
-        android:layout_marginTop="29dp"
-        android:background="@drawable/image_button_bg" >
-    </LinearLayout>
-    <Button
-        android:id="@+id/button1"
-        style="?android:attr/buttonStyleSmall"
+    android:background="@android:color/holo_blue_dark" >
+
+    <RelativeLayout
+        android:id="@+id/gameTitleContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="5dp" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" >
+
+            <TextView
+                android:id="@+id/lblScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/score"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txtScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="15dp"
+                android:text="000"
+                tools:ignore="HardcodedText" />
+            
+            <TextView
+                android:id="@+id/lblTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time"
+                android:textColor="@android:color/black" />
+	
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="12dp"
+                android:text="000"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/lblNumPlayers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_p"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txtNumPlayers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="000"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblPlayerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/player"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txtPlayerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:maxLength="5"
+                android:text="-----"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/gameSurfaceContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/controlsContainer"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="false"
+        android:layout_below="@+id/gameTitleContainer"
+        android:layout_toEndOf="@id/gameTitleContainer"
+        android:background="@android:color/black" >
+
+        <pt.cmov.bomberman.presenter.view.MainGamePanel
+            android:id="@+id/gameSurface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/controlsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="31dp"
-        android:layout_marginLeft="26dp"
-        android:layout_toRightOf="@+id/layout_joystick"
-        android:text="Button" />
+        android:layout_alignParentLeft="true" >
+
+        <RelativeLayout
+            android:id="@+id/padJoystick"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:alpha="0.8"
+            android:orientation="vertical" >
+
+            <pt.cmov.bomberman.presenter.view.JoystickView
+                android:id="@+id/joystickView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btnBombPlant"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="22dp"
+            android:alpha="0.8"
+            android:background="@drawable/bomb_selector"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+
 </RelativeLayout>

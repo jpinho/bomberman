@@ -1,4 +1,4 @@
-package pt.cmov.bomberman.presenter;
+package pt.cmov.bomberman.presenter.view;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -30,9 +31,17 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private int port;
 	private boolean isServer;
 	
-	/* Used for players that host a game */
-	public MainGamePanel(Context context) {
-		super(context);
+	private final MainThread thread;
+	private final GameLevel currentGameLevel;
+	private OnGameStateChange gameStateChangeListener;
+
+	public static interface OnGameStateChange {
+		public void onStateChange(GameLevel gameLevel);
+	}	
+
+	/* Used for players that host a game */	
+	public MainGamePanel(Context context, AttributeSet attributeSet) {
+		super(context, attributeSet);
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
@@ -41,7 +50,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	}
 	
 	/* Used for players joining on a game hosted by someone else */
-	public MainGamePanel(Context context, String ip, int port) {
+    public MainGamePanel(Context context, String ip, int port) { // TODO Add attributeSet on this constructor
 		super(context);
 		this.ip = ip;
 		this.port = port;
@@ -52,10 +61,12 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		setFocusable(true);
 	}
 
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+	public void onGameStateChange(OnGameStateChange listener){
+		this.gameStateChangeListener = listener;
 	}
+	
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) { }
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
@@ -104,24 +115,13 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			// delegating event handling to the droid
-		}
-		if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			// the gestures
-		}
-		if (event.getAction() == MotionEvent.ACTION_UP) {
-			// touch was released
-		}
-		return true;
-	}
-
-	@Override
 	protected void onDraw(Canvas canvas) {
 		GameLevel.getInstance().draw(canvas);
+		// fire event game state changed
+		if(gameStateChangeListener != null)
+			this.gameStateChangeListener.onStateChange(currentGameLevel);
 	}
-
+	
 	public MainThread getThread() {
 		return thread;
 	}

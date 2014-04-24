@@ -12,25 +12,29 @@
     
 
     <uses-sdk
-        android:minSdkVersion="10"
+        android:minSdkVersion="19"
         android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
-        <activity 
-            android:name="pt.cmov.bomberman.presenter.GameArenaActivity"
+        
+        <activity  
+            android:theme="@style/Theme.Bomberman"
+            android:name="pt.cmov.bomberman.presenter.activity.GameArenaActivity"
             android:label="@string/app_name" >
         </activity>
-        <activity android:theme="@style/Theme.AppCompat"
-            android:name="pt.cmov.bomberman.presenter.GameStartActivity"
+        
+        <activity 
+            android:theme="@style/Theme.Bomberman"
+            android:name="pt.cmov.bomberman.presenter.activity.GameStartActivity"
             android:label="@string/title_activity_game_start" >
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
