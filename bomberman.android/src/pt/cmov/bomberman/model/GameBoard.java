@@ -3,6 +3,7 @@ package pt.cmov.bomberman.model;
 import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
@@ -51,32 +52,36 @@ public class GameBoard {
 	public void addPlayer(Player p) {
 		players.add(p);
 	}
-	
+
 	public void addEnemy(Enemy e) {
 		enemies.add(e);
 	}
 
 	public void actionMovePlayer(int pid, int dir) {
 		Player p;
+		
 		if ((p = findPlayer(pid)) == null) {
 			return;
 		}
+		
 		int v_x, v_y;
 		v_x = v_y = 0;
+		
 		switch (dir) {
-		case JoyStick.STICK_DOWN:
-			v_x = 1;
-			break;
-		case JoyStick.STICK_UP:
-			v_x = -1;
-			break;
-		case JoyStick.STICK_LEFT:
-			v_y = -1;
-			break;
-		case JoyStick.STICK_RIGHT:
-			v_y = 1;
-			break;
+			case JoystickView.BOTTOM:
+				v_x = 1;
+				break;
+			case JoystickView.FRONT:
+				v_x = -1;
+				break;
+			case JoystickView.RIGHT:
+				v_y = -1;
+				break;
+			case JoystickView.LEFT:
+				v_y = 1;
+				break;
 		}
+		
 		if (isValidMove(p.getX(), p.getY(), v_x, v_y)) {
 			int new_x = p.getX() + v_x;
 			int new_y = p.getY() + v_y;
@@ -85,7 +90,7 @@ public class GameBoard {
 			p.setPosition(new_x, new_y);
 		}
 	}
-	
+
 	public void placeBomb(int player) {
 		Player p;
 		if ((p = findPlayer(player)) == null)
@@ -101,7 +106,7 @@ public class GameBoard {
 				public void run() {
 					bombExploded(b);
 				}
-			}, GameLevel.getInstance().getExplosion_timeout()*1000);
+			}, GameLevel.getInstance().getExplosion_timeout() * 1000);
 		}
 	}
 
@@ -109,25 +114,33 @@ public class GameBoard {
 		board[b.getX()][b.getY()] = new BombFire();
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
-		pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes down
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes up
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes to the right
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); //Goes to the left
+		pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes
+																		// down
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes
+																				// up
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes
+																				// to
+																				// the
+																				// right
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); // Goes
+																				// to
+																				// the
+																				// left
 		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
 		Handler endExplosion = new Handler();
 		endExplosion.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				clearFire(pos_to_clear);					
+				clearFire(pos_to_clear);
 			}
-		}, GameLevel.getInstance().getExplosion_duration()*1000);
+		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
-	
+
 	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
 		for (Tuple<Integer, Integer> t : lst)
 			board[t.x][t.y] = null;
 	}
-	
+
 	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
@@ -143,10 +156,11 @@ public class GameBoard {
 		}
 		return positions;
 	}
-	
+
 	private Player findPlayer(int id) {
 		int i;
-		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
+		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++)
+			;
 		return i < players.size() ? players.get(i) : null;
 	}
 
@@ -159,11 +173,11 @@ public class GameBoard {
 	private boolean validPosition(int x, int y) {
 		return inBoard(x, y) && (board[x][y] == null || !board[x][y].isSolid());
 	}
-	
+
 	private boolean inBoard(int x, int y) {
 		return 0 <= x && x < nRows && 0 <= y && y < nCols;
 	}
-	
+
 	private void moveEnemies() {
 		Log.d("LevelFileParser", "In moveEnemies()");
 		for (Enemy e : enemies) {
@@ -171,10 +185,12 @@ public class GameBoard {
 			if (new_pos != null) {
 				Log.d("LevelFileParser", "New pos = " + new_pos.x + "," + new_pos.y);
 				board[e.getX()][e.getY()] = null;
-				board[new_pos.x][new_pos.y]= e;
+				board[new_pos.x][new_pos.y] = e;
 				e.setPosition(new_pos.x, new_pos.y);
 			}
-			else { Log.d("LevelFileParser", "new_pos = NULL"); }
+			else {
+				Log.d("LevelFileParser", "new_pos = NULL");
+			}
 		}
 		Handler enemiesHandler = new Handler();
 		enemiesHandler.postDelayed(new Runnable() {
@@ -184,26 +200,26 @@ public class GameBoard {
 			}
 		}, enemies_timer_interval);
 	}
-	
+
 	private Tuple<Integer, Integer> chooseNextPosition(int e_x, int e_y) {
 		int total_attempts = 0;
 		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
-		                  /* | Up | Down | Left | Right */ 
+		/* | Up | Down | Left | Right */
 		boolean directions_tried[] = { false, false, false, false };
-		                             /*  Up    Down   Left   Right */
+		/* Up Down Left Right */
 		int direction;
 		int x;
 		int y;
 		do {
-			direction = Misc.randInt(0, directions_tried.length-1);
+			direction = Misc.randInt(0, directions_tried.length - 1);
 			if (directions_tried[direction] == false) {
 				directions_tried[direction] = true;
 				total_attempts++;
 			}
-			x = directions[direction*2]+e_x;
-			y = directions[direction*2+1]+e_y;
+			x = directions[direction * 2] + e_x;
+			y = directions[direction * 2 + 1] + e_y;
 		} while (total_attempts < directions_tried.length && !validPosition(x, y));
-		
+
 		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y) : null;
 	}
 
@@ -229,13 +245,13 @@ public class GameBoard {
 		 * the aspect ratio of the image file is kept.
 		 */
 		int delta;
-		if (fitsIn(max_object_width, max_object_height, Bitmaps.ORIGINAL_WIDTH,
-				Bitmaps.ORIGINAL_HEIGHT)) {
-			delta = Math.min(max_object_width - Bitmaps.ORIGINAL_WIDTH,
-					max_object_height - Bitmaps.ORIGINAL_HEIGHT);
-		} else {
-			delta = -Math.max(Bitmaps.ORIGINAL_WIDTH - max_object_width,
-					Bitmaps.ORIGINAL_HEIGHT - max_object_height);
+		if (fitsIn(max_object_width, max_object_height, Bitmaps.ORIGINAL_WIDTH, Bitmaps.ORIGINAL_HEIGHT)) {
+			delta = Math.min(max_object_width - Bitmaps.ORIGINAL_WIDTH, max_object_height
+					- Bitmaps.ORIGINAL_HEIGHT);
+		}
+		else {
+			delta = -Math.max(Bitmaps.ORIGINAL_WIDTH - max_object_width, Bitmaps.ORIGINAL_HEIGHT
+					- max_object_height);
 		}
 		object_width = Bitmaps.ORIGINAL_WIDTH + delta;
 		object_height = Bitmaps.ORIGINAL_HEIGHT + delta;
@@ -255,6 +271,9 @@ public class GameBoard {
 	}
 
 	public void draw(Canvas canvas) {
+		if(canvas == null) 
+			return;
+		
 		drawBorders(canvas);
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
@@ -277,15 +296,13 @@ public class GameBoard {
 		do {
 			y -= object_height;
 			drawLeftRightBorder(canvas, border, y);
-			for (float x = (float) horizontalExcess; x < horizontalExcess
-					+ nCols * object_width; x += object_width) {
+			for (float x = (float) horizontalExcess; x < horizontalExcess + nCols * object_width; x += object_width) {
 				canvas.drawBitmap(border, x, y, null);
 			}
 		} while (y >= 0);
 
 		// Left and Right
-		for (y = (float) verticalExcess; y <= verticalExcess + (nRows - 1)
-				* object_height; y += object_height)
+		for (y = (float) verticalExcess; y <= verticalExcess + (nRows - 1) * object_height; y += object_height)
 			drawLeftRightBorder(canvas, border, y);
 
 		// Bottom
@@ -294,8 +311,7 @@ public class GameBoard {
 		do {
 			y += object_height;
 			drawLeftRightBorder(canvas, border, y);
-			for (float x = (float) horizontalExcess; x < horizontalExcess
-					+ nCols * object_width; x += object_width) {
+			for (float x = (float) horizontalExcess; x < horizontalExcess + nCols * object_width; x += object_width) {
 				canvas.drawBitmap(border, x, y, null);
 			}
 		} while (y <= y_limit);
@@ -317,11 +333,10 @@ public class GameBoard {
 		} while (x <= x_limit);
 	}
 
-	private boolean fitsIn(int max_width, int max_height, int object_w,
-			int object_h) {
+	private boolean fitsIn(int max_width, int max_height, int object_w, int object_h) {
 		return object_w <= max_width && object_h <= max_height;
 	}
-	
+
 	public void notifyFinishedParse() {
 		Handler enemiesHandler = new Handler();
 		enemiesHandler.postDelayed(new Runnable() {
@@ -329,6 +344,6 @@ public class GameBoard {
 			public void run() {
 				moveEnemies();
 			}
-		}, enemies_timer_interval = 1000/GameLevel.getInstance().getEnemy_speed());
+		}, enemies_timer_interval = 1000 / GameLevel.getInstance().getEnemy_speed());
 	}
 }

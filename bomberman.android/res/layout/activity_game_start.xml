@@ -1,68 +1,57 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ctnScreenContainer"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rlScreenRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textAlignment="center"
-    tools:context="pt.cmov.bomberman.presenter.GameStartActivity"
-    tools:ignore="MergeRootFrame">
-    
-    <RelativeLayout
-        android:id="@+id/rlScreenRelativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gamestart_bg">
+    android:background="@drawable/gamestart_bg" >
 
-        <RelativeLayout
-            android:id="@+id/rlCommandsRelativeLayout"
+    <RelativeLayout
+        android:id="@+id/rlCommandsRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" >
+
+        <LinearLayout
+            android:id="@+id/llCommandsLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/ivSplashImage">
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" >
 
-            <LinearLayout
-                android:id="@+id/llCommandsLinearLayout"
+            <Button
+                android:id="@+id/btnNewGame"
+                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" >
+                android:layout_marginRight="20dp"
+                android:onClick="buttonSinglePlayer"
+                android:text="@string/new_game" />
 
-                <Button
-                    android:id="@+id/btnNewGame"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="New Game"
-                    android:onClick="buttonSinglePlayer" />
-
-                <Button
-                    android:id="@+id/btnPlayOnline"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Play Online" 
-                    android:onClick="buttonMultiPlayer"/>
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/ivSplashImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:adjustViewBounds="false"
-            android:baselineAlignBottom="false"
-            android:cropToPadding="false"
-            android:paddingLeft="50dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/bman_large" />
-
+            <Button
+                android:id="@+id/btnPlayOnline"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="buttonMultiPlayer"
+                android:text="@string/play_online" />
+        </LinearLayout>
     </RelativeLayout>
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/ivSplashImage"
+        android:contentDescription="..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="87dp"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:cropToPadding="false"
+        android:paddingLeft="50dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/bman_large" />
+
+</RelativeLayout>
