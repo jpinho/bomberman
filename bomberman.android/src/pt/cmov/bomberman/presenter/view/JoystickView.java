@@ -14,11 +14,11 @@ public class JoystickView extends View /* implements Runnable - jpinho: now just
 	public final static long DEFAULT_LOOP_INTERVAL = 100; // 100 ms
 	public final static int UP = 3;
 	public final static int UP_RIGHT = 4;
-	public final static int RIGHT = 5;
+	public final static int RIGHT = 1;
 	public final static int RIGHT_BOTTOM = 6;
 	public final static int BOTTOM = 7;
 	public final static int BOTTOM_LEFT = 8;
-	public final static int LEFT = 1;
+	public final static int LEFT = 5;
 	public final static int LEFT_FRONT = 2;
 	
 	// Variables
