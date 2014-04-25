@@ -47,4 +47,10 @@ public class GameBoardClient extends GameBoard {
 	public synchronized void setPlayerId(int id) { 
 		player = findPlayer(id);
 	}
+	
+	@Override
+	public void addPlayer(Player p) {
+		super.addPlayer(p);
+		board[p.getX()][p.getY()] = p;
+	}
 }
