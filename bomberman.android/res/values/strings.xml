@@ -13,7 +13,7 @@
     <string name="score">Score</string>
     <string name="_p">#P</string>
     <string name="player">Player</string>
-    <string name="new_game">New Game</string>
+    <string name="new_game">Host Game</string>
     <string name="play_online">Play Online</string>
 
 </resources>
