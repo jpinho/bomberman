@@ -13,8 +13,7 @@ public class GameBoardClient extends GameBoard {
 	}
 	
 	public void startLevel() {
-		// TODO Pick a player number from board
-		// player_id = ...
+		// TODO What to do here?
 	}
 	
 	@Override
@@ -43,4 +42,9 @@ public class GameBoardClient extends GameBoard {
 	
 	@Override
 	public Player newPlayer() { return null; }
+	
+	@Override
+	public synchronized void setPlayerId(int id) { 
+		player = findPlayer(id);
+	}
 }

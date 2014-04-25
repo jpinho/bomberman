@@ -21,8 +21,8 @@ public class CommunicationThread implements Runnable {
     			BufferedReader in = new BufferedReader(new InputStreamReader(
     					clientSocket.getInputStream()));
     			RemotePlayer remotePlayer = new RemotePlayer(player_id, out);
-    			Server.getInstance().sendPlayerId(remotePlayer);
     			GameLevel.getInstance().getBoard().addNewPlayer(remotePlayer);
+    			Server.getInstance().sendPlayerId(remotePlayer);
     			String inputLine;
     			while ((inputLine = in.readLine()) != null) {
     				String reply;

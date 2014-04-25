@@ -89,6 +89,7 @@ public class GameBoard {
 
 	public void startLevel() { }
 	public Player newPlayer() { return null; }
+	public void setPlayerId(int id) { }
 	/* End methods overridden */
 	
 	public boolean actionMovePlayer(int pid, int dir) {
@@ -249,7 +250,7 @@ public class GameBoard {
 	
 	public void addNewPlayer(RemotePlayer p) {
 		StringBuilder msg = new StringBuilder();
-		msg.append("board ");
+		msg.append("board MAP:").append(nRows).append(",").append(nCols).append("N");
 		synchronized (board) {
 			for (int i = 0; i < nRows; i++) {
 				for (int j = 0; j < nCols; j++) {
@@ -260,8 +261,9 @@ public class GameBoard {
 						msg.append(board[i][j].toString());
 					}
 				}
-				msg.append("\n");
+				msg.append("N");
 			}
+			msg.append("\n");
 			synchronized (p.getPlayer_comm()) {
 				p.getPlayer_comm().print(msg);
 				p.getPlayer_comm().flush();

@@ -16,6 +16,7 @@ import pt.cmov.bomberman.model.Rock;
 import pt.cmov.bomberman.model.Wall;
 import pt.cmov.bomberman.presenter.view.MainGamePanel;
 import android.content.res.Resources;
+import android.util.Log;
 
 public class LevelFileParser {
 	private static int width;
@@ -45,6 +46,7 @@ public class LevelFileParser {
 	}
 	
 	public static void loadLevelFromString(String levelRep) {
+		Log.d("LevelFileParser", "Level representation: " + levelRep);
 		BufferedReader reader = new BufferedReader(new StringReader(levelRep));
 		try {
 			buildLevel(reader, false);
