@@ -15,6 +15,8 @@ public class JoystickView extends View /* implements Runnable - jpinho: now just
 	public final static int UP = 3;
 	public final static int UP_RIGHT = 4;
 	public final static int RIGHT = 1;
+	public final static int FRONT = 3;
+	public final static int FRONT_RIGHT = 4;
 	public final static int RIGHT_BOTTOM = 6;
 	public final static int BOTTOM = 7;
 	public final static int BOTTOM_LEFT = 8;

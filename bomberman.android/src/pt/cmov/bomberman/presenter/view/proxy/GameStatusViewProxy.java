@@ -2,10 +2,7 @@ package pt.cmov.bomberman.presenter.view.proxy;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.os.CountDownTimer;
-import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,7 +14,6 @@ public class GameStatusViewProxy {
 	private final TextView txtGameTimeLeft;
 	private final TextView txtNumberOfPlayers;
 	private boolean initialized;
-	private CountDownTimer gameTimer;
 
 	public GameStatusViewProxy(View gameStatusView) {
 		this.gameStatusView = gameStatusView;
