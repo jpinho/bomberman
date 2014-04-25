@@ -22,4 +22,7 @@ public class RemotePlayer {
 	public int getPlayer_id() {
 		return player_id;
 	}
+	public PrintWriter getPlayer_comm() {
+		return player_comm;
+	}	
 }

@@ -42,6 +42,10 @@ public class Server {
 		//broadcastMsg(from, positions);
 	}
 	
+	public void sendPlayerId(RemotePlayer p) {
+		p.sendMsg("id " + p.getPlayer_id());
+	}
+	
 	private void broadcastMsg(Player from, String msg) {
 		//Log.d("ServerHost", "Sending new message:");
 		//Log.d("ServerHost", msg);

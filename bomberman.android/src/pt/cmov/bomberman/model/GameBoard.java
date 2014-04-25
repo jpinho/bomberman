@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.net.server.RemotePlayer;
+import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.util.Bitmaps;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
@@ -245,7 +247,7 @@ public class GameBoard {
 		return object_w <= max_width && object_h <= max_height;
 	}
 	
-	public void sendBoard(PrintWriter out) {
+	public void addNewPlayer(RemotePlayer p) {
 		StringBuilder msg = new StringBuilder();
 		msg.append("board ");
 		synchronized (board) {
@@ -253,19 +255,18 @@ public class GameBoard {
 				for (int j = 0; j < nCols; j++) {
 					if (board[i][j] == null) {
 						msg.append("-");
-						//Log.d("sendBoard", i + " " + j + " -> null");
 					}
 					else {
 						msg.append(board[i][j].toString());
-						//Log.d("sendBoard", i + " " + j + " -> not null");
 					}
 				}
 				msg.append("\n");
 			}
-			synchronized (out) {
-				out.print(msg);
-				out.flush();
+			synchronized (p.getPlayer_comm()) {
+				p.getPlayer_comm().print(msg);
+				p.getPlayer_comm().flush();
 			}
+			Server.getInstance().addNewClient(p);
 		}
 	}
 }
