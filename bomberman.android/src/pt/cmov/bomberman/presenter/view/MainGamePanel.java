@@ -106,6 +106,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	protected void onDraw(Canvas canvas) {
 		GameLevel.getInstance().draw(canvas);
+		
 		// fire event game state changed
 		if(gameStateChangeListener != null)
 			this.gameStateChangeListener.onStateChange(GameLevel.getInstance());
