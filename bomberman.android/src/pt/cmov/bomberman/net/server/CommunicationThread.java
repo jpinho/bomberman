@@ -32,7 +32,8 @@ public class CommunicationThread implements Runnable {
     			}
     			Server.getInstance().delClient(remotePlayer);
     			clientSocket.close();
-    		} catch (IOException e) {
+    		} 
+    		catch (IOException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}

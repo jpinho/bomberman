@@ -22,6 +22,7 @@ public class ServerThread implements Runnable {
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				Socket clientSocket = serverSocket.accept();
+				
 				int new_player_id;
 				if ((new_player_id = GameLevel.getInstance().isJoinable()) != -1) {
 					Log.d("ServerHost", "Accepted new player, id = " + new_player_id);

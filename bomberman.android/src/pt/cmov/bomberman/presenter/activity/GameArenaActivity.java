@@ -83,11 +83,11 @@ public class GameArenaActivity extends Activity
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_A){
-    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.RIGHT);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.LEFT);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_D){
-    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.LEFT);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.RIGHT);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_ENTER){
