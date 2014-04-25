@@ -17,7 +17,6 @@ import android.view.SurfaceView;
  * to the screen.
  */
 public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback {
-	//private static final String TAG = MainGamePanel.class.getSimpleName();
 	
 	private String ip;
 	private int port;
@@ -35,6 +34,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		super(context, attributeSet);
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
+		
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
 		isServer = true;
@@ -48,6 +48,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		isServer = false;
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
+		
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
 	}
@@ -68,8 +69,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
             isServer = true;
 		}
 		
-		
-		
 		/* Upon surface creation, we must call loadLevel() to load the bootstrap level.
 		 * The parser will read the level file and build the level accordingly; level attributes
 		 * are stored in currentGameLevel, and the map layout is retrieved and turned into a board
@@ -86,6 +85,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 			//GameLevel.getInstance().getBoard().startLevel(ip, port);
 			//Log.d("ClientHost", "Entered game as a client.");
 		}
+		
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		getThread().setRunning(true);
 		getThread().start();

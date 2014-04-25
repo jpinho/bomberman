@@ -63,7 +63,7 @@ public class GameArenaActivity extends Activity
     @Override
     public boolean onKeyUp(int keyCode, android.view.KeyEvent event) {    	
     	if(keyCode == KeyEvent.KEYCODE_W){
-    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.UP);
+    		GameLevel.getInstance().getBoard().actionMovePlayer(1, JoystickView.FRONT);
     		return true;
     	}
     	else if(keyCode == KeyEvent.KEYCODE_S){
@@ -134,7 +134,7 @@ public class GameArenaActivity extends Activity
         jsv.setOnJoystickMoveListener(new OnJoystickMoveListener() {
 			@Override
 			public void onValueChanged(int angle, int power, int direction) {
-				if (direction == JoystickView.BOTTOM || direction == JoystickView.UP || 
+				if (direction == JoystickView.BOTTOM || direction == JoystickView.FRONT || 
 					direction == JoystickView.LEFT || direction == JoystickView.RIGHT) { 
 					
 					GameLevel.getInstance().getBoard().actionMovePlayer(direction);
@@ -145,10 +145,13 @@ public class GameArenaActivity extends Activity
 
 	private void setupSounds() {
         try {
-	        playerGameSound = MediaPlayer.create(this, R.raw.game_sound);
-	        playerGameSound.setAudioStreamType(AudioManager.STREAM_MUSIC);
-	        playerGameSound.setLooping(true);
-			playerGameSound.start();
+        	//not emulator
+        	if (!(android.os.Build.MODEL.equals("google_sdk") || android.os.Build.MODEL.equals("sdk"))) { 
+            	playerGameSound = MediaPlayer.create(this, R.raw.game_sound);
+    	        playerGameSound.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    	        playerGameSound.setLooping(true);
+    			playerGameSound.start();        		   
+        	}
 		}
 		catch (IllegalStateException e) {
 			e.printStackTrace();
