@@ -33,8 +33,8 @@ public class Server {
 		broadcastMsg(player, message);
 	}
 	
-	public void broadcastPlayerPlantedBomb(Player player, Bomb bomb) {
-		String message = "BOMB " + player.getPlayer_number() + " " + bomb.getX() + " " + bomb.getY();
+	public void broadcastPlayerPlantedBomb(Player player, int x, int y) {
+		String message = "BOMB " + player.getPlayer_number() + " " + x + " " + y;
 		broadcastMsg(player, message);
 	}
 	

@@ -53,8 +53,6 @@ public class GameBoardServer extends GameBoard {
 		if (player != null) {
 			synchronized (board) {
 				player.activate();
-				//board[player.getX()][player.getY()] = new Player(player.getPlayer_number(), player.getX(), player.getY());
-				//((Player) board[player.getX()][player.getY()]).activate();
 			}
 			current_players++;
 			// TODO Notify others that new player arrived
@@ -65,7 +63,7 @@ public class GameBoardServer extends GameBoard {
 
 	@Override
 	/** Called when a player wants to move. */
-	public synchronized boolean actionMovePlayer(Player p, int dir) {
+	public boolean actionMovePlayer(Player p, int dir) {
 		int v_x, v_y;
 		v_x = v_y = 0;
 		
@@ -84,16 +82,19 @@ public class GameBoardServer extends GameBoard {
 				break;
 		}
 		
-		if (isValidMove(p.getX(), p.getY(), v_x, v_y)) {
-			int new_x = p.getX() + v_x;
-			int new_y = p.getY() + v_y;
-			board[p.getX()][p.getY()] = null;
-			board[new_x][new_y] = p;
-			p.setPosition(new_x, new_y);
-			Server.getInstance().broadcastPlayerMoved(p);
-			return true;
+		boolean moved = false;
+		synchronized (board) {
+			if ((moved = isValidMove(p.getX(), p.getY(), v_x, v_y))) {
+				int new_x = p.getX() + v_x;
+				int new_y = p.getY() + v_y;
+				board[p.getX()][p.getY()] = null;
+				board[new_x][new_y] = p;
+				p.setPosition(new_x, new_y);
+			}
 		}
-		return false;
+		if (moved)
+			Server.getInstance().broadcastPlayerMoved(p);
+		return moved;
 	}
 
 	@Override
@@ -103,27 +104,36 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BOMB PHYSICS
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	 * BOMB PHYSICS
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	@Override
-	public synchronized boolean actionPlaceBomb(Player p) {
-		final int bomb_x = p.getX() + p.getV_x();
-		final int bomb_y = p.getY() + p.getV_y();
-		if (validPosition(bomb_x, bomb_y)) {
-			final Bomb b = new Bomb(bomb_x, bomb_y);
-			board[bomb_x][bomb_y] = b;
-			Handler bhandler = new Handler();
-			bhandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					bombExploded(b);
-				}
-			}, GameLevel.getInstance().getExplosion_timeout() * 1000);
-			Server.getInstance().broadcastPlayerPlantedBomb(p, b);
-			return true;
+	public boolean actionPlaceBomb(Player p) {
+		boolean res = false;
+		int bx, by;
+		synchronized (board) {
+			final int bomb_x = p.getX() + p.getV_x();
+			final int bomb_y = p.getY() + p.getV_y();
+			bx = bomb_x;
+			by = bomb_y;
+			if ((res = validPosition(bomb_x, bomb_y))) {
+				final Bomb b = new Bomb(bomb_x, bomb_y);
+				board[bomb_x][bomb_y] = b;
+				Handler bhandler = new Handler();
+				bhandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						synchronized (board) {
+							bombExploded(b);
+						}
+					}
+				}, GameLevel.getInstance().getExplosion_timeout() * 1000);
+			}
 		}
-		return false;
+		if (res)
+			Server.getInstance().broadcastPlayerPlantedBomb(p, bx, by);
+		return res;
 	}
 
 	@Override
@@ -131,38 +141,40 @@ public class GameBoardServer extends GameBoard {
 		return actionPlaceBomb(player);
 	}
 
-	private synchronized void bombExploded(Bomb b) {
-		board[b.getX()][b.getY()] = new BombFire();
-		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
-		int range = GameLevel.getInstance().getExplosion_range();
-		pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes
-																		// down
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes
-																				// up
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes
-																				// to
-																				// the
-																				// right
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); // Goes
-																				// to
-																				// the
-																				// left
-		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
-		Handler endExplosion = new Handler();
-		endExplosion.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				clearFire(pos_to_clear);
-			}
-		}, GameLevel.getInstance().getExplosion_duration() * 1000);
+	private void bombExploded(Bomb b) {
+			board[b.getX()][b.getY()] = new BombFire();
+			final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
+			int range = GameLevel.getInstance().getExplosion_range();
+			pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes
+																			// down
+			pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes
+																					// up
+			pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes
+																					// to
+																					// the
+																					// right
+			pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); // Goes
+																					// to
+																					// the
+																					// left
+			pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
+			Handler endExplosion = new Handler();
+			endExplosion.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					synchronized (board) {
+						clearFire(pos_to_clear);
+					}
+				}
+			}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
-	private synchronized void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
+	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
 		for (Tuple<Integer, Integer> t : lst)
 			board[t.x][t.y] = null;
 	}
 
-	private synchronized ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range,
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range,
 			int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
@@ -180,29 +192,32 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ENEMIES MOVEMENT
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	 * ENEMIES MOVEMENT
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	private synchronized void moveEnemies() {
 		StringBuilder new_positions = new StringBuilder();
 		new_positions.append("ENEMY ");
-		for (Enemy e : enemies) {
-			new_positions.append(e.getX()).append(" ").append(e.getY()).append(" -> ");
-			Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
-			if (new_pos != null) {
-				board[e.getX()][e.getY()] = null;
-				board[new_pos.x][new_pos.y] = e;
-				e.setPosition(new_pos.x, new_pos.y);
+		synchronized (board) {
+			for (Enemy e : enemies) {
+				new_positions.append(e.getX()).append(" ").append(e.getY()).append(" -> ");
+				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
+				if (new_pos != null) {
+					board[e.getX()][e.getY()] = null;
+					board[new_pos.x][new_pos.y] = e;
+					e.setPosition(new_pos.x, new_pos.y);
+				}
+				new_positions.append(e.getX()).append(" ").append(e.getY()).append(" ");
 			}
-			new_positions.append(e.getX()).append(" ").append(e.getY()).append(" ");
+			Handler enemiesHandler = new Handler();
+			enemiesHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					moveEnemies();
+				}
+			}, enemies_timer_interval);
 		}
-		Handler enemiesHandler = new Handler();
-		enemiesHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				moveEnemies();
-			}
-		}, enemies_timer_interval);
 		Server.getInstance().broadcastEnemiesPositions(player, new_positions.toString());
 	}
 

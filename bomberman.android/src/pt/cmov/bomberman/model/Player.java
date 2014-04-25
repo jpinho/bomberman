@@ -10,7 +10,7 @@ public class Player extends GameObject {
 	private int player_number;
 	private int x;
 	private int y;
-	private boolean isActive; /* Indicates whether this player is participating in the game */
+	private volatile boolean isActive; /* Indicates whether this player is participating in the game */
 	/* This pair of values stores the direction of the last movement performed.
 	 * It is used to determine where to place a bomb.
 	 */
