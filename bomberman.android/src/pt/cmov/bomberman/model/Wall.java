@@ -12,4 +12,9 @@ public class Wall extends GameObject {
 	public boolean notifyExplosion() {
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "W";
+	}
 }

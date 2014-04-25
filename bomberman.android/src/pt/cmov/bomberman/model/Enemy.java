@@ -20,4 +20,9 @@ public class Enemy extends GameObject {
 	public int getY() {
 		return y;
 	}
+	
+	@Override
+	public String toString() {
+		return "E";
+	}
 }

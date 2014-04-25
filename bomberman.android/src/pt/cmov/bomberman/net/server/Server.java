@@ -39,7 +39,7 @@ public class Server {
 	}
 	
 	public void broadcastEnemiesPositions(Player from, String positions) {
-		broadcastMsg(from, positions);
+		//broadcastMsg(from, positions);
 	}
 	
 	private void broadcastMsg(Player from, String msg) {

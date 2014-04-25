@@ -11,4 +11,9 @@ public class Pavement extends GameObject {
 	public boolean isSolid() {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return "-";
+	}
 }

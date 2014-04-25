@@ -1,5 +1,6 @@
 package pt.cmov.bomberman.model;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
@@ -8,6 +9,7 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -241,5 +243,29 @@ public class GameBoard {
 	private boolean fitsIn(int max_width, int max_height, int object_w,
 			int object_h) {
 		return object_w <= max_width && object_h <= max_height;
+	}
+	
+	public void sendBoard(PrintWriter out) {
+		StringBuilder msg = new StringBuilder();
+		msg.append("board ");
+		synchronized (board) {
+			for (int i = 0; i < nRows; i++) {
+				for (int j = 0; j < nCols; j++) {
+					if (board[i][j] == null) {
+						msg.append("-");
+						//Log.d("sendBoard", i + " " + j + " -> null");
+					}
+					else {
+						msg.append(board[i][j].toString());
+						//Log.d("sendBoard", i + " " + j + " -> not null");
+					}
+				}
+				msg.append("\n");
+			}
+			synchronized (out) {
+				out.print(msg);
+				out.flush();
+			}
+		}
 	}
 }

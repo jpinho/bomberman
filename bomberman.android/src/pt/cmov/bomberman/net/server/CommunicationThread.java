@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import pt.cmov.bomberman.model.GameLevel;
+
 public class CommunicationThread implements Runnable {
         private Socket clientSocket;
         private int player_id;
@@ -19,6 +21,8 @@ public class CommunicationThread implements Runnable {
     			BufferedReader in = new BufferedReader(new InputStreamReader(
     					clientSocket.getInputStream()));
     			RemotePlayer remotePlayer = new RemotePlayer(player_id, out);
+    			// TODO Send player id
+    			GameLevel.getInstance().getBoard().sendBoard(out);
     			Server.getInstance().addNewClient(remotePlayer);
     			String inputLine;
     			while ((inputLine = in.readLine()) != null) {

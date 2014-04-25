@@ -13,7 +13,6 @@ public class GameBoardClient extends GameBoard {
 	}
 	
 	public void startLevel() {
-		// TODO Pick current board state from server
 		// TODO Pick a player number from board
 		// player_id = ...
 	}

@@ -36,4 +36,9 @@ public abstract class GameObject {
 	public void setBitmapCode(int bitmapCode) {
 		this.bitmapCode = bitmapCode;
 	}
+	
+	@Override
+	public String toString() {
+		return "-";
+	}
 }

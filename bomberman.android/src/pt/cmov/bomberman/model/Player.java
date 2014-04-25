@@ -10,7 +10,6 @@ public class Player extends GameObject {
 	private int player_number;
 	private int x;
 	private int y;
-	private volatile boolean isActive; /* Indicates whether this player is participating in the game */
 	/* This pair of values stores the direction of the last movement performed.
 	 * It is used to determine where to place a bomb.
 	 */
@@ -30,19 +29,17 @@ public class Player extends GameObject {
 		this.x = x;
 		this.y = y;
 		
-		isActive = false;
 	}
 	
 	@Override
 	public boolean isSolid() {
-		return isActive;
+		return true;
 	}
 	
 	@Override
 	public void draw(Canvas canvas, float x, float y) {
 		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
-		if (isActive)
-			super.draw(canvas, x, y);
+		super.draw(canvas, x, y);
 	}
 
 	public int getPlayer_number() {
@@ -86,7 +83,8 @@ public class Player extends GameObject {
 		}
 	}
 	
-	public void activate() {
-		isActive = true;
+	@Override
+	public String toString() {
+		return ""+player_number;
 	}
 }

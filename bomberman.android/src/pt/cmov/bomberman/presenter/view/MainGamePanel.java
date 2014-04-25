@@ -60,12 +60,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		// TEMP
-		Log.d("ClientHost", "Server? " + (isServer ? "YES" : "NO"));
-		if (!isServer) {
-			new Thread(new ClientThread()).start();
-            isServer = true;
-		}
 		
 		/* Upon surface creation, we must call loadLevel() to load the bootstrap level.
 		 * The parser will read the level file and build the level accordingly; level attributes
@@ -75,15 +69,19 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		 * It is crucial to call loadLevel() before enabling the rendering thread and picking bitmaps, because we need
 		 * to view the map dimensions to decide the scaling factor and the borders size.
 		 */
-		LevelFileParser.loadLevel(getResources(), "level5", getWidth(), getHeight(), isServer);
+		LevelFileParser.setDimensions(getWidth(), getHeight());
+		LevelFileParser.setDoneCallback(this);
 		if (isServer) {
-			GameLevel.getInstance().getBoard().startLevel();			
+			LevelFileParser.loadLevelFromFile(getResources(), "level5");
 		} else {
-			// TODO Implement client - must grab current game state from server
-			//GameLevel.getInstance().getBoard().startLevel(ip, port);
-			//Log.d("ClientHost", "Entered game as a client.");
+			// Client grabs current game state from server
+			Thread client = new Thread(new ClientThread(ip, port));
+			client.start();
 		}
-		
+	}
+	
+	public void levelParsedCallback() {
+		GameLevel.getInstance().getBoard().startLevel();
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		getThread().setRunning(true);
 		getThread().start();
