@@ -1,6 +1,5 @@
 package pt.cmov.bomberman.model;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import pt.cmov.bomberman.R;
@@ -11,7 +10,6 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -21,16 +19,23 @@ public class GameBoard {
 	 */
 	private double horizontalExcess;
 	private double verticalExcess;
+	
 	/* Object width and height in pixels */
 	private int object_width;
 	private int object_height;
 	
-	protected GameObject[][] board; // Stores game objects in world coordinates
+	// Stores game objects in world coordinates
+	protected GameObject[][] board; 
+
 	protected ArrayList<Player> players;
 	protected ArrayList<Enemy> enemies;
-	protected int max_players; /* Size of players array */
 	
-	protected Player player; /* This player */
+	/* Size of players array */
+	protected int max_players; 
+	
+	/* This player */
+	protected Player player; 
+	
 	/* The board's dimensions */
 	protected final int nCols;
 	protected final int nRows;
@@ -58,9 +63,11 @@ public class GameBoard {
 	public void setPosition(int x, int y, GameObject item) {
 		board[x][y] = item;
 	}
+	
 	public void addPlayer(Player p) {
 		players.add(p);
 	}
+	
 	public void addEnemy(Enemy e) {
 		enemies.add(e);
 	}

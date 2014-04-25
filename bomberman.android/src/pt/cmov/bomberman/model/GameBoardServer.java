@@ -83,11 +83,24 @@ public class GameBoardServer extends GameBoard {
 		boolean moved = false;
 		synchronized (board) {
 			if ((moved = isValidMove(p.getX(), p.getY(), v_x, v_y))) {
-				int new_x = p.getX() + v_x;
-				int new_y = p.getY() + v_y;
+				int new_x = p.getX()+ v_x;
+				int new_y = p.getY()+ v_y;
+				
+				/* warn: is set on if statements */
+				boolean dirChanged = false;
+				
+				// is turned left or right, must turn it first
+				if(p.getV_x() != v_x && (dirChanged=true)) 
+					new_x = p.getX();
+				
+				// is turned up or down, must turn it first
+				if(p.getV_y() != v_y && (dirChanged=true))
+					new_y = p.getY();
+				
 				board[p.getX()][p.getY()] = null;
 				board[new_x][new_y] = p;
-				p.setPosition(new_x, new_y);
+				
+				p.setPosition(new_x, new_y, v_x, v_y);
 			}
 		}
 		if (moved)

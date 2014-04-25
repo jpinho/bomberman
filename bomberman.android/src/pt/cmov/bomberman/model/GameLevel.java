@@ -108,6 +108,7 @@ public class GameLevel {
     	else
     		return -1;
     }
+    
 	public static GameLevel getInstance() {
         return INSTANCE;
     }
