@@ -10,7 +10,10 @@ public class Player extends GameObject {
 	private int player_number;
 	private int x;
 	private int y;
-	private volatile boolean isActive; /* Indicates whether this player is participating in the game */
+	
+	/* Indicates whether this player is participating in the game */
+	private volatile boolean isActive; 
+	
 	/* This pair of values stores the direction of the last movement performed.
 	 * It is used to determine where to place a bomb.
 	 */
@@ -25,7 +28,7 @@ public class Player extends GameObject {
 		/* bman_down -> (1, 0) */
 		v_x = 1;
 		v_y = 0;
-	//	scoreBoard = new PlayerScore();
+		// scoreBoard = new PlayerScore();
 		player_number = player;
 		this.x = x;
 		this.y = y;
@@ -40,7 +43,6 @@ public class Player extends GameObject {
 	
 	@Override
 	public void draw(Canvas canvas, float x, float y) {
-		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
 		if (isActive)
 			super.draw(canvas, x, y);
 	}
@@ -56,12 +58,25 @@ public class Player extends GameObject {
 	public int getY() {
 		return y;
 	}
+	
 	public void setPosition(int x, int y) {
 		v_x = x - this.x;
 		v_y = y - this.y;
+		
+		this.setPosition(x, y, v_x, v_y);
+	}
+	
+	public void setPosition(int x, int y, int v_x, int v_y){
 		this.x = x;
 		this.y = y;
-		updatePic();
+		
+		setDirection(v_x, v_y);
+		updateAvatar();
+	}
+	
+	public void setDirection(int v_x, int v_y){
+		this.v_x = v_x;
+		this.v_y = v_y;
 	}
 
 	public int getV_x() {
@@ -71,7 +86,8 @@ public class Player extends GameObject {
 	public int getV_y() {
 		return v_y;
 	}
-	private void updatePic() {
+	
+	private void updateAvatar() {
 		if (v_x == 1 && v_y == 0) {
 			setBitmapCode(R.drawable.bman_down);
 		}
