@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -30,26 +31,22 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		public void onStateChange(GameLevel gameLevel);
 	}	
 
-	/* Used for players that host a game */	
 	public MainGamePanel(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
+	}
+	
+	public void initAsServer() {
 		isServer = true;
 	}
 	
-	/* Used for players joining on a game hosted by someone else */
-    public MainGamePanel(Context context, String ip, int port) { // TODO Add attributeSet on this constructor
-		super(context);
+	public void initAsClient(String ip, int port) {
+		isServer = false;
 		this.ip = ip;
 		this.port = port;
-		isServer = false;
-		getHolder().addCallback(this);
-		Bitmaps.init(getResources());
-		thread = new MainThread(getHolder(), this);
-		setFocusable(true);
 	}
 
 	public void onGameStateChange(OnGameStateChange listener){
@@ -63,6 +60,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TEMP
+		Log.d("ClientHost", "Server? " + (isServer ? "YES" : "NO"));
 		if (!isServer) {
 			new Thread(new ClientThread()).start();
             isServer = true;

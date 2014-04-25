@@ -43,7 +43,19 @@ public class GameArenaActivity extends Activity
         
         // the surface view where the game is being drawn
         gameView = (MainGamePanel)this.findViewById(R.id.gameSurface);
+	    
+        Bundle extras = getIntent().getExtras();
+	    boolean isServer = extras.getBoolean("isHost");
         
+	    if (isServer) {
+	    	gameView.initAsServer();
+	    }
+	    else {
+	    	String ip = extras.getString("BombermanServerIP");
+	    	int port = extras.getInt("BombermanServerPort");
+	    	gameView.initAsClient(ip, port);
+	    }
+	    
         setupGameStatusUpdate();        
 		setupControls();
         setupSounds();

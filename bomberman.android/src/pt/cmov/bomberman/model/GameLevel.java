@@ -111,20 +111,11 @@ public class GameLevel {
 	public static GameLevel getInstance() {
         return INSTANCE;
     }
-	public void initClient(String ip, int port) {
-		// TODO Implement
-	}
 
-	/**
-	 * @return the player_name
-	 */
 	public String getPlayer_name() {
 		return player_name;
 	}
 
-	/**
-	 * @param player_name the player_name to set
-	 */
 	public void setPlayer_name(String player_name) {
 		this.player_name = player_name;
 	}

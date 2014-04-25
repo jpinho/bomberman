@@ -45,7 +45,6 @@ public class GameStartActivity extends Activity {
 		intent.putExtra("BombermanServerIP", "10.0.2.2");
 		intent.putExtra("BombermanServerPort", 6000);
 		queryPlayerName(intent);
-		startActivity(intent);
 	}
 	
 	private void queryPlayerName(final Intent intent) {

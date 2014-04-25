@@ -52,6 +52,8 @@ public class GameBoardServer extends GameBoard {
 		if (player != null) {
 			synchronized (board) {
 				player.activate();
+				//board[player.getX()][player.getY()] = new Player(player.getPlayer_number(), player.getX(), player.getY());
+				//((Player) board[player.getX()][player.getY()]).activate();
 			}
 			current_players++;
 			// TODO Notify others that new player arrived
