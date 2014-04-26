@@ -82,6 +82,6 @@ public class Enemy extends GameObject {
 	 */
 	public void setTargetPath(List<Tuple<Integer, Integer>> targetPath) {
 		this.targetPath = targetPath;
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
 	}
 }

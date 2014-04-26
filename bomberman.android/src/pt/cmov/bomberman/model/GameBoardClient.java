@@ -53,4 +53,19 @@ public class GameBoardClient extends GameBoard {
 		super.addPlayer(p);
 		board[p.getX()][p.getY()] = p;
 	}
+	
+	public void updateEnemiesPos(String[] serverTokens) {
+		synchronized (board) {
+			for (int i = 1; i < serverTokens.length; i += 4) {
+				int old_x = Integer.parseInt(serverTokens[i]);
+				int old_y = Integer.parseInt(serverTokens[i+1]);
+				int new_x = Integer.parseInt(serverTokens[i+2]);
+				int new_y = Integer.parseInt(serverTokens[i+3]);
+				Enemy e = (Enemy) board[old_x][old_y];
+				board[old_x][old_y] = null;
+				e.setPosition(new_x, new_y);
+				board[new_x][new_y] = e;
+			}
+		}
+	}
 }

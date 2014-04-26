@@ -20,7 +20,6 @@ import android.util.Log;
  * The gameboard server is also responsible for moving enemies around (and
  * broadcasting their positions).
  * 
- * @author filipe
  * 
  */
 
@@ -116,7 +115,8 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BOMB PHYSICS
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	 * BOMB PHYSICS
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	@Override
@@ -202,16 +202,17 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ENEMIES MOVEMENT
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	 * ENEMIES MOVEMENT
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	private synchronized void moveEnemies() {
 		StringBuilder new_positions = new StringBuilder();
-		new_positions.append("ENEMY ");
+		new_positions.append("ENEMY");
 
 		synchronized (board) {
 			for (Enemy e : enemies) {
-				new_positions.append(e.getX()).append(" ").append(e.getY()).append(" -> ");
+				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
 
 				if (new_pos != null) {
@@ -220,11 +221,11 @@ public class GameBoardServer extends GameBoard {
 					e.setPosition(new_pos.x, new_pos.y);
 				}
 
-				new_positions.append(e.getX()).append(" ").append(e.getY()).append(" ");
+				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 			}
+			new_positions.append("\n");
+			Server.getInstance().broadcastEnemiesPositions(player, new_positions.toString());
 		}
-		
-		Server.getInstance().broadcastEnemiesPositions(player, new_positions.toString());
 		
 		new Handler().postDelayed(new Runnable() {
 			@Override

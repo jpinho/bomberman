@@ -39,11 +39,11 @@ public class Server {
 	}
 	
 	public void broadcastEnemiesPositions(Player from, String positions) {
-		//broadcastMsg(from, positions);
+		broadcastMsg(from, positions);
 	}
 	
 	public void sendPlayerId(RemotePlayer p) {
-		p.sendMsg("id " + p.getPlayer_id());
+		p.sendMsg("id " + p.getPlayer_id() + "\n");
 	}
 	
 	private void broadcastMsg(Player from, String msg) {

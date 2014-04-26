@@ -2,6 +2,7 @@ package pt.cmov.bomberman.net.client;
 
 import java.io.PrintWriter;
 
+import pt.cmov.bomberman.model.GameBoardClient;
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.util.LevelFileParser;
 
@@ -23,14 +24,12 @@ public class Client {
 		if (tokens.length < 1)
 			return;
 		if (tokens[0].equalsIgnoreCase("board")) {
-			process_board(tokens);
+			LevelFileParser.loadLevelFromString(tokens[1].replace('N', '\n'));
 		} else if (tokens[0].equalsIgnoreCase("id")) {
 			GameLevel.getInstance().getBoard().setPlayerId(Integer.parseInt(tokens[1]));
+		} else if (tokens[0].equalsIgnoreCase("enemy")) {
+			((GameBoardClient) GameLevel.getInstance().getBoard()).updateEnemiesPos(tokens);
 		}
 		// TODO add other messages
-	}
-	
-	public void process_board(String[] tokens) {
-		LevelFileParser.loadLevelFromString(tokens[1].replace('N', '\n'));
 	}
 }
