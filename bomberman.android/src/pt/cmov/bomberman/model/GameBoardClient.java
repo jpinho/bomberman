@@ -1,5 +1,6 @@
 package pt.cmov.bomberman.model;
 
+import android.os.Handler;
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.presenter.view.JoystickView;
 
@@ -13,10 +14,6 @@ public class GameBoardClient extends GameBoard {
 	
 	public GameBoardClient(int rows, int cols, int max_players) {
 		super(rows, cols, max_players);
-	}
-	
-	public void startLevel() {
-		// TODO What to do here?
 	}
 	
 	@Override
@@ -67,15 +64,15 @@ public class GameBoardClient extends GameBoard {
 	}
 	
 	@Override
-	public boolean actionPlaceBomb(int player) {
+	public boolean actionPlaceBomb() {
 		// TODO Send request to server and wait for acknowledgement
 		return false;
 	}
 	
-	@Override
-	public boolean actionPlaceBomb() {
-		// TODO Implement
-		return false;
+	public void plantBomb(int pid, int bx, int by) {
+		synchronized (board) {
+			board[bx][by] = new Bomb(bx, by);
+		}
 	}
 	
 	@Override

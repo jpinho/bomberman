@@ -6,10 +6,12 @@ import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.net.server.RemotePlayer;
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.util.Bitmaps;
+import pt.cmov.bomberman.util.Tuple;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.os.Handler;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -138,8 +140,6 @@ public class GameBoard {
 	}
 	
 	
-	
-	
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 *                   GRAPHICS STUFF
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
@@ -257,7 +257,13 @@ public class GameBoard {
 	
 	public void addNewPlayer(RemotePlayer p) {
 		StringBuilder msg = new StringBuilder();
-		msg.append("board MAP:").append(nRows).append(",").append(nCols).append("N");
+		msg.append("board ");
+		msg.append("ET=").append(GameLevel.getInstance().getExplosion_timeout()).append("N");
+		msg.append("ED=").append(GameLevel.getInstance().getExplosion_duration()).append("N");
+		msg.append("ER=").append(GameLevel.getInstance().getExplosion_range()).append("N");
+		msg.append("PR=").append(GameLevel.getInstance().getRobot_score()).append("N");
+		msg.append("PO=").append(GameLevel.getInstance().getOpponent_score()).append("N");
+		msg.append("MAP:").append(nRows).append(",").append(nCols).append("N");
 		synchronized (board) {
 			for (int i = 0; i < nRows; i++) {
 				for (int j = 0; j < nCols; j++) {

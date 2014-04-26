@@ -31,6 +31,10 @@ public class Client {
 			((GameBoardClient) GameLevel.getInstance().getBoard()).updateEnemiesPos(tokens);
 		} else if (tokens[0].equalsIgnoreCase("move")) {
 			GameLevel.getInstance().getBoard().actionMovePlayer(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
+		} else if (tokens[0].equalsIgnoreCase("bomb")) {
+			((GameBoardClient) GameLevel.getInstance().getBoard()).plantBomb(Integer.parseInt(tokens[1]), 
+					                                                         Integer.parseInt(tokens[2]),
+					                                                         Integer.parseInt(tokens[3]));
 		}
 		// TODO add other messages
 	}

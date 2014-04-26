@@ -110,46 +110,13 @@ public class GameBoardServer extends GameBoard {
 	public boolean actionMovePlayer(int dir) {
 		return actionMovePlayer(player, dir);
 	}
-
-	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-	 * BOMB PHYSICS
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *                   BOMB PHYSICS
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
 	 */
-	@Override
-	public boolean actionPlaceBomb(Player p) {
-		boolean res = false;
-		int bx, by;
-		synchronized (board) {
-			final int bomb_x = p.getX() + p.getV_x();
-			final int bomb_y = p.getY() + p.getV_y();
-			bx = bomb_x;
-			by = bomb_y;
-			if ((res = validPosition(bomb_x, bomb_y))) {
-				final Bomb b = new Bomb(bomb_x, bomb_y);
-				board[bomb_x][bomb_y] = b;
-				Handler bhandler = new Handler();
-				bhandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						synchronized (board) {
-							bombExploded(b);
-						}
-					}
-				}, GameLevel.getInstance().getExplosion_timeout() * 1000);
-			}
-		}
-		if (res)
-			Server.getInstance().broadcastPlayerPlantedBomb(p, bx, by);
-		return res;
-	}
-
-	@Override
-	public boolean actionPlaceBomb() {
-		return actionPlaceBomb(player);
-	}
-
-	private void bombExploded(Bomb b) {
+	
+	protected void bombExploded(Bomb b) {
 		board[b.getX()][b.getY()] = new BombFire();
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
@@ -177,12 +144,12 @@ public class GameBoardServer extends GameBoard {
 		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
-	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
+	protected void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
 		for (Tuple<Integer, Integer> t : lst)
 			board[t.x][t.y] = null;
 	}
 
-	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
+	protected ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
@@ -196,6 +163,38 @@ public class GameBoardServer extends GameBoard {
 				hit = true;
 		}
 		return positions;
+	}
+
+	@Override
+	public boolean actionPlaceBomb(Player p) {
+		boolean res = false;
+		int bx, by;
+		synchronized (board) {
+			final int bomb_x = p.getX() + p.getV_x();
+			final int bomb_y = p.getY() + p.getV_y();
+			bx = bomb_x;
+			by = bomb_y;
+			if ((res = validPosition(bomb_x, bomb_y))) {
+				final Bomb b = new Bomb(bomb_x, bomb_y);
+				board[bomb_x][bomb_y] = b;
+				Handler bhandler = new Handler();
+				bhandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						synchronized (board) {
+							bombExploded(b);
+						}
+					}
+				}, GameLevel.getInstance().getExplosion_timeout() * 1000);
+				Server.getInstance().broadcastPlayerPlantedBomb(p, bx, by);
+			}
+		}
+		return res;
+	}
+
+	@Override
+	public boolean actionPlaceBomb() {
+		return actionPlaceBomb(player);
 	}
 
 	/*
