@@ -25,11 +25,13 @@ public abstract class GameObject {
 	}
 	
 	// Screen coordinates
-	public void draw(Canvas canvas, float x, float y) {
-		if(this instanceof Player)
-			canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
-		
+	public void draw(Canvas canvas, float x, float y) {		
 		canvas.drawBitmap(getBitmap(), x, y, null);
+	}
+	
+	public void draw(Canvas canvas, float x, float y, int floorLayer){
+		canvas.drawBitmap(Bitmaps.getBitmap(floorLayer), x, y, null);
+		draw(canvas, x, y);
 	}
 	
 	/* Called when an explosion hits this object

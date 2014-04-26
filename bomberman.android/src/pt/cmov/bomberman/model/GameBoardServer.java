@@ -1,6 +1,8 @@
 package pt.cmov.bomberman.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.net.server.ServerThread;
@@ -64,47 +66,46 @@ public class GameBoardServer extends GameBoard {
 	public boolean actionMovePlayer(Player p, int dir) {
 		int v_x, v_y;
 		v_x = v_y = 0;
-		
+
 		switch (dir) {
-			case JoystickView.BOTTOM:
-				v_x = 1;
-				break;
-			case JoystickView.FRONT:
-				v_x = -1;
-				break;
-			case JoystickView.RIGHT:
-				v_y = 1;
-				break;
-			case JoystickView.LEFT:
-				v_y = -1;
-				break;
+		case JoystickView.BOTTOM:
+			v_x = 1;
+			break;
+		case JoystickView.FRONT:
+			v_x = -1;
+			break;
+		case JoystickView.RIGHT:
+			v_y = 1;
+			break;
+		case JoystickView.LEFT:
+			v_y = -1;
+			break;
 		}
-		
+
 		boolean moved = false;
 		synchronized (board) {
 			if ((moved = isValidMove(p.getX(), p.getY(), v_x, v_y))) {
-				int new_x = p.getX()+ v_x;
-				int new_y = p.getY()+ v_y;
-				
-				/* warn: is set on if statements */
-				boolean dirChanged = false;
-				
+				int new_x = p.getX() + v_x;
+				int new_y = p.getY() + v_y;
+
 				// is turned left or right, must turn it first
-				if(p.getV_x() != v_x && (dirChanged=true)) 
+				if (p.getV_x() != v_x)
 					new_x = p.getX();
-				
+
 				// is turned up or down, must turn it first
-				if(p.getV_y() != v_y && (dirChanged=true))
+				if (p.getV_y() != v_y)
 					new_y = p.getY();
-				
+
 				board[p.getX()][p.getY()] = null;
 				board[new_x][new_y] = p;
-				
+
 				p.setPosition(new_x, new_y, v_x, v_y);
 			}
 		}
+
 		if (moved)
 			Server.getInstance().broadcastPlayerMoved(p);
+
 		return moved;
 	}
 
@@ -115,8 +116,7 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-	 * BOMB PHYSICS
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BOMB PHYSICS
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	@Override
@@ -153,31 +153,31 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	private void bombExploded(Bomb b) {
-			board[b.getX()][b.getY()] = new BombFire();
-			final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
-			int range = GameLevel.getInstance().getExplosion_range();
-			pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes
-																			// down
-			pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes
-																					// up
-			pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes
-																					// to
-																					// the
-																					// right
-			pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); // Goes
-																					// to
-																					// the
-																					// left
-			pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
-			Handler endExplosion = new Handler();
-			endExplosion.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					synchronized (board) {
-						clearFire(pos_to_clear);
-					}
+		board[b.getX()][b.getY()] = new BombFire();
+		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
+		int range = GameLevel.getInstance().getExplosion_range();
+		pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes
+																		// down
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes
+																				// up
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes
+																				// to
+																				// the
+																				// right
+		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); // Goes
+																				// to
+																				// the
+																				// left
+		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
+		Handler endExplosion = new Handler();
+		endExplosion.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (board) {
+					clearFire(pos_to_clear);
 				}
-			}, GameLevel.getInstance().getExplosion_duration() * 1000);
+			}
+		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
 	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
@@ -185,8 +185,7 @@ public class GameBoardServer extends GameBoard {
 			board[t.x][t.y] = null;
 	}
 
-	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range,
-			int x_step, int y_step) {
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
@@ -203,33 +202,36 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-	 * ENEMIES MOVEMENT
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ENEMIES MOVEMENT
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	private synchronized void moveEnemies() {
 		StringBuilder new_positions = new StringBuilder();
 		new_positions.append("ENEMY ");
+
 		synchronized (board) {
 			for (Enemy e : enemies) {
 				new_positions.append(e.getX()).append(" ").append(e.getY()).append(" -> ");
 				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
+
 				if (new_pos != null) {
 					board[e.getX()][e.getY()] = null;
 					board[new_pos.x][new_pos.y] = e;
 					e.setPosition(new_pos.x, new_pos.y);
 				}
+
 				new_positions.append(e.getX()).append(" ").append(e.getY()).append(" ");
 			}
-			Handler enemiesHandler = new Handler();
-			enemiesHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					moveEnemies();
-				}
-			}, enemies_timer_interval);
 		}
+		
 		Server.getInstance().broadcastEnemiesPositions(player, new_positions.toString());
+		
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				moveEnemies();
+			}
+		}, enemies_timer_interval);
 	}
 
 	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(int e_x, int e_y) {
@@ -253,4 +255,107 @@ public class GameBoardServer extends GameBoard {
 
 		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y) : null;
 	}
+	
+	/**
+	 * Enemy AI Movement - Unfinished, is too slow! 
+	 *
+	
+	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(Enemy e, int e_x, int e_y) {
+		int x;
+		int y;
+
+		// target reached or no more path to it, let's choose another point for to enemy to focus on.
+		if(e.getTargetPath() == null || e.getTargetPath().isEmpty()){
+			boolean valid_pos = false;
+			
+			while(!valid_pos){
+				e.setTarget_x(Misc.randInt(0, this.nCols-1));
+				e.setTarget_y(Misc.randInt(0, this.nRows-1));
+				valid_pos = validPosition(e.getTarget_x(), e.getTarget_y());
+				
+				// tracing initial route to target.
+				if(valid_pos) 
+					e.setTargetPath(find_path(e_x, e_y, e.getTarget_x(), e.getTarget_y()));
+			}
+		}
+		
+		List<Tuple<Integer, Integer>> path = e.getTargetPath();
+		
+		if(path == null || path.isEmpty())
+			return null;
+		
+		// if route still valid follow it.
+		if(validPosition(path.get(0).x, path.get(0).y)){
+			x = path.get(0).x;
+			y = path.get(0).y;
+		}
+		else return null;
+		
+		// traveled position is removed to allow the enemy to move on down the path.
+		e.setTargetPath(path.subList(1, path.size()));
+		
+		return new Tuple<Integer, Integer>(x, y);
+	}
+		 
+	private List<Tuple<Integer, Integer>> find_path(int e_x, int e_y, int t_x, int t_y){
+	 
+		List<Tuple<Integer, Integer>> path;
+		boolean visit[][] = new boolean[nRows][nCols];
+		
+		do{
+			path = find_path(e_x, e_y, t_x, t_y, visit);
+			
+			if(path.isEmpty())
+				continue;
+		}
+		while(path.get(path.size()-1).x != t_x && path.get(path.size()-1).y != t_y);
+		
+		return path;
+	}
+
+	private List<Tuple<Integer, Integer>> find_path(int e_x, int e_y, int t_x, int t_y, boolean[][] visit) {
+		List<Tuple<Integer, Integer>> result = new LinkedList<Tuple<Integer, Integer>>();
+		
+		if(e_x == t_x && e_y == t_y){
+			result.add(new Tuple<Integer, Integer>(t_x, t_y));
+			return result;
+		}
+		
+		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
+
+		// Up | Down | Left | Right
+		boolean directions_tried[] = { false, false, false, false };
+		int x=0,y=0,direction;
+		int total_attempts=0;
+		
+		while (total_attempts < directions_tried.length) {
+			direction = Misc.randInt(0, directions_tried.length - 1);
+			if (directions_tried[direction] == false) {
+				directions_tried[direction] = true;
+				total_attempts++;
+			}
+			x = directions[direction * 2] + e_x;
+			y = directions[direction * 2 + 1] + e_y;
+			
+			if(!validPosition(x,y))
+				continue;
+			
+			if(visit[x][y])
+				continue;
+		} 
+			
+		// blocked, return empty list to append to the previous call.
+		if(!validPosition(x, y) || (validPosition(x, y) && visit[x][y]))
+			return result;
+		
+		visit[x][y] = true;
+		
+		// add new position to path.
+		result.add(new Tuple<Integer, Integer>(x, y));
+		
+		// keep trying to find the target from the current (x,y) pos.
+		result.addAll(find_path(x, y, t_x, t_y, visit));
+		
+		return result;
+	}*/
 }
