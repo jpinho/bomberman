@@ -99,12 +99,9 @@ public class GameBoardServer extends GameBoard {
 				board[new_x][new_y] = p;
 
 				p.setPosition(new_x, new_y, v_x, v_y);
+				Server.getInstance().broadcastPlayerMoved(p.getPlayer_number(), dir);
 			}
 		}
-
-		if (moved)
-			Server.getInstance().broadcastPlayerMoved(p);
-
 		return moved;
 	}
 
@@ -224,7 +221,7 @@ public class GameBoardServer extends GameBoard {
 				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 			}
 			new_positions.append("\n");
-			Server.getInstance().broadcastEnemiesPositions(player, new_positions.toString());
+			Server.getInstance().broadcastEnemiesPositions(new_positions.toString());
 		}
 		
 		new Handler().postDelayed(new Runnable() {

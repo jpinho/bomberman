@@ -1,5 +1,8 @@
 package pt.cmov.bomberman.model;
 
+import pt.cmov.bomberman.net.server.Server;
+import pt.cmov.bomberman.presenter.view.JoystickView;
+
 
 /** 
  * A GameBoardClient obeys a GameBoardServer's orders. It just performs actions as instructed by the server.
@@ -18,7 +21,42 @@ public class GameBoardClient extends GameBoard {
 	
 	@Override
 	public boolean actionMovePlayer(Player player, int dir) {
-		// TODO Update board state with new data arrived from server
+		int v_x, v_y;
+		v_x = v_y = 0;
+
+		switch (dir) {
+		case JoystickView.BOTTOM:
+			v_x = 1;
+			break;
+		case JoystickView.FRONT:
+			v_x = -1;
+			break;
+		case JoystickView.RIGHT:
+			v_y = 1;
+			break;
+		case JoystickView.LEFT:
+			v_y = -1;
+			break;
+		}
+		
+		synchronized (board) {
+			// Assumes valid move, since data comes from server
+			int new_x = player.getX() + v_x;
+			int new_y = player.getY() + v_y;
+
+			//is turned left or right, must turn it first
+			if (player.getV_x() != v_x)
+				new_x = player.getX();
+
+			// is turned up or down, must turn it first
+			if (player.getV_y() != v_y)
+				new_y = player.getY();
+			
+			board[player.getX()][player.getY()] = null;
+			board[new_x][new_y] = player;
+
+			player.setPosition(new_x, new_y, v_x, v_y);
+		}
 		return false;
 	}
 	

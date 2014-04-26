@@ -28,31 +28,30 @@ public class Server {
 		return null;
 	}
 	
-	public void broadcastPlayerMoved(Player player) {
-		String message = "MOVE " + player.getPlayer_number() + " " + player.getX() + " " + player.getY();
-		broadcastMsg(player, message);
+	public void broadcastPlayerMoved(int pid, int dir) {
+		String message = "move " + pid + " " + dir + "\n";
+		broadcastMsg(message);
 	}
 	
 	public void broadcastPlayerPlantedBomb(Player player, int x, int y) {
-		String message = "BOMB " + player.getPlayer_number() + " " + x + " " + y;
-		broadcastMsg(player, message);
+		String message = "bomb " + player.getPlayer_number() + " " + x + " " + y + "\n";
+		broadcastMsg(message);
 	}
 	
-	public void broadcastEnemiesPositions(Player from, String positions) {
-		broadcastMsg(from, positions);
+	public void broadcastEnemiesPositions(String positions) {
+		broadcastMsg(positions);
 	}
 	
 	public void sendPlayerId(RemotePlayer p) {
 		p.sendMsg("id " + p.getPlayer_id() + "\n");
 	}
 	
-	private void broadcastMsg(Player from, String msg) {
+	private void broadcastMsg(String msg) {
 		//Log.d("ServerHost", "Sending new message:");
 		//Log.d("ServerHost", msg);
 		synchronized (players) {
 			for (RemotePlayer p : players)
-				if (p.getPlayer_id() != from.getPlayer_number())
-					p.sendMsg(msg);
+				p.sendMsg(msg);
 		}
 	}
 }

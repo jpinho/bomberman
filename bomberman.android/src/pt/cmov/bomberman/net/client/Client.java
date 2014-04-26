@@ -29,6 +29,8 @@ public class Client {
 			GameLevel.getInstance().getBoard().setPlayerId(Integer.parseInt(tokens[1]));
 		} else if (tokens[0].equalsIgnoreCase("enemy")) {
 			((GameBoardClient) GameLevel.getInstance().getBoard()).updateEnemiesPos(tokens);
+		} else if (tokens[0].equalsIgnoreCase("move")) {
+			GameLevel.getInstance().getBoard().actionMovePlayer(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
 		}
 		// TODO add other messages
 	}
