@@ -117,18 +117,18 @@ public class GameBoardServer extends GameBoard {
 	 */
 	
 	private void bombExploded(Bomb b) {
-		board[b.getX()][b.getY()] = new BombFire();
+		board[b.getX()][b.getY()] = new BombFire(b);
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
-		pos_to_clear = propagateFire(b.getX(), b.getY(), range, 1, 0); // Goes
+		pos_to_clear = propagateFire(b, b.getX(), b.getY(), range, 1, 0); // Goes
 																		// down
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, -1, 0)); // Goes
+		pos_to_clear.addAll(propagateFire(b, b.getX(), b.getY(), range, -1, 0)); // Goes
 																				// up
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, 1)); // Goes
+		pos_to_clear.addAll(propagateFire(b, b.getX(), b.getY(), range, 0, 1)); // Goes
 																				// to
 																				// the
 																				// right
-		pos_to_clear.addAll(propagateFire(b.getX(), b.getY(), range, 0, -1)); // Goes
+		pos_to_clear.addAll(propagateFire(b, b.getX(), b.getY(), range, 0, -1)); // Goes
 																				// to
 																				// the
 																				// left
@@ -145,14 +145,14 @@ public class GameBoardServer extends GameBoard {
 		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
-	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(Bomb bomb, int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
 			if (board[x][y] == null || board[x][y].notifyExplosion()) {
 				if (board[x][y] != null)
 					hit = true;
-				board[x][y] = new BombFire();
+				board[x][y] = new BombFire(bomb);
 				positions.add(new Tuple<Integer, Integer>(x, y));
 			}
 			else
@@ -182,7 +182,7 @@ public class GameBoardServer extends GameBoard {
 			bx = bomb_x;
 			by = bomb_y;
 			if ((res = validPosition(bomb_x, bomb_y))) {
-				final Bomb b = new Bomb(bomb_x, bomb_y);
+				final Bomb b = new Bomb(bomb_x, bomb_y, p);
 				board[bomb_x][bomb_y] = b;
 				Handler bhandler = new Handler();
 				bhandler.postDelayed(new Runnable() {

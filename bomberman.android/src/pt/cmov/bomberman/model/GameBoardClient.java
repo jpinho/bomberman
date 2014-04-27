@@ -73,7 +73,7 @@ public class GameBoardClient extends GameBoard {
 	
 	public void plantBomb(int pid, int bx, int by) {
 		synchronized (board) {
-			board[bx][by] = new Bomb(bx, by);
+			board[bx][by] = new Bomb(bx, by, findPlayer(pid));
 		}
 	}
 	
@@ -110,11 +110,12 @@ public class GameBoardClient extends GameBoard {
 		int bx = Integer.parseInt(serverTokens[1]);
 		int by = Integer.parseInt(serverTokens[2]);
 		synchronized (board) {
-			board[bx][by] = new BombFire();
+			Bomb bomb = (Bomb) board[bx][by]; 
+			board[bx][by] = new BombFire(bomb);
 			for (int i = 3; i < serverTokens.length; i += 2) {
 				int fireX = Integer.parseInt(serverTokens[i]);
 				int fireY = Integer.parseInt(serverTokens[i+1]);
-				board[fireX][fireY] = new BombFire();
+				board[fireX][fireY] = new BombFire(bomb);
 			}
 		}
 	}
