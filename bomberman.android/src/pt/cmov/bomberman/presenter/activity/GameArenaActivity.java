@@ -20,6 +20,9 @@ import android.widget.RelativeLayout;
 
 public class GameArenaActivity extends Activity 
 {
+	
+	private static GameArenaActivity instance;
+	
     /** Called when the activity is first created. */
 	RelativeLayout game;
 	JoystickView jsv;
@@ -59,6 +62,12 @@ public class GameArenaActivity extends Activity
         setupGameStatusUpdate();        
 		setupControls();
         setupSounds();
+        
+        instance = this;
+    }
+    
+    public static GameArenaActivity getInstance() {
+    	return instance;
     }
 
 	private void setupGameStatusUpdate() {

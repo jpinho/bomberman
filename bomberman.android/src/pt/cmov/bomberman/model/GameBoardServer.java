@@ -6,6 +6,7 @@ import java.util.List;
 
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.net.server.ServerThread;
+import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
@@ -182,17 +183,25 @@ public class GameBoardServer extends GameBoard {
 			bx = bomb_x;
 			by = bomb_y;
 			if ((res = validPosition(bomb_x, bomb_y))) {
+				
 				final Bomb b = new Bomb(bomb_x, bomb_y, p);
 				board[bomb_x][bomb_y] = b;
-				Handler bhandler = new Handler();
-				bhandler.postDelayed(new Runnable() {
+				
+				GameArenaActivity.getInstance().runOnUiThread(new Runnable() {
 					@Override
-					public void run() {
-						synchronized (board) {
-							bombExploded(b);
-						}
+					public void run() {						
+						Handler bhandler = new Handler();
+						bhandler.postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								synchronized (board) {
+									bombExploded(b);
+								}
+							}
+						}, GameLevel.getInstance().getExplosion_timeout() * 1000);
 					}
-				}, GameLevel.getInstance().getExplosion_timeout() * 1000);
+				});
+				
 				Server.getInstance().broadcastPlayerPlantedBomb(p.getPlayer_number(), bx, by);
 			}
 		}
