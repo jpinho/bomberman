@@ -1,8 +1,10 @@
 package pt.cmov.bomberman.model;
 
+import java.util.ArrayList;
+
 import android.os.Handler;
-import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.presenter.view.JoystickView;
+import pt.cmov.bomberman.util.Tuple;
 
 
 /** 
@@ -100,6 +102,29 @@ public class GameBoardClient extends GameBoard {
 				board[old_x][old_y] = null;
 				e.setPosition(new_x, new_y);
 				board[new_x][new_y] = e;
+			}
+		}
+	}
+	
+	public void bombExplosion(String[] serverTokens) {
+		int bx = Integer.parseInt(serverTokens[1]);
+		int by = Integer.parseInt(serverTokens[2]);
+		synchronized (board) {
+			board[bx][by] = new BombFire();
+			for (int i = 3; i < serverTokens.length; i += 2) {
+				int fireX = Integer.parseInt(serverTokens[i]);
+				int fireY = Integer.parseInt(serverTokens[i+1]);
+				board[fireX][fireY] = new BombFire();
+			}
+		}
+	}
+	
+	public void bombExplosionEnd(String[] serverTokens) {
+		synchronized (board) {
+			for (int i = 1; i < serverTokens.length; i += 2) {
+				int x = Integer.parseInt(serverTokens[i]);
+				int y = Integer.parseInt(serverTokens[i+1]);
+				board[x][y] = null;
 			}
 		}
 	}

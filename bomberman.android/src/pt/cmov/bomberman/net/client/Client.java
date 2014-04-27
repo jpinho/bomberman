@@ -35,6 +35,10 @@ public class Client {
 			((GameBoardClient) GameLevel.getInstance().getBoard()).plantBomb(Integer.parseInt(tokens[1]), 
 					                                                         Integer.parseInt(tokens[2]),
 					                                                         Integer.parseInt(tokens[3]));
+		} else if (tokens[0].equalsIgnoreCase("explode")) {
+			((GameBoardClient) GameLevel.getInstance().getBoard()).bombExplosion(tokens);
+		} else if (tokens[0].equalsIgnoreCase("clear")) {
+			((GameBoardClient) GameLevel.getInstance().getBoard()).bombExplosionEnd(tokens);
 		}
 		// TODO add other messages
 	}

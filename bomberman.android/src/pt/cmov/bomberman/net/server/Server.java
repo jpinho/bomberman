@@ -1,9 +1,9 @@
 package pt.cmov.bomberman.net.server;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
-import pt.cmov.bomberman.model.Bomb;
-import pt.cmov.bomberman.model.Player;
+import pt.cmov.bomberman.util.Tuple;
 
 public class Server {
 	// The list of clients
@@ -33,8 +33,8 @@ public class Server {
 		broadcastMsg(message);
 	}
 	
-	public void broadcastPlayerPlantedBomb(Player player, int x, int y) {
-		String message = "bomb " + player.getPlayer_number() + " " + x + " " + y + "\n";
+	public void broadcastPlayerPlantedBomb(int player, int x, int y) {
+		String message = "bomb " + player + " " + x + " " + y + "\n";
 		broadcastMsg(message);
 	}
 	
@@ -46,9 +46,20 @@ public class Server {
 		p.sendMsg("id " + p.getPlayer_id() + "\n");
 	}
 	
+	public void broadcastBombExploded(int bx, int by, ArrayList<Tuple<Integer, Integer>> firePositions) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("explode ").append(bx).append(" ").append(by);
+		for (Tuple<Integer, Integer> pos : firePositions)
+			builder.append(" ").append(pos.x).append(" ").append(pos.y);
+		builder.append("\n");
+		broadcastMsg(builder.toString());
+	}
+	
+	public void broadcastClearExplosion(String positions) {
+		broadcastMsg(positions);
+	}
+	
 	private void broadcastMsg(String msg) {
-		//Log.d("ServerHost", "Sending new message:");
-		//Log.d("ServerHost", msg);
 		synchronized (players) {
 			for (RemotePlayer p : players)
 				p.sendMsg(msg);

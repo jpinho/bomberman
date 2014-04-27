@@ -116,7 +116,7 @@ public class GameBoardServer extends GameBoard {
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
 	 */
 	
-	protected void bombExploded(Bomb b) {
+	private void bombExploded(Bomb b) {
 		board[b.getX()][b.getY()] = new BombFire();
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
@@ -133,6 +133,7 @@ public class GameBoardServer extends GameBoard {
 																				// the
 																				// left
 		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
+		Server.getInstance().broadcastBombExploded(b.getX(), b.getY(), pos_to_clear);
 		Handler endExplosion = new Handler();
 		endExplosion.postDelayed(new Runnable() {
 			@Override
@@ -144,12 +145,7 @@ public class GameBoardServer extends GameBoard {
 		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
-	protected void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
-		for (Tuple<Integer, Integer> t : lst)
-			board[t.x][t.y] = null;
-	}
-
-	protected ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
@@ -163,6 +159,17 @@ public class GameBoardServer extends GameBoard {
 				hit = true;
 		}
 		return positions;
+	}
+	
+	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
+		StringBuilder positions = new StringBuilder();
+		positions.append("clear");
+		for (Tuple<Integer, Integer> t : lst) {
+			positions.append(" ").append(t.x).append(" ").append(t.y);
+			board[t.x][t.y] = null;
+		}
+		positions.append("\n");
+		Server.getInstance().broadcastClearExplosion(positions.toString());
 	}
 
 	@Override
@@ -186,7 +193,7 @@ public class GameBoardServer extends GameBoard {
 						}
 					}
 				}, GameLevel.getInstance().getExplosion_timeout() * 1000);
-				Server.getInstance().broadcastPlayerPlantedBomb(p, bx, by);
+				Server.getInstance().broadcastPlayerPlantedBomb(p.getPlayer_number(), bx, by);
 			}
 		}
 		return res;
