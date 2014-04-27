@@ -1,17 +1,28 @@
 package pt.cmov.bomberman.model;
 
+import android.graphics.Canvas;
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.util.Bitmaps;
 
 public class BombFire extends GameObject {
 	
-	private Bomb source;
+	private Player source;
 	
-	public BombFire(Bomb from) {
+	public BombFire(Player from) {
 		super(R.drawable.fire);
 		source = from;
 	}
 	
-	public Bomb getSource() {
+	public Player getSource() {
 		return source;
+	}
+	@Override
+	public void draw(Canvas canvas, float x, float y) {
+		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
+		super.draw(canvas, x, y);
+	}
+	@Override
+	public String toString() {
+		return "F" + source.toString();
 	}
 }

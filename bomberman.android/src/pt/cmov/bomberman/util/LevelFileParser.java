@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 
+import pt.cmov.bomberman.model.Bomb;
+import pt.cmov.bomberman.model.BombFire;
 import pt.cmov.bomberman.model.Enemy;
 import pt.cmov.bomberman.model.GameBoard;
 import pt.cmov.bomberman.model.GameBoardClient;
@@ -101,38 +104,87 @@ public class LevelFileParser {
 	}
 	private static GameBoard process_map(int rows, int cols, BufferedReader reader, int max_players, boolean isServer) throws IOException {
 		GameBoard board;
+		ArrayList<BFDescriptor> bombAndFireToShow = new ArrayList<BFDescriptor>();
 		if (isServer)
 			board = new GameBoardServer(rows, cols, max_players);
 		else
 			board = new GameBoardClient(rows, cols, max_players);
 		int row = 0;
 		for (String map_entry = reader.readLine(); map_entry != null; map_entry = reader.readLine(), row++) {
-			process_map_line(map_entry, row, board);
+			bombAndFireToShow.addAll(process_map_line(map_entry, row, board));
+		}
+		for (BFDescriptor entity : bombAndFireToShow) {
+			entity.addToBoard(board);
 		}
 		return board;
 	}
-	private static void process_map_line(String line, int row, GameBoard board) {
+	private static ArrayList<BFDescriptor> process_map_line(String line, int row, GameBoard board) {
 		int p;
-		for (int col = 0; col < line.length(); col++) {
-	    	if (line.charAt(col) == '-') {
-				board.setPosition(row, col, null);
+		ArrayList<BFDescriptor> bombAndFireToShow = new ArrayList<BFDescriptor>();
+		for (int col = 0, y = 0; col < line.length(); col++, y++) {
+			char c = line.charAt(col);
+	    	if (c == '-') {
+				board.setPosition(row, y, null);
 	    	}
-	    	else if (line.charAt(col) == 'R') {
-	    		board.setPosition(row, col, new Rock());
+	    	else if (c == 'R') {
+	    		board.setPosition(row, y, new Rock());
 	    	}
-	    	else if (line.charAt(col) == 'W') {
-	    		board.setPosition(row, col, new Wall());
+	    	else if (c == 'W') {
+	    		board.setPosition(row, y, new Wall());
 	    	}
-	    	else if (line.charAt(col) == 'E') {
-	    		Enemy e = new Enemy(row, col);
-	    		board.setPosition(row, col, e);
+	    	else if (c == 'E') {
+	    		Enemy e = new Enemy(row, y);
+	    		board.setPosition(row, y, e);
 	    		board.addEnemy(e);
-	    	}
-	    	else {
-	    		p = Character.getNumericValue(line.charAt(col));
-	    		Player player = new Player(p, row, col);
+	    	} else if (Character.isDigit(c)) {
+	    		p = Character.getNumericValue(c);
+	    		Player player = new Player(p, row, y);
 				board.addPlayer(player);
 	    	}
+	    	// These are not part of the map file, but can be sent by a server to a new client
+	    	else if (c == 'B') {
+	    		int bombAuthor = Character.getNumericValue(line.charAt(y+1));
+	    		bombAndFireToShow.add(new BombDescriptor(row, y, bombAuthor));
+	    		col++;
+	    	} else if (c == 'F') {
+	    		int fireAuthor = Character.getNumericValue(line.charAt(y+1));
+	    		bombAndFireToShow.add(new FireDescriptor(row, y, fireAuthor));
+	    		col++;
+	    	}
 		}
+		return bombAndFireToShow;
 	}
 }
+
+ class BFDescriptor {
+	protected int x;
+	protected int y;
+	protected int player;
+	public BFDescriptor(int x, int y, int player) {
+		this.x = x;
+		this.y = y;
+		this.player = player;
+	}
+	public void addToBoard(GameBoard board) { }
+ }
+ 
+ class BombDescriptor extends BFDescriptor {
+	 public BombDescriptor(int x, int y, int player) {
+		super(x, y, player);
+	}
+	@Override
+	 public void addToBoard(GameBoard board) {
+		 board.setPosition(x, y, new Bomb(x, y, board.findPlayer(player)));
+	 }
+ }
+ 
+ class FireDescriptor extends BFDescriptor {
+	 public FireDescriptor(int x, int y, int player) {
+		super(x, y, player);
+	}
+	@Override
+	 public void addToBoard(GameBoard board) {
+		 board.setPosition(x, y, new BombFire(board.findPlayer(player)));
+	 }
+ }
+

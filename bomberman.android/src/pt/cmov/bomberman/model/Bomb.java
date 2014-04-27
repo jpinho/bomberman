@@ -1,13 +1,15 @@
 package pt.cmov.bomberman.model;
 
+import android.graphics.Canvas;
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.util.Bitmaps;
 
 public class Bomb extends GameObject {
 	
 	private int x;
 	private int y;
 	
-	Player author;
+	private Player author;
 	
 	public Bomb(int x, int y, Player author) {
 		super(R.drawable.bomb);
@@ -24,5 +26,14 @@ public class Bomb extends GameObject {
 	}
 	public Player getAuthor() {
 		return author;
+	}
+	@Override
+	public void draw(Canvas canvas, float x, float y) {
+		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
+		super.draw(canvas, x, y);
+	}
+	@Override
+	public String toString() {
+		return "B" + author.toString();
 	}
 }

@@ -53,7 +53,7 @@ public class GameBoard {
 		nCols = cols;
 	}
 
-	protected Player findPlayer(int id) {
+	public Player findPlayer(int id) {
 		int i;
 		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
 		return i < players.size() ? players.get(i) : null;

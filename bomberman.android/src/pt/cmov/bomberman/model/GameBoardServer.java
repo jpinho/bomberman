@@ -117,7 +117,7 @@ public class GameBoardServer extends GameBoard {
 	 */
 	
 	private void bombExploded(Bomb b) {
-		board[b.getX()][b.getY()] = new BombFire(b);
+		board[b.getX()][b.getY()] = new BombFire(b.getAuthor());
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
 		pos_to_clear = propagateFire(b, b.getX(), b.getY(), range, 1, 0); // Goes
@@ -152,7 +152,7 @@ public class GameBoardServer extends GameBoard {
 			if (board[x][y] == null || board[x][y].notifyExplosion()) {
 				if (board[x][y] != null)
 					hit = true;
-				board[x][y] = new BombFire(bomb);
+				board[x][y] = new BombFire(bomb.getAuthor());
 				positions.add(new Tuple<Integer, Integer>(x, y));
 			}
 			else

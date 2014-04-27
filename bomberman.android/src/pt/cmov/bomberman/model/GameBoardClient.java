@@ -111,11 +111,11 @@ public class GameBoardClient extends GameBoard {
 		int by = Integer.parseInt(serverTokens[2]);
 		synchronized (board) {
 			Bomb bomb = (Bomb) board[bx][by]; 
-			board[bx][by] = new BombFire(bomb);
+			board[bx][by] = new BombFire(bomb.getAuthor());
 			for (int i = 3; i < serverTokens.length; i += 2) {
 				int fireX = Integer.parseInt(serverTokens[i]);
 				int fireY = Integer.parseInt(serverTokens[i+1]);
-				board[fireX][fireY] = new BombFire(bomb);
+				board[fireX][fireY] = new BombFire(bomb.getAuthor());
 			}
 		}
 	}
