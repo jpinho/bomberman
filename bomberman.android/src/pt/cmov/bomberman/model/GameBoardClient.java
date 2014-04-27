@@ -3,6 +3,7 @@ package pt.cmov.bomberman.model;
 import java.util.ArrayList;
 
 import android.os.Handler;
+import pt.cmov.bomberman.net.client.Client;
 import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.util.Tuple;
 
@@ -61,16 +62,17 @@ public class GameBoardClient extends GameBoard {
 	
 	@Override
 	public boolean actionMovePlayer(int dir) {
-		// TODO Send request to server and wait for acknowledgement
+		Client.getInstance().sendMoveRequest(player.getPlayer_number(), dir);
 		return false;
 	}
 	
 	@Override
 	public boolean actionPlaceBomb() {
-		// TODO Send request to server and wait for acknowledgement
+		Client.getInstance().sendBombRequest(player.getPlayer_number());
 		return false;
 	}
 	
+	/* Called when new bomb info. comes from the server */
 	public void plantBomb(int pid, int bx, int by) {
 		synchronized (board) {
 			board[bx][by] = new Bomb(bx, by, findPlayer(pid));

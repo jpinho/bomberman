@@ -25,13 +25,7 @@ public class CommunicationThread implements Runnable {
     			Server.getInstance().sendPlayerId(remotePlayer);
     			String inputLine;
     			while ((inputLine = in.readLine()) != null) {
-    				String reply;
-    				if ((reply = Server.getInstance().parse_msg(inputLine.split(" "))) != null) {
-    					synchronized (out) {
-    						out.println(reply);
-    						out.flush();
-    					}
-    				}
+    				Server.getInstance().parse_msg(inputLine.split(" "));
     			}
     			Server.getInstance().delClient(remotePlayer);
     			clientSocket.close();

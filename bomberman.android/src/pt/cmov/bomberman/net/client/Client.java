@@ -42,4 +42,21 @@ public class Client {
 		}
 		// TODO add other messages
 	}
+	
+	public void sendMoveRequest(int pid, int dir) {
+		String msg = "move " + pid + " " + dir + "\n";
+		sendMsgToServer(msg);
+	}
+	
+	public void sendBombRequest(int pid) {
+		String msg = "bomb " + pid + "\n";
+		sendMsgToServer(msg);
+	}
+	
+	private void sendMsgToServer(String msg) {
+		synchronized (out) {
+			out.print(msg);
+			out.flush();
+		}
+	}
 }

@@ -3,6 +3,7 @@ package pt.cmov.bomberman.net.server;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.util.Tuple;
 
 public class Server {
@@ -23,9 +24,11 @@ public class Server {
 		players.remove(p);
 	}
 	
-	public String parse_msg(String[] tokens) {
-		// TODO Implement
-		return null;
+	public void parse_msg(String[] tokens) {
+		if (tokens[0].equalsIgnoreCase("move"))
+			GameLevel.getInstance().getBoard().actionMovePlayer(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
+		else if (tokens[0].equalsIgnoreCase("bomb"))
+			GameLevel.getInstance().getBoard().actionPlaceBomb(Integer.parseInt(tokens[1]));
 	}
 	
 	public void broadcastPlayerMoved(int pid, int dir) {
