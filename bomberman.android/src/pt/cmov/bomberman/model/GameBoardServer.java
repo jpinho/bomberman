@@ -117,7 +117,7 @@ public class GameBoardServer extends GameBoard {
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
 	 */
 	
-	private void bombExploded(Bomb b) {
+	private void bombExploded(final Bomb b) {
 		board[b.getX()][b.getY()] = new BombFire(b.getAuthor());
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
@@ -140,7 +140,7 @@ public class GameBoardServer extends GameBoard {
 			@Override
 			public void run() {
 				synchronized (board) {
-					clearFire(pos_to_clear);
+					clearFire(pos_to_clear, b.getAuthor());
 				}
 			}
 		}, GameLevel.getInstance().getExplosion_duration() * 1000);
@@ -162,7 +162,7 @@ public class GameBoardServer extends GameBoard {
 		return positions;
 	}
 	
-	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst) {
+	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst, Player author) {
 		StringBuilder positions = new StringBuilder();
 		positions.append("clear");
 		for (Tuple<Integer, Integer> t : lst) {
@@ -171,6 +171,7 @@ public class GameBoardServer extends GameBoard {
 		}
 		positions.append("\n");
 		Server.getInstance().broadcastClearExplosion(positions.toString());
+		author.setPlantedBomb(false);
 	}
 
 	@Override
@@ -182,10 +183,12 @@ public class GameBoardServer extends GameBoard {
 			final int bomb_y = p.getY() + p.getV_y();
 			bx = bomb_x;
 			by = bomb_y;
-			if ((res = validPosition(bomb_x, bomb_y))) {
+			if ((res = validPosition(bomb_x, bomb_y)) && (GameArenaActivity.GOD_MODE || !p.plantedBomb())) {
 				
 				final Bomb b = new Bomb(bomb_x, bomb_y, p);
 				board[bomb_x][bomb_y] = b;
+				
+				p.setPlantedBomb(true);
 				
 				GameArenaActivity.getInstance().runOnUiThread(new Runnable() {
 					@Override

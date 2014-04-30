@@ -16,6 +16,9 @@ public class Player extends GameObject {
 	 */
 	private int v_x;
 	private int v_y;
+	
+	private boolean plantedBomb; /* True if there's an active bomb from this player in the board */
+	
 	/*
 	private PlayerScore scoreBoard;
 	private String name;
@@ -29,6 +32,7 @@ public class Player extends GameObject {
 		player_number = player;
 		this.x = x;
 		this.y = y;
+		plantedBomb = false;
 		
 	}
 	
@@ -98,6 +102,14 @@ public class Player extends GameObject {
 		}
 	}
 	
+	public boolean plantedBomb() {
+		return plantedBomb;
+	}
+
+	public void setPlantedBomb(boolean plantedBomb) {
+		this.plantedBomb = plantedBomb;
+	}
+
 	@Override
 	public String toString() {
 		return ""+player_number;

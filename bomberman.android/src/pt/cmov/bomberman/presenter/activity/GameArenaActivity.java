@@ -22,6 +22,11 @@ public class GameArenaActivity extends Activity
 {
 	
 	private static GameArenaActivity instance;
+	/* God mode: 
+	 * - players can plant unlimited number of bombs at the same time
+	 * - it is impossible to die
+	 */
+	public static final boolean GOD_MODE = false;
 	
     /** Called when the activity is first created. */
 	RelativeLayout game;
