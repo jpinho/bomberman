@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.net.server.RemotePlayer;
 import pt.cmov.bomberman.net.server.Server;
+import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.Tuple;
 import android.annotation.TargetApi;
@@ -137,6 +138,19 @@ public class GameBoard {
 
 	public int getRowsCount() {
 		return nRows;
+	}
+	
+	/* Some player died */
+	protected void kill(Player player) {
+		board[player.getX()][player.getY()] = null;
+		players.remove(player);
+	}
+	
+	/* This player died */
+	protected void die(String killer) {
+		kill(player);
+		player = null;
+		GameArenaActivity.getInstance().notifyDied(killer);
 	}
 	
 	

@@ -7,6 +7,7 @@ import pt.cmov.bomberman.presenter.view.JoystickView.OnJoystickMoveListener;
 import pt.cmov.bomberman.presenter.view.MainGamePanel;
 import pt.cmov.bomberman.presenter.view.proxy.GameStatusViewProxy;
 import android.app.Activity;
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class GameArenaActivity extends Activity 
 {
@@ -73,6 +75,15 @@ public class GameArenaActivity extends Activity
     
     public static GameArenaActivity getInstance() {
     	return instance;
+    }
+    
+    public void notifyDied(String killer) {
+    	Context context = getApplicationContext();
+    	CharSequence text = "You were killed by " + killer;
+    	int duration = Toast.LENGTH_LONG;
+    	
+    	Toast toast = Toast.makeText(context, text, duration);
+    	toast.show();
     }
 
 	private void setupGameStatusUpdate() {

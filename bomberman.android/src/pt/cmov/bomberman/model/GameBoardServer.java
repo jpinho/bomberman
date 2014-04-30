@@ -109,7 +109,9 @@ public class GameBoardServer extends GameBoard {
 	@Override
 	/** Called when the owner of the game wants to move his player */
 	public boolean actionMovePlayer(int dir) {
-		return actionMovePlayer(player, dir);
+		if (player != null)
+			return actionMovePlayer(player, dir);
+		return false;
 	}
 	
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -213,7 +215,10 @@ public class GameBoardServer extends GameBoard {
 
 	@Override
 	public boolean actionPlaceBomb() {
-		return actionPlaceBomb(player);
+		if (player != null) {
+			return actionPlaceBomb(player);
+		}
+		return false;
 	}
 
 	/*
@@ -224,22 +229,39 @@ public class GameBoardServer extends GameBoard {
 	private synchronized void moveEnemies() {
 		StringBuilder new_positions = new StringBuilder();
 		new_positions.append("ENEMY");
+		ArrayList<Player> playersKilled = new ArrayList<Player>();
 
 		synchronized (board) {
 			for (Enemy e : enemies) {
 				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
-
 				if (new_pos != null) {
 					board[e.getX()][e.getY()] = null;
 					board[new_pos.x][new_pos.y] = e;
 					e.setPosition(new_pos.x, new_pos.y);
+					
 				}
-
+				playersKilled.addAll(checkEnemyKill(e.getX(), e.getY()));
 				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 			}
 			new_positions.append("\n");
 			Server.getInstance().broadcastEnemiesPositions(new_positions.toString());
+
+			// TODO Send kill information to other players
+			
+			boolean playerDied = false;
+			
+			for (Player pKilled : playersKilled) {
+				if (pKilled == player)
+					playerDied = true;
+				else
+					kill(pKilled);
+			}
+			
+			if (playerDied) {
+				// Player hosting the game is now dead!
+				die("an enemy.");
+			}
 		}
 		
 		new Handler().postDelayed(new Runnable() {
@@ -249,13 +271,25 @@ public class GameBoardServer extends GameBoard {
 			}
 		}, enemies_timer_interval);
 	}
+	
+	private ArrayList<Player> checkEnemyKill(int enemyX, int enemyY) {
+		ArrayList<Player> playersKilled = new ArrayList<Player>();
+		for (Player player : players) {
+			int px = player.getX();
+			int py = player.getY();
+			if ((enemyX == px || enemyX == px-1 || enemyX == px+1) &&
+				(enemyY == py || enemyY == py-1 || enemyY == py+1))
+				playersKilled.add(player);
+		}
+		return playersKilled;
+	}
 
 	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(int e_x, int e_y) {
 		int total_attempts = 0;
 		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
-		/* | Up | Down | Left | Right */
+		                  /* | Up | Down | Left | Right */
 		boolean directions_tried[] = { false, false, false, false };
-		/* Up Down Left Right */
+		                             /* Up     Down   Left   Right */
 		int direction;
 		int x;
 		int y;
