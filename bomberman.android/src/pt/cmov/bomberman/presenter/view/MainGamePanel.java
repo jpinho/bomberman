@@ -72,7 +72,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		LevelFileParser.setDimensions(getWidth(), getHeight());
 		LevelFileParser.setDoneCallback(this);
 		if (isServer) {
-			LevelFileParser.loadLevelFromFile(getResources(), "level5");
+			LevelFileParser.loadLevelFromFile(getResources(), "level1");
 		} else {
 			// Client grabs current game state from server
 			Thread client = new Thread(new ClientThread(ip, port));

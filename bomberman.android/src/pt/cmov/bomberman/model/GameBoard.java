@@ -153,6 +153,19 @@ public class GameBoard {
 		GameArenaActivity.getInstance().notifyDied(killer);
 	}
 	
+	public void kill(int player, String killer) {
+		synchronized (board) {
+			if (this.player != null && player == this.player.getPlayer_number()) {
+				die(killer);
+				return;
+			}
+			Player p;
+			if ((p = findPlayer(player)) == null)
+				return;
+			kill(p);
+		}
+	}
+	
 	
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 *                   GRAPHICS STUFF

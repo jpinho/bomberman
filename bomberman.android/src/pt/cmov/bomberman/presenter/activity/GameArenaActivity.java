@@ -77,13 +77,18 @@ public class GameArenaActivity extends Activity
     	return instance;
     }
     
-    public void notifyDied(String killer) {
-    	Context context = getApplicationContext();
-    	CharSequence text = "You were killed by " + killer;
-    	int duration = Toast.LENGTH_LONG;
-    	
-    	Toast toast = Toast.makeText(context, text, duration);
-    	toast.show();
+    public void notifyDied(final String killer) {
+    	runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Context context = getApplicationContext();
+				CharSequence text = "You were killed by " + killer;
+				int duration = Toast.LENGTH_LONG;
+				
+				Toast toast = Toast.makeText(context, text, duration);
+				toast.show();				
+			}
+    	});
     }
 
 	private void setupGameStatusUpdate() {

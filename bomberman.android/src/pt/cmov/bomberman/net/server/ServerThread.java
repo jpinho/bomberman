@@ -16,7 +16,7 @@ public class ServerThread implements Runnable {
 		try {
 			serverSocket = new ServerSocket(SERVER_PORT);
 		} catch (IOException e) {
-			return;
+			throw new RuntimeException(e.getMessage());
 		}
 		Log.d("ServerHost", "Initialized new server on port " + SERVER_PORT);
 		while (!Thread.currentThread().isInterrupted()) {
@@ -30,10 +30,12 @@ public class ServerThread implements Runnable {
 					new Thread(commThread).start();
 				} else {
 					/* Level is full */
+					Log.d("ServerHost", "Declined new request - no room for more players!");
 					clientSocket.close();
 				}
 			} catch (IOException e) {
 				// Ignore this client.
+				throw new RuntimeException(e.getMessage());
 			}
 		}
 		try {

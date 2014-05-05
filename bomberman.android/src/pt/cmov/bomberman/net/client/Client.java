@@ -39,6 +39,8 @@ public class Client {
 			((GameBoardClient) GameLevel.getInstance().getBoard()).bombExplosion(tokens);
 		} else if (tokens[0].equalsIgnoreCase("clear")) {
 			((GameBoardClient) GameLevel.getInstance().getBoard()).bombExplosionEnd(tokens);
+		} else if (tokens[0].equalsIgnoreCase("die")) {
+			killPlayers(tokens);
 		}
 		// TODO add other messages
 	}
@@ -57,6 +59,13 @@ public class Client {
 		synchronized (out) {
 			out.print(msg);
 			out.flush();
+		}
+	}
+	
+	private void killPlayers(String[] tokens) {
+		for (int i = 2; i < tokens.length; i++) {
+			int pid = Integer.parseInt(tokens[i]);
+			GameLevel.getInstance().getBoard().kill(pid, tokens[1]);
 		}
 	}
 }

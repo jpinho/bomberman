@@ -246,22 +246,24 @@ public class GameBoardServer extends GameBoard {
 			}
 			new_positions.append("\n");
 			Server.getInstance().broadcastEnemiesPositions(new_positions.toString());
-
-			// TODO Send kill information to other players
 			
 			boolean playerDied = false;
-			
+			StringBuilder killMsg = new StringBuilder();
+			killMsg.append("die enemy");
 			for (Player pKilled : playersKilled) {
 				if (pKilled == player)
 					playerDied = true;
 				else
 					kill(pKilled);
+				killMsg.append(" " + pKilled.getPlayer_number());
 			}
-			
+			killMsg.append("\n");
 			if (playerDied) {
 				// Player hosting the game is now dead!
 				die("an enemy.");
 			}
+			if (playersKilled.size() > 0)
+				Server.getInstance().broadcastPlayersKilled(killMsg.toString());
 		}
 		
 		new Handler().postDelayed(new Runnable() {

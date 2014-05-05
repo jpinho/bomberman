@@ -49,6 +49,10 @@ public class Server {
 		p.sendMsg("id " + p.getPlayer_id() + "\n");
 	}
 	
+	public void broadcastPlayersKilled(String killMsg) {
+		broadcastMsg(killMsg);
+	}
+	
 	public void broadcastBombExploded(int bx, int by, ArrayList<Tuple<Integer, Integer>> firePositions) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("explode ").append(bx).append(" ").append(by);
