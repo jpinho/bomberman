@@ -97,10 +97,15 @@ public class GameBoardServer extends GameBoard {
 					new_y = p.getY();
 
 				board[p.getX()][p.getY()] = null;
-				board[new_x][new_y] = p;
-
-				p.setPosition(new_x, new_y, v_x, v_y);
-				Server.getInstance().broadcastPlayerMoved(p.getPlayer_number(), dir);
+				Player killer;
+				if (board[new_x][new_y] != null && (killer = board[new_x][new_y].isLethal()) != null) {
+					die("Player " + killer.getPlayer_number());
+					// TODO Notify others
+				} else {
+					board[new_x][new_y] = p;
+					p.setPosition(new_x, new_y, v_x, v_y);
+					Server.getInstance().broadcastPlayerMoved(p.getPlayer_number(), dir);
+				}
 			}
 		}
 		return moved;
