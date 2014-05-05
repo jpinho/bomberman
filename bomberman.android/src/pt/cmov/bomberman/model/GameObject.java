@@ -41,6 +41,10 @@ public abstract class GameObject {
 		 return false;
 	}
 	
+	public Player isLethal() {
+		return null;
+	}
+	
 	public void setBitmapCode(int bitmapCode) {
 		this.bitmapCode = bitmapCode;
 	}

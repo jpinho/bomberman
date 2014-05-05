@@ -229,23 +229,34 @@ public class GameBoardServer extends GameBoard {
 	private synchronized void moveEnemies() {
 		StringBuilder new_positions = new StringBuilder();
 		new_positions.append("ENEMY");
+		StringBuilder killed_enemies = new StringBuilder();
+		killed_enemies.append("die player ");
 		ArrayList<Player> playersKilled = new ArrayList<Player>();
+		ArrayList<Enemy> enemiesKilled = new ArrayList<Enemy>();
 
 		synchronized (board) {
 			for (Enemy e : enemies) {
-				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
-				if (new_pos != null) {
-					board[e.getX()][e.getY()] = null;
+				board[e.getX()][e.getY()] = null;
+				Player killer;
+				if (board[new_pos.x][new_pos.y] != null && (killer = board[new_pos.x][new_pos.y].isLethal()) != null) {
+					enemiesKilled.add(e);
+					killed_enemies.append(" ").append(killer.getPlayer_number()).append(" ").append(e.getX()).append(" ").append(e.getY());
+				}
+				else {
 					board[new_pos.x][new_pos.y] = e;
+					new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 					e.setPosition(new_pos.x, new_pos.y);
-					
+					new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 				}
 				playersKilled.addAll(checkEnemyKill(e.getX(), e.getY()));
-				new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 			}
+			
+			killed_enemies.append("\n");
 			new_positions.append("\n");
 			Server.getInstance().broadcastEnemiesPositions(new_positions.toString());
+			if (enemiesKilled.size() > 0)
+				Server.getInstance().broadcastMsg(killed_enemies.toString());
 			
 			boolean playerDied = false;
 			StringBuilder killMsg = new StringBuilder();
@@ -264,6 +275,9 @@ public class GameBoardServer extends GameBoard {
 			}
 			if (playersKilled.size() > 0)
 				Server.getInstance().broadcastPlayersKilled(killMsg.toString());
+			
+			for (Enemy e : enemiesKilled)
+				enemies.remove(e);
 		}
 		
 		new Handler().postDelayed(new Runnable() {
@@ -305,7 +319,7 @@ public class GameBoardServer extends GameBoard {
 			y = directions[direction * 2 + 1] + e_y;
 		} while (total_attempts < directions_tried.length && !validPosition(x, y));
 
-		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y) : null;
+		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y) : new Tuple<Integer, Integer>(e_x, e_y);
 	}
 	
 	/**

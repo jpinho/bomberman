@@ -25,4 +25,15 @@ public class BombFire extends GameObject {
 	public String toString() {
 		return "F" + source.toString();
 	}
+	
+	@Override
+	public boolean isSolid() {
+		return false;
+	}
+	
+	@Override
+	public Player isLethal() {
+		return source;
+	}
+	
 }

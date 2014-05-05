@@ -66,7 +66,7 @@ public class Server {
 		broadcastMsg(positions);
 	}
 	
-	private void broadcastMsg(String msg) {
+	public void broadcastMsg(String msg) {
 		synchronized (players) {
 			for (RemotePlayer p : players)
 				p.sendMsg(msg);
