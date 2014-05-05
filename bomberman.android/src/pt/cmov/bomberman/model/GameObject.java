@@ -37,7 +37,7 @@ public abstract class GameObject {
 	/* Called when an explosion hits this object
 	 * Returns true if the object must be destroyed; false otherwise
 	 */
-	public boolean notifyExplosion() {
+	public boolean notifyExplosion(Player responsible) {
 		 return false;
 	}
 	

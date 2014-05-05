@@ -77,6 +77,11 @@ public class GameBoard {
 	/* End: methods used by LevelFileParser */
 	
 	
+	public void removeEnemy(Enemy e) {
+		board[e.getX()][e.getY()] = null;
+		enemies.remove(e);
+	}
+	
 	
 	/* Overridden methods. These methods are different depending on whether this is a client
 	 * or a server. 

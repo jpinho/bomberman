@@ -114,4 +114,11 @@ public class Player extends GameObject {
 	public String toString() {
 		return ""+player_number;
 	}
+	
+	@Override 
+	public boolean notifyExplosion(Player responsible) {
+		GameLevel.getInstance().getBoard().kill(getPlayer_number(), "Player " + responsible.getPlayer_number()); // TODO Use player name instead
+		// TODO notify others
+		return true;
+	}
 }

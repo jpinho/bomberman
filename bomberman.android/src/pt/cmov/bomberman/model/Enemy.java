@@ -83,4 +83,11 @@ public class Enemy extends GameObject {
 	public void setTargetPath(List<Tuple<Integer, Integer>> targetPath) {
 		this.targetPath = targetPath;
 	}
+	
+	@Override 
+	public boolean notifyExplosion(Player responsible) {
+		GameLevel.getInstance().getBoard().removeEnemy(this);
+		// TODO notify others
+		return true;
+	}
 }

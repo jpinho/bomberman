@@ -9,7 +9,7 @@ public class Wall extends GameObject {
 	}
 	
 	@Override 
-	public boolean notifyExplosion() {
+	public boolean notifyExplosion(Player responsible) {
 		return true;
 	}
 	

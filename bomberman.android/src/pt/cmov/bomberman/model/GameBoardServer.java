@@ -152,7 +152,7 @@ public class GameBoardServer extends GameBoard {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
-			if (board[x][y] == null || board[x][y].notifyExplosion()) {
+			if (board[x][y] == null || board[x][y].notifyExplosion(bomb.getAuthor())) {
 				if (board[x][y] != null)
 					hit = true;
 				board[x][y] = new BombFire(bomb.getAuthor());
@@ -230,7 +230,7 @@ public class GameBoardServer extends GameBoard {
 		StringBuilder new_positions = new StringBuilder();
 		new_positions.append("ENEMY");
 		StringBuilder killed_enemies = new StringBuilder();
-		killed_enemies.append("die player ");
+		killed_enemies.append("die player enemy");
 		ArrayList<Player> playersKilled = new ArrayList<Player>();
 		ArrayList<Enemy> enemiesKilled = new ArrayList<Enemy>();
 
