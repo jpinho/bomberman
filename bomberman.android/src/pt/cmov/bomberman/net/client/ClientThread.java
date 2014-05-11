@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import pt.cmov.bomberman.net.server.RemotePlayer;
-import pt.cmov.bomberman.net.server.Server;
 import android.util.Log;
 
 public class ClientThread implements Runnable {
@@ -37,11 +35,11 @@ public class ClientThread implements Runnable {
 			while ((line = in.readLine()) != null) {
 				Client.getInstance().parse_msg(line.split(" "));
 			}
+			socket.close();
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
 	}
 }

@@ -1,6 +1,5 @@
 package pt.cmov.bomberman.model;
 
-import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.util.Bitmaps;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

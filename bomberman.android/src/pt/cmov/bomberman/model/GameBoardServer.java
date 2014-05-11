@@ -1,8 +1,6 @@
 package pt.cmov.bomberman.model;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.net.server.ServerThread;
@@ -11,7 +9,6 @@ import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
 import android.os.Handler;
-import android.util.Log;
 
 /**
  * A GameBoardServer controls everything that happens in a game. Anyone wanting

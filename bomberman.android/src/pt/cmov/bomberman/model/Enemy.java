@@ -3,7 +3,6 @@ package pt.cmov.bomberman.model;
 import java.util.List;
 
 import pt.cmov.bomberman.R;
-import pt.cmov.bomberman.util.Misc;
 import pt.cmov.bomberman.util.Tuple;
 
 public class Enemy extends GameObject {
