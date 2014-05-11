@@ -261,7 +261,7 @@ public class GameBoardServer extends GameBoard {
 				Player killer;
 				if (board[new_pos.x][new_pos.y] != null && (killer = board[new_pos.x][new_pos.y].isLethal()) != null) {
 					enemiesKilled.add(e);
-					killed_enemies.append(" ").append(killer.getPlayer_number()).append(" ").append(e.getX()).append(" ").append(e.getY());
+					killed_enemies.append(" ").append(e.getX()).append(" ").append(e.getY());
 					killer.incrementScore(GameLevel.getInstance().getRobot_score());
 					if (killer != player)
 						Server.getInstance().updatePlayerScore(killer.getPlayer_number(), GameLevel.getInstance().getRobot_score());

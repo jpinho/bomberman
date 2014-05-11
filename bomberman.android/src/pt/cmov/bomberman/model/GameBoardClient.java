@@ -135,4 +135,10 @@ public class GameBoardClient extends GameBoard {
 			}
 		}
 	}
+	
+	public void killEnemy(int x, int y) {
+		synchronized (board) {
+			removeEnemy((Enemy) board[x][y]);
+		}
+	}
 }

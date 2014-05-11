@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 
 import pt.cmov.bomberman.model.GameBoardClient;
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.model.Player;
 import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.util.LevelFileParser;
 
@@ -41,9 +42,14 @@ public class Client {
 		} else if (tokens[0].equalsIgnoreCase("clear")) {
 			((GameBoardClient) GameLevel.getInstance().getBoard()).bombExplosionEnd(tokens);
 		} else if (tokens[0].equalsIgnoreCase("die")) {
-			killPlayers(tokens);
+			if (tokens[2].equalsIgnoreCase("enemy"))
+				killEnemies(tokens);
+			else
+				killPlayers(tokens);
 		} else if (tokens[0].equalsIgnoreCase("score")) {
-			GameLevel.getInstance().getBoard().getPlayer().incrementScore(Integer.parseInt(tokens[1]));
+			Player p = GameLevel.getInstance().getBoard().getPlayer();
+			if (p != null)
+				p.incrementScore(Integer.parseInt(tokens[1]));
 			GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
 		}
 		// TODO add other messages
@@ -72,4 +78,11 @@ public class Client {
 			GameLevel.getInstance().getBoard().kill(pid, tokens[1]);
 		}
 	}
+	
+	private void killEnemies(String[] tokens) {
+		for (int i = 3; i < tokens.length; i += 2) {
+			((GameBoardClient) GameLevel.getInstance().getBoard()).killEnemy(Integer.parseInt(tokens[i]), Integer.parseInt(tokens[i+1]));
+		}
+	}
 }
+
