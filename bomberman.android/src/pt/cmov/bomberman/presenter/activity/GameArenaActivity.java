@@ -184,6 +184,10 @@ public class GameArenaActivity extends Activity
 			}
 		});
 	}
+	
+	public MainGamePanel getGameView() {
+		return gameView;
+	}
 
 	private void setupSounds() {
         try {

@@ -23,6 +23,12 @@ public class GameLevel {
 	private GameLevel() {
 
 	}
+	
+	public int getPlayerScore() {
+		if (board.getPlayer() != null)
+			return board.getPlayer().getScore();
+		return -1;
+	}
 
 	public void setBoard(GameBoard board) {
 		this.board = board;

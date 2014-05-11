@@ -37,8 +37,8 @@ public abstract class GameObject {
 	/* Called when an explosion hits this object
 	 * Returns true if the object must be destroyed; false otherwise
 	 */
-	public boolean notifyExplosion(Player responsible) {
-		 return false;
+	public int notifyExplosion(Player responsible) {
+		 return -1;
 	}
 	
 	public Player isLethal() {
@@ -52,5 +52,9 @@ public abstract class GameObject {
 	@Override
 	public String toString() {
 		return "-";
+	}
+	
+	public int getScoreIncr() {
+		return 0;
 	}
 }

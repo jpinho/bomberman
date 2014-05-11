@@ -159,7 +159,6 @@ public class GameBoard {
 	
 	public void kill(int player, String killer) {
 		synchronized (board) {
-			Log.d("ClientHost", "player to kill = " + player + "; my player = " + this.player.getPlayer_number());
 			if (this.player != null && player == this.player.getPlayer_number()) {
 				die(killer);
 				return;
@@ -316,5 +315,9 @@ public class GameBoard {
 			}
 			Server.getInstance().addNewClient(p);
 		}
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 }

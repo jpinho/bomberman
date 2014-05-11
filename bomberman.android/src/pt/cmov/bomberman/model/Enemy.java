@@ -85,9 +85,15 @@ public class Enemy extends GameObject {
 	}
 	
 	@Override 
-	public boolean notifyExplosion(Player responsible) {
+	public int notifyExplosion(Player responsible) {
 		GameLevel.getInstance().getBoard().removeEnemy(this);
+		
 		// TODO notify others
-		return true;
+		return GameLevel.getInstance().getRobot_score();
+	}
+	
+	@Override
+	public int getScoreIncr() {
+		return GameLevel.getInstance().getRobot_score();
 	}
 }

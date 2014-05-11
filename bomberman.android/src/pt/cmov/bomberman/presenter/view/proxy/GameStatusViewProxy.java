@@ -54,6 +54,9 @@ public class GameStatusViewProxy {
 					initialized = true;
 					init(gameState);
 				}
+				int newScore = gameState.getPlayerScore();
+				if (newScore != -1)
+					txtPlayerScore.setText(Integer.toString(newScore));
 			}
 		});
 	}

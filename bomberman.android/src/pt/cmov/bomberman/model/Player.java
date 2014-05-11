@@ -12,6 +12,8 @@ public class Player extends GameObject {
 	private int x;
 	private int y;
 	
+	private int score;
+	
 	/* This pair of values stores the direction of the last movement performed.
 	 * It is used to determine where to place a bomb.
 	 */
@@ -34,8 +36,14 @@ public class Player extends GameObject {
 		this.x = x;
 		this.y = y;
 		plantedBomb = false;
-		
+		score = 0;		
 	}
+	
+	public synchronized void incrementScore(int amount) {
+		score += amount;
+	}
+	
+	public synchronized int getScore() { return score; }
 	
 	@Override
 	public boolean isSolid() {
@@ -117,9 +125,14 @@ public class Player extends GameObject {
 	}
 	
 	@Override 
-	public boolean notifyExplosion(Player responsible) {
+	public int notifyExplosion(Player responsible) {
 		GameLevel.getInstance().getBoard().kill(getPlayer_number(), "Player " + responsible.getPlayer_number()); // TODO Use player name instead
 		Server.getInstance().broadcastPlayersKilled("die Player" + responsible.getPlayer_number() + " " + getPlayer_number() + "\n");
-		return true;
+		return GameLevel.getInstance().getOpponent_score();
+	}
+	
+	@Override
+	public int getScoreIncr() {
+		return GameLevel.getInstance().getOpponent_score();
 	}
 }

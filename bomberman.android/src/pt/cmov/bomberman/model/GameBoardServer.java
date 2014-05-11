@@ -104,6 +104,13 @@ public class GameBoardServer extends GameBoard {
 					} else {
 						kill(p);
 					}
+					if (killer != p) {
+						killer.incrementScore(GameLevel.getInstance().getOpponent_score());
+						if (killer != player)
+							; // TODO Send new score to killer
+						else
+							GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
+					}
 					Server.getInstance().broadcastPlayersKilled("die Player" + killer.getPlayer_number() + " " + p.getPlayer_number() + "\n");
 				} else {
 					board[new_x][new_y] = p;
@@ -160,10 +167,19 @@ public class GameBoardServer extends GameBoard {
 	private ArrayList<Tuple<Integer, Integer>> propagateFire(Bomb bomb, int x, int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
+		int scoreUpdate = 0;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
-			if (board[x][y] == null || (hit = board[x][y].notifyExplosion(bomb.getAuthor()))) {
+			if (board[x][y] == null || (hit = ((scoreUpdate = board[x][y].notifyExplosion(bomb.getAuthor())) > -1))) {
 				board[x][y] = new BombFire(bomb.getAuthor());
 				positions.add(new Tuple<Integer, Integer>(x, y));
+				if (hit) {
+					bomb.getAuthor().incrementScore(scoreUpdate);
+					if (bomb.getAuthor() != player) {
+						// TODO Send new score to killer
+					} else {
+						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
+					}
+				}
 			}
 			else
 				hit = true;
@@ -249,6 +265,11 @@ public class GameBoardServer extends GameBoard {
 				if (board[new_pos.x][new_pos.y] != null && (killer = board[new_pos.x][new_pos.y].isLethal()) != null) {
 					enemiesKilled.add(e);
 					killed_enemies.append(" ").append(killer.getPlayer_number()).append(" ").append(e.getX()).append(" ").append(e.getY());
+					killer.incrementScore(GameLevel.getInstance().getRobot_score());
+					if (killer != player)
+						; // TODO Notify killer about new score
+					else
+						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
 				}
 				else {
 					board[new_pos.x][new_pos.y] = e;

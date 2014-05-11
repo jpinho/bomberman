@@ -54,6 +54,10 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		this.gameStateChangeListener = listener;
 	}
 	
+	public OnGameStateChange getGameStateChangeListener() {
+		return gameStateChangeListener;
+	}
+
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) { }
 	
