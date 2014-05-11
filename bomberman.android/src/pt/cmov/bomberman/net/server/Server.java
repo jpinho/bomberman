@@ -62,6 +62,17 @@ public class Server {
 		broadcastMsg(builder.toString());
 	}
 	
+	public void updatePlayerScore(int player, int increment) {
+		RemotePlayer playerObj = null;
+		
+		for (RemotePlayer p : players)
+			if (p.getPlayer_id() == player)
+				playerObj = p;
+		
+		if (playerObj != null)
+			playerObj.sendMsg("score " + increment + "\n");
+	}
+	
 	public void broadcastClearExplosion(String positions) {
 		broadcastMsg(positions);
 	}

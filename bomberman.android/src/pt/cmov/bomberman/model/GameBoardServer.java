@@ -104,7 +104,7 @@ public class GameBoardServer extends GameBoard {
 					if (killer != p) {
 						killer.incrementScore(GameLevel.getInstance().getOpponent_score());
 						if (killer != player)
-							; // TODO Send new score to killer
+							Server.getInstance().updatePlayerScore(killer.getPlayer_number(), GameLevel.getInstance().getOpponent_score());
 						else
 							GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
 					}
@@ -172,7 +172,7 @@ public class GameBoardServer extends GameBoard {
 				if (hit) {
 					bomb.getAuthor().incrementScore(scoreUpdate);
 					if (bomb.getAuthor() != player) {
-						// TODO Send new score to killer
+						Server.getInstance().updatePlayerScore(bomb.getAuthor().getPlayer_number(), scoreUpdate);
 					} else {
 						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
 					}
@@ -264,7 +264,7 @@ public class GameBoardServer extends GameBoard {
 					killed_enemies.append(" ").append(killer.getPlayer_number()).append(" ").append(e.getX()).append(" ").append(e.getY());
 					killer.incrementScore(GameLevel.getInstance().getRobot_score());
 					if (killer != player)
-						; // TODO Notify killer about new score
+						Server.getInstance().updatePlayerScore(killer.getPlayer_number(), GameLevel.getInstance().getRobot_score());
 					else
 						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
 				}
