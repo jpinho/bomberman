@@ -70,7 +70,7 @@ public class LevelFileParser {
 				level.setLevel_name(line.substring(3, line.length()));
 			}
 			else if (line.matches("GD.*")) {
-				level.setDuration(Integer.parseInt(line.substring(3, line.length())));
+				level.setTimeLeft(Integer.parseInt(line.substring(3, line.length())));
 			}
 			else if (line.matches("ET.*")) {
 				level.setExplosion_timeout(Integer.parseInt(line.substring(3, line.length())));

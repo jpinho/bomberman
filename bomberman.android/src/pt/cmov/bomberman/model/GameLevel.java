@@ -10,7 +10,7 @@ public class GameLevel {
 	private static GameLevel INSTANCE = new GameLevel();
 	
 	private GameBoard board;
-	private int duration;
+	private int timeLeft;
 	private String player_name;
 	private String level_name;
 	private int explosion_timeout;
@@ -28,8 +28,8 @@ public class GameLevel {
 		this.board = board;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
+	public synchronized void setTimeLeft(int duration) {
+		this.timeLeft = duration;
 	}
 
 	public void setLevel_name(String level_name) {
@@ -65,8 +65,8 @@ public class GameLevel {
 			board.draw(canvas);
 	}
 
-	public int getDuration() {
-		return duration;
+	public synchronized int getTimeLeft() {
+		return timeLeft;
 	}
 
 	public String getLevel_name() {

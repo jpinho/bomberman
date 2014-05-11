@@ -85,6 +85,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		/* Now that the screen arrangement has been decided, it is safe to start drawing. */
 		getThread().setRunning(true);
 		getThread().start();
+		gameStateChangeListener.onStateChange(GameLevel.getInstance());
 	}
 
 	@Override

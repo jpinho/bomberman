@@ -7,12 +7,11 @@ import pt.cmov.bomberman.net.server.RemotePlayer;
 import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.util.Bitmaps;
-import pt.cmov.bomberman.util.Tuple;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.os.Handler;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -146,13 +145,13 @@ public class GameBoard {
 	}
 	
 	/* Some player died */
-	protected void kill(Player player) {
+	public void kill(Player player) {
 		board[player.getX()][player.getY()] = null;
 		players.remove(player);
 	}
 	
 	/* This player died */
-	protected void die(String killer) {
+	public void die(String killer) {
 		kill(player);
 		player = null;
 		GameArenaActivity.getInstance().notifyDied(killer);
@@ -160,6 +159,7 @@ public class GameBoard {
 	
 	public void kill(int player, String killer) {
 		synchronized (board) {
+			Log.d("ClientHost", "player to kill = " + player + "; my player = " + this.player.getPlayer_number());
 			if (this.player != null && player == this.player.getPlayer_number()) {
 				die(killer);
 				return;
@@ -290,6 +290,7 @@ public class GameBoard {
 	public void addNewPlayer(RemotePlayer p) {
 		StringBuilder msg = new StringBuilder();
 		msg.append("board ");
+		msg.append("GD=").append(GameLevel.getInstance().getTimeLeft()).append("N");
 		msg.append("ET=").append(GameLevel.getInstance().getExplosion_timeout()).append("N");
 		msg.append("ED=").append(GameLevel.getInstance().getExplosion_duration()).append("N");
 		msg.append("ER=").append(GameLevel.getInstance().getExplosion_range()).append("N");

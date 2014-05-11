@@ -2,6 +2,7 @@ package pt.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.util.Bitmaps;
 
 public class Player extends GameObject {
@@ -118,7 +119,7 @@ public class Player extends GameObject {
 	@Override 
 	public boolean notifyExplosion(Player responsible) {
 		GameLevel.getInstance().getBoard().kill(getPlayer_number(), "Player " + responsible.getPlayer_number()); // TODO Use player name instead
-		// TODO notify others
+		Server.getInstance().broadcastPlayersKilled("die Player" + responsible.getPlayer_number() + " " + getPlayer_number() + "\n");
 		return true;
 	}
 }

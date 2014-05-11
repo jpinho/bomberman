@@ -2,9 +2,9 @@ package pt.cmov.bomberman.presenter.view.proxy;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
-import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
+import android.os.CountDownTimer;
 
 public class GameStatusViewProxy {
 
@@ -13,47 +13,48 @@ public class GameStatusViewProxy {
 	private final TextView txtPlayerScore;
 	private final TextView txtGameTimeLeft;
 	private final TextView txtNumberOfPlayers;
+	
 	private boolean initialized;
 
 	public GameStatusViewProxy(View gameStatusView) {
 		this.gameStatusView = gameStatusView;
-		initialized = false;
 
 		txtPlayerName = (TextView) this.gameStatusView.findViewById(R.id.txtPlayerName);
 		txtPlayerScore = (TextView) this.gameStatusView.findViewById(R.id.txtScore);
 		txtGameTimeLeft = (TextView) this.gameStatusView.findViewById(R.id.txtTime);
 		txtNumberOfPlayers = (TextView) this.gameStatusView.findViewById(R.id.txtNumPlayers);
+		
+		initialized = false;
 	}
 
 	private void init(final GameLevel gameState) {
-		initialized = true;
-		
+		txtPlayerName.setText(gameState.getPlayer_name());
+		txtPlayerScore.setText("000"); // TODO score
+		txtNumberOfPlayers.setText(String.format("%3d", 1)); // TODO count players
+		txtGameTimeLeft.setText(Integer.toString(gameState.getTimeLeft()));
+		(new CountDownTimer(1000 * gameState.getTimeLeft(), 1000) {
+			public void onTick(final long millisUntilFinished) {
+				int left;
+				txtGameTimeLeft.setText(Integer.toString(left = ((int) millisUntilFinished / 1000)));
+				gameState.setTimeLeft(left);
+			}
+			
+			public void onFinish() {
+				txtGameTimeLeft.setText("000");
+				// TODO Gameover
+			}
+		}).start();		
+	}
+	
+	public void update(final GameLevel gameState) {
 		gameStatusView.getHandler().post(new Runnable() {
 			@Override
 			public void run() {
-				
-				txtPlayerName.setText(gameState.getPlayer_name());
-				txtPlayerScore.setText("000");
-				txtGameTimeLeft.setText("100");
-				txtNumberOfPlayers.setText(String.format("%3d", 1));
-				
-				(new CountDownTimer(1000 * 100, 1000) {
-					public void onTick(final long millisUntilFinished) {
-						txtGameTimeLeft.setText("" + ((int) millisUntilFinished / 1000));
-					}
-
-					public void onFinish() {
-						txtGameTimeLeft.setText("000");
-					}
-				}).start();
+				if (!initialized) {
+					initialized = true;
+					init(gameState);
+				}
 			}
 		});
-	}
-
-	public void update(GameLevel gameState) {
-		if (!initialized)
-			init(gameState);
-
-		// TODO
 	}
 }

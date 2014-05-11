@@ -1,11 +1,8 @@
 package pt.cmov.bomberman.model;
 
-import java.util.ArrayList;
-
-import android.os.Handler;
 import pt.cmov.bomberman.net.client.Client;
 import pt.cmov.bomberman.presenter.view.JoystickView;
-import pt.cmov.bomberman.util.Tuple;
+import android.util.Log;
 
 
 /** 
@@ -62,13 +59,19 @@ public class GameBoardClient extends GameBoard {
 	
 	@Override
 	public boolean actionMovePlayer(int dir) {
-		Client.getInstance().sendMoveRequest(player.getPlayer_number(), dir);
+		synchronized (board) {
+			if (player != null)
+				Client.getInstance().sendMoveRequest(player.getPlayer_number(), dir);
+		}
 		return false;
 	}
 	
 	@Override
 	public boolean actionPlaceBomb() {
-		Client.getInstance().sendBombRequest(player.getPlayer_number());
+		synchronized (board) {
+			if (player != null)
+				Client.getInstance().sendBombRequest(player.getPlayer_number());
+		}
 		return false;
 	}
 	
@@ -85,6 +88,7 @@ public class GameBoardClient extends GameBoard {
 	@Override
 	public synchronized void setPlayerId(int id) { 
 		player = findPlayer(id);
+		Log.d("ClientHost", "set player id: " + player.getPlayer_number());
 	}
 	
 	@Override

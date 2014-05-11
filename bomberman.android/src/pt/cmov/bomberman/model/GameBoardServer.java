@@ -56,7 +56,6 @@ public class GameBoardServer extends GameBoard {
 				board[player.getX()][player.getY()] = player;
 			}
 			current_players++;
-			// TODO Notify others that new player arrived
 		}
 		return player;
 	}
@@ -99,8 +98,13 @@ public class GameBoardServer extends GameBoard {
 				board[p.getX()][p.getY()] = null;
 				Player killer;
 				if (board[new_x][new_y] != null && (killer = board[new_x][new_y].isLethal()) != null) {
-					die("Player " + killer.getPlayer_number());
-					// TODO Notify others
+					// TODO Merge these
+					if (p == player) {
+						die("Player" + killer.getPlayer_number());						
+					} else {
+						kill(p);
+					}
+					Server.getInstance().broadcastPlayersKilled("die Player" + killer.getPlayer_number() + " " + p.getPlayer_number() + "\n");
 				} else {
 					board[new_x][new_y] = p;
 					p.setPosition(new_x, new_y, v_x, v_y);
@@ -157,9 +161,7 @@ public class GameBoardServer extends GameBoard {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
-			if (board[x][y] == null || board[x][y].notifyExplosion(bomb.getAuthor())) {
-				if (board[x][y] != null)
-					hit = true;
+			if (board[x][y] == null || (hit = board[x][y].notifyExplosion(bomb.getAuthor()))) {
 				board[x][y] = new BombFire(bomb.getAuthor());
 				positions.add(new Tuple<Integer, Integer>(x, y));
 			}
