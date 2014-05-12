@@ -3,10 +3,20 @@ package pt.cmov.bomberman.presenter.activity;
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.util.DebouncedOnClickListener;
+import pt.cmov.bomberman.net.wifidirect.SimWifiP2pBroadcastReceiver;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.Channel;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.GroupInfoListener;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.PeerListListener;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Build;
@@ -19,8 +29,22 @@ import android.widget.Button;
 import android.widget.EditText;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class GameStartActivity extends Activity {
+public class GameStartActivity extends Activity implements 
+PeerListListener, GroupInfoListener {
 
+	
+    private SimWifiP2pManager mManager = null;
+    private Channel mChannel = null;
+	
+	public SimWifiP2pManager getManager() {
+		return mManager;
+	}
+	
+	public Channel getChannel() {
+		return mChannel;
+	}
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,6 +71,18 @@ public class GameStartActivity extends Activity {
 				btnPlayOnline_DebouncedClick(v);
 			}
 		});
+		
+		// initialize the WDSim API
+		SimWifiP2pSocketManager.Init(getApplicationContext());
+		
+		// register broadcast receiver
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
+		SimWifiP2pBroadcastReceiver receiver = new SimWifiP2pBroadcastReceiver(this);
+		registerReceiver(receiver, filter);
 	}
 
 	public void btnHostGame_DebouncedClick(View v) {
@@ -109,5 +145,18 @@ public class GameStartActivity extends Activity {
 		btn.setEnabled(enable);
 		btn.setClickable(enable);
 		btn.setVisibility(enable ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
+			SimWifiP2pInfo groupInfo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPeersAvailable(SimWifiP2pDeviceList peers) {
+		// TODO Auto-generated method stub
+		
 	}
 }
