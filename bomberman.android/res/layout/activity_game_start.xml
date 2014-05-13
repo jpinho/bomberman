@@ -66,6 +66,14 @@
                 android:text="@string/serviceButton"
                 android:onClick="wifiOnButton" />
 
+                
+            <Button
+                android:id="@+id/idWifiOffButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancelButton"
+                android:onClick="wifiOffButton" />
+
             <Button
 
                 android:id="@+id/btnPlayOnline"
@@ -117,5 +125,14 @@
 
         tools:ignore="ContentDescription" />
 
+    <Button
+        android:id="@+id/inGroup"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ivSplashImage"
+        android:layout_alignParentTop="true"
+        android:text="In Group"
+        android:onClick="inGroupList" />
 
 </RelativeLayout>
