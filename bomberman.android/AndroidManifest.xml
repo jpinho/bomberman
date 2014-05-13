@@ -36,5 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService" />
     </application>
 </manifest>

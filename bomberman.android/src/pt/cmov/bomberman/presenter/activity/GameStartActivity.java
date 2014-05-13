@@ -11,16 +11,22 @@ import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.Channel;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.GroupInfoListener;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.PeerListListener;
+import pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Messenger;
 import android.text.InputType;
 import android.view.View;
 import android.view.Window;
@@ -32,9 +38,10 @@ import android.widget.EditText;
 public class GameStartActivity extends Activity implements 
 PeerListListener, GroupInfoListener {
 
-	
+	private boolean mBound = false;
     private SimWifiP2pManager mManager = null;
     private Channel mChannel = null;
+    private Messenger mService = null;
 	
 	public SimWifiP2pManager getManager() {
 		return mManager;
@@ -140,6 +147,28 @@ PeerListListener, GroupInfoListener {
 		builder.setCancelable(false);
 		builder.show();
 	}
+	
+	/*
+	 * Listeners associated to buttons
+	 */
+
+	public void wifiOnButton(View v) {
+   
+        	Intent intent = new Intent(this.getBaseContext(), SimWifiP2pService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+			mBound = true;
+
+			// spawn the chat server background task
+			//new IncommingCommTask().execute();
+
+			guiUpdateDisconnectedState();
+        }
+	
+
+	private void guiUpdateDisconnectedState() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private void enableButton(Button btn, boolean enable) {
 		btn.setEnabled(enable);
@@ -147,6 +176,28 @@ PeerListListener, GroupInfoListener {
 		btn.setVisibility(enable ? View.VISIBLE : View.GONE);
 	}
 
+	
+	private ServiceConnection mConnection = new ServiceConnection() {
+		// callbacks for service binding, passed to bindService()
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mService = new Messenger(service);
+			mManager = new SimWifiP2pManager(mService);
+			mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
+			mBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mService = null;
+			mManager = null;
+			mChannel = null;
+			mBound = false;
+		}
+	};
+	
+	
 	@Override
 	public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
 			SimWifiP2pInfo groupInfo) {

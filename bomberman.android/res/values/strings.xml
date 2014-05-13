@@ -15,5 +15,12 @@
     <string name="player">Player</string>
     <string name="new_game">Host Game</string>
     <string name="play_online">Play Online</string>
-
+    <string name="sendButton">Send</string>
+    <string name="connectButton">Connect</string>
+    <string name="disconnectButton">Disconnect</string>
+    <string name="serviceButton">WiFi On</string>
+    <string name="cancelButton">WiFi Off</string>
+    <string name="inRangeButton">In Range</string>
+    <string name="inGroupButton">In Network</string>
+	<string name="port">10001</string>
 </resources>
