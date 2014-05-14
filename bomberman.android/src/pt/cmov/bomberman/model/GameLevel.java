@@ -13,10 +13,10 @@ public class GameLevel {
 	private int timeLeft;
 	private String player_name;
 	private String level_name;
-	private int explosion_timeout;
+	private float explosion_timeout;
 	private int explosion_range;
 	private int explosion_duration;
-	private int enemy_speed;
+	private float enemy_speed;
 	private int robot_score;
 	private int opponent_score;
 
@@ -42,7 +42,7 @@ public class GameLevel {
 		this.level_name = level_name;
 	}
 
-	public void setExplosion_timeout(int explosion_timeout) {
+	public void setExplosion_timeout(float explosion_timeout) {
 		this.explosion_timeout = explosion_timeout;
 	}
 
@@ -54,7 +54,7 @@ public class GameLevel {
 		this.explosion_duration = explosion_duration;
 	}
 
-	public void setEnemy_speed(int enemy_speed) {
+	public void setEnemy_speed(float enemy_speed) {
 		this.enemy_speed = enemy_speed;
 	}
 
@@ -79,7 +79,7 @@ public class GameLevel {
 		return level_name;
 	}
 
-	public int getExplosion_timeout() {
+	public float getExplosion_timeout() {
 		return explosion_timeout;
 	}
 
@@ -91,7 +91,7 @@ public class GameLevel {
 		return explosion_duration;
 	}
 
-	public int getEnemy_speed() {
+	public float getEnemy_speed() {
 		return enemy_speed;
 	}
 

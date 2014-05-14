@@ -25,7 +25,7 @@ public class GameBoardServer extends GameBoard {
 	/* Server is always player 1 */
 	private int current_players;
 
-	private int enemies_timer_interval;
+	private long enemies_timer_interval;
 
 	public GameBoardServer(int rows, int cols, int max_players) {
 		super(rows, cols, max_players);
@@ -39,7 +39,7 @@ public class GameBoardServer extends GameBoard {
 			public void run() {
 				moveEnemies();
 			}
-		}, enemies_timer_interval = 1000 / GameLevel.getInstance().getEnemy_speed());
+		}, enemies_timer_interval = (long) (1000 / GameLevel.getInstance().getEnemy_speed()));
 		player = newPlayer(); // Activates player 1, the game owner
 		Thread server = new Thread(new ServerThread());
 		server.start();
@@ -223,7 +223,7 @@ public class GameBoardServer extends GameBoard {
 									bombExploded(b);
 								}
 							}
-						}, GameLevel.getInstance().getExplosion_timeout() * 1000);
+						}, (long) (GameLevel.getInstance().getExplosion_timeout() * 1000));
 					}
 				});
 				

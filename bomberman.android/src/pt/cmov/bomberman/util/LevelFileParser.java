@@ -73,7 +73,7 @@ public class LevelFileParser {
 				level.setTimeLeft(Integer.parseInt(line.substring(3, line.length())));
 			}
 			else if (line.matches("ET.*")) {
-				level.setExplosion_timeout(Integer.parseInt(line.substring(3, line.length())));
+				level.setExplosion_timeout(Float.parseFloat(line.substring(3, line.length())));
 			}
 			else if (line.matches("ER.*")) {
 				level.setExplosion_range(Integer.parseInt(line.substring(3, line.length())));
@@ -82,7 +82,7 @@ public class LevelFileParser {
 				level.setExplosion_duration(Integer.parseInt(line.substring(3, line.length())));
 			}
 			else if (line.matches("RS.*")) {
-				level.setEnemy_speed(Integer.parseInt(line.substring(3, line.length())));
+				level.setEnemy_speed(Float.parseFloat(line.substring(3, line.length())));
 			}
 			else if (line.matches("PR.*")) {
 				level.setRobot_score(Integer.parseInt(line.substring(3, line.length())));
