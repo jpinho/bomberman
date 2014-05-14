@@ -166,63 +166,86 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	private void queryPlayerName(final Intent intent, final EditText input,
 			final OnClickListener okClickListener) {
 		
+		if (intent.getExtras().getBoolean("isHost")) {
+			AlertDialog.Builder builderLevels = new AlertDialog.Builder(this);
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        builderLevels.setTitle("Select level:");
+	        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
+	        /* Levels 1-3, as asked in the course page */
+	        arrayAdapter.add("level1");
+	        arrayAdapter.add("level2");
+	        arrayAdapter.add("level3");
+	        /*
+	         Levels 4-8 are used for dev tests
+	        */
+	        /*
+	        arrayAdapter.add("level4");
+	        arrayAdapter.add("level5");
+	        arrayAdapter.add("level6");
+	        arrayAdapter.add("level7");
+	        arrayAdapter.add("level8");
+	        */
+	        builderLevels.setNegativeButton("Cancel",
+	                new DialogInterface.OnClickListener() {
+	
+	                    @Override
+	                    public void onClick(DialogInterface dialog, int which) {
+	                        dialog.dismiss();
+	                    }
+	                });
+	        builderLevels.setAdapter(arrayAdapter,
+	                new DialogInterface.OnClickListener() {
+	
+	                    @Override
+	                    public void onClick(DialogInterface dialog, int which) {
+	                        
+	                		intent.putExtra("levelChosen", arrayAdapter.getItem(which));
+	
+	                        builder.setTitle("Player Name");
+	                        
+	                        input.setInputType(InputType.TYPE_CLASS_TEXT);
+	                        builder.setView(input);
+	                        
+	                        // Set up the buttons
+	                        builder.setPositiveButton("OK", okClickListener);
+	                        
+	                        builder.setNegativeButton("Cancel",
+	                        		new DialogInterface.OnClickListener() {
+	                        	@Override
+	                        	public void onClick(DialogInterface dialog, int which) {
+	                        		dialog.cancel();
+	                        	}
+	                        });
+	                        
+	                        builder.setCancelable(false);
+	                        builder.show();
+	                    }
+	                });
+	        builderLevels.show();
+		}
 		
-		AlertDialog.Builder builderLevels = new AlertDialog.Builder(this);
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builderLevels.setTitle("Select level:");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
-        /* Levels 1-3, as asked in the course page */
-        arrayAdapter.add("level1");
-        arrayAdapter.add("level2");
-        arrayAdapter.add("level3");
-        /*
-         Levels 4-8 are used for dev tests
-        */
-        /*
-        arrayAdapter.add("level4");
-        arrayAdapter.add("level5");
-        arrayAdapter.add("level6");
-        arrayAdapter.add("level7");
-        arrayAdapter.add("level8");
-        */
-        builderLevels.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        builderLevels.setAdapter(arrayAdapter,
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        
-                		intent.putExtra("levelChosen", arrayAdapter.getItem(which));
-
-                        builder.setTitle("Player Name");
-                        
-                        input.setInputType(InputType.TYPE_CLASS_TEXT);
-                        builder.setView(input);
-                        
-                        // Set up the buttons
-                        builder.setPositiveButton("OK", okClickListener);
-                        
-                        builder.setNegativeButton("Cancel",
-                        		new DialogInterface.OnClickListener() {
-                        	@Override
-                        	public void onClick(DialogInterface dialog, int which) {
-                        		dialog.cancel();
-                        	}
-                        });
-                        
-                        builder.setCancelable(false);
-                        builder.show();
-                    }
-                });
-        
-        builderLevels.show();
+		else {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			
+            builder.setTitle("Player Name");
+            
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            
+            // Set up the buttons
+            builder.setPositiveButton("OK", okClickListener);
+            
+            builder.setNegativeButton("Cancel",
+            		new DialogInterface.OnClickListener() {
+            	@Override
+            	public void onClick(DialogInterface dialog, int which) {
+            		dialog.cancel();
+            	}
+            });
+            
+            builder.setCancelable(false);
+            builder.show();
+		}
 		
 	}
 
