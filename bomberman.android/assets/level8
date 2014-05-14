@@ -1,0 +1,25 @@
+LN=Level 4
+GD=300
+ET=15
+ED=15
+ER=5
+RS=5
+PR=5
+PO=10
+MP=3
+MAP:15,10
+-E------1-
+-R-R-R-R-R
+-E--W-----
+-R-R-R-R-R
+-----E---W
+-R-R-R-R-R
+-E---E-2--
+-R-R-R-R-R
+---W-----W
+-R-R-R-R-R
+----E-----
+3R-R-RER-R
+----------
+-R-R-R-R-R
+---W---E--

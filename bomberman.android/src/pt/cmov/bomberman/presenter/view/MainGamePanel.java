@@ -21,6 +21,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 	private String ip;
 	private int port;
 	private boolean isServer;
+	private String level;
 	
 	private final MainThread thread;
 	private OnGameStateChange gameStateChangeListener;
@@ -38,8 +39,9 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		setFocusable(true);
 	}
 	
-	public void initAsServer() {
+	public void initAsServer(String level) {
 		isServer = true;
+		this.level = level;
 	}
 	
 	public void initAsClient(String ip, int port) {
@@ -75,7 +77,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		LevelFileParser.setDimensions(getWidth(), getHeight());
 		LevelFileParser.setDoneCallback(this);
 		if (isServer) {
-			LevelFileParser.loadLevelFromFile(getResources(), "level1");
+			LevelFileParser.loadLevelFromFile(getResources(), level);
 		} else {
 			// Client grabs current game state from server
 			Thread client = new Thread(new ClientThread(ip, port));

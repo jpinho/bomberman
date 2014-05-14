@@ -58,7 +58,7 @@ public class GameArenaActivity extends Activity
 	    boolean isServer = extras.getBoolean("isHost");
         
 	    if (isServer) {
-	    	gameView.initAsServer();
+	    	gameView.initAsServer(extras.getString("levelChosen"));
 	    }
 	    else {
 	    	String ip = extras.getString("BombermanServerIP");
