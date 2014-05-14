@@ -270,6 +270,8 @@ public class GameStartActivity extends Activity implements PeerListListener,
 				e.printStackTrace();
 			}
 			while (!Thread.currentThread().isInterrupted()) {
+				if (isCancelled())
+					break;
 				try {
 					SimWifiP2pSocket sock = mSrvSocket.accept();
 					if (mCliSocket != null && mCliSocket.isClosed()) {
@@ -306,7 +308,9 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	}
 
 	public void destroyTasks(View v) {
+		mComm.cancel(true);
 		mInComm.cancel(true);
+		mOutComm.cancel(true);
 	}
 
 	public class OutgoingCommTask extends AsyncTask<String, Void, String> {
