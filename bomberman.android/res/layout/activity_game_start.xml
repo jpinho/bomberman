@@ -135,4 +135,34 @@
         android:text="In Group"
         android:onClick="inGroupList" />
 
+    <EditText
+        android:id="@+id/inputIp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="23dp"
+        android:layout_toRightOf="@+id/inGroup"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/connectButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/ivSplashImage"
+        android:layout_below="@+id/inputIp"
+        android:text="@string/connectButton"
+        android:onClick="connectButton" />
+
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/inGroup"
+        android:layout_toLeftOf="@+id/inputIp"
+        android:text="@string/sendButton" 
+        android:onClick="sendButton"/>
+
 </RelativeLayout>
