@@ -113,6 +113,16 @@ public class GameStartActivity extends Activity implements PeerListListener,
 				this);
 		registerReceiver(receiver, filter);
 		mTextInput = (TextView) findViewById(R.id.inputIp);
+		Intent intent = new Intent(this.getBaseContext(),
+				SimWifiP2pService.class);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		mBound = true;
+		mInComm = new IncommingCommTask();
+		if (mInComm.getStatus() == AsyncTask.Status.PENDING) {
+			Log.d(TAG, "Pending!!!!!!!!!!!!!!!!");
+			mInComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+		}
 
 	}
 
@@ -178,18 +188,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	/*
 	 * Listeners associated to buttons
 	 */
-
-	public void wifiOnButton(View v) {
-
-		Intent intent = new Intent(this.getBaseContext(),
-				SimWifiP2pService.class);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-		mBound = true;
-
-		// spawn the chat server background task
-		mInComm = (IncommingCommTask) new IncommingCommTask()
-				.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-	}
 
 	public void wifiOffButton(View v) {
 
@@ -260,7 +258,9 @@ public class GameStartActivity extends Activity implements PeerListListener,
 
 		@Override
 		protected Void doInBackground(Void... params) {
-
+			if (isCancelled()) {
+				return null;
+			}
 			Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
 
 			try {
@@ -269,7 +269,7 @@ public class GameStartActivity extends Activity implements PeerListListener,
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			while (!Thread.currentThread().isInterrupted()) {
+			while (!isCancelled()) {
 				try {
 					SimWifiP2pSocket sock = mSrvSocket.accept();
 					if (mCliSocket != null && mCliSocket.isClosed()) {
@@ -299,20 +299,27 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		}
 	}
 
-	public void onDestroy() {
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 		mComm.cancel(true);
 		mInComm.cancel(true);
 		mOutComm.cancel(true);
 	}
 
 	public void destroyTasks(View v) {
+		// mComm.cancel(true);
 		mInComm.cancel(true);
+		// mOutComm.cancel(true);
 	}
 
 	public class OutgoingCommTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
+			if (isCancelled()) {
+				return null;
+			}
 			Log.d(TAG, "OutgoingCommTask connecting........");
 			try {
 				mCliSocket = new SimWifiP2pSocket(params[0],
@@ -343,6 +350,9 @@ public class GameStartActivity extends Activity implements PeerListListener,
 
 		@Override
 		protected Void doInBackground(SimWifiP2pSocket... params) {
+			if (isCancelled()) {
+				return null;
+			}
 			BufferedReader sockIn;
 			String st;
 
