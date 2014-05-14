@@ -93,8 +93,10 @@ public class GameBoardClient extends GameBoard {
 	
 	@Override
 	public void addPlayer(Player p) {
-		super.addPlayer(p);
-		board[p.getX()][p.getY()] = p;
+		synchronized (board) {
+			super.addPlayer(p);
+			board[p.getX()][p.getY()] = p;
+		}
 	}
 	
 	public void updateEnemiesPos(String[] serverTokens) {

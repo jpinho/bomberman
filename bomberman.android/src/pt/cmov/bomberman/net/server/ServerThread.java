@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.model.Player;
 import android.util.Log;
 
 public class ServerThread implements Runnable {
@@ -28,6 +29,8 @@ public class ServerThread implements Runnable {
 					Log.d("ServerHost", "Accepted new player, id = " + new_player_id);
 					CommunicationThread commThread = new CommunicationThread(clientSocket, new_player_id);
 					new Thread(commThread).start();
+					Player newPlayer = GameLevel.getInstance().getBoard().findPlayer(new_player_id);
+					Server.getInstance().broadcastPlayerJoined(new_player_id, newPlayer.getX(), newPlayer.getY());
 				} else {
 					/* Level is full */
 					Log.d("ServerHost", "Declined new request - no room for more players!");

@@ -77,6 +77,10 @@ public class Server {
 		broadcastMsg(positions);
 	}
 	
+	public void broadcastPlayerJoined(int newPlayer, int x, int y) {
+		broadcastMsg("join " + newPlayer + " " + x + " " + y + "\n");
+	}
+	
 	public void broadcastMsg(String msg) {
 		synchronized (players) {
 			for (RemotePlayer p : players)

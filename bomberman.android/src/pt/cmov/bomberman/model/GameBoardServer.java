@@ -318,7 +318,9 @@ public class GameBoardServer extends GameBoard {
 		for (Player player : players) {
 			int px = player.getX();
 			int py = player.getY();
-			if ((enemyX == px || enemyX == px-1 || enemyX == px+1) &&
+			// TODO refactor. This was a quick, dirty way to fix a bug
+			if (board[px][py] != null && board[px][py] instanceof Player &&
+				(enemyX == px || enemyX == px-1 || enemyX == px+1) &&
 				(enemyY == py || enemyY == py-1 || enemyY == py+1))
 				playersKilled.add(player);
 		}

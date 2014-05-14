@@ -11,6 +11,7 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class GameBoard {
@@ -55,6 +56,7 @@ public class GameBoard {
 	public Player findPlayer(int id) {
 		int i;
 		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
+		Log.d("LevelFileParser", "findPlayer(" + id + ") -> i == " + i + "; players.size() == " + players.size());
 		return i < players.size() ? players.get(i) : null;
 	}
 	

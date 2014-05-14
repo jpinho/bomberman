@@ -51,8 +51,9 @@ public class Client {
 			if (p != null)
 				p.incrementScore(Integer.parseInt(tokens[1]));
 			GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
+		} else if (tokens[0].equalsIgnoreCase("join")) {
+			GameLevel.getInstance().getBoard().addPlayer(new Player(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3])));
 		}
-		// TODO add other messages
 	}
 	
 	public void sendMoveRequest(int pid, int dir) {

@@ -140,6 +140,7 @@ public class LevelFileParser {
 	    		p = Character.getNumericValue(c);
 	    		Player player = new Player(p, row, y);
 				board.addPlayer(player);
+				Log.d("LevelFileParser", "Added player " + p + " at (" + row + "," + y + ")");
 	    	}
 	    	// These are not part of the map file, but can be sent by a server to a new client
 	    	else if (c == 'B') {
