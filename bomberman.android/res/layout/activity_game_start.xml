@@ -165,4 +165,13 @@
         android:text="@string/sendButton" 
         android:onClick="sendButton"/>
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ivSplashImage"
+        android:layout_toLeftOf="@+id/inputIp"
+        android:text="kill" 
+        android:onClick="destroyTasks"/>
+
 </RelativeLayout>
