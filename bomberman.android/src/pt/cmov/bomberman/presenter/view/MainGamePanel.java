@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -102,6 +103,8 @@ public class MainGamePanel extends SurfaceView implements
 		getThread().start();
 		gameStateChangeListener.onStateChange(GameLevel.getInstance());
 	}
+	
+	
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {

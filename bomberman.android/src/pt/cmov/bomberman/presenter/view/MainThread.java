@@ -1,8 +1,12 @@
 package pt.cmov.bomberman.presenter.view;
 
+import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -36,6 +40,9 @@ public class MainThread extends Thread {
 				synchronized (surfaceHolder) {
 					if (GameLevel.getInstance().isGameOver()) {
 						running = false;
+						canvas.drawColor(Color.BLACK);
+						Bitmap gameover = BitmapFactory.decodeResource(gamePanel.getResources(), R.drawable.gameover);
+						canvas.drawBitmap(gameover, 0, 0, null);
 					} else {
 						this.gamePanel.onDraw(canvas);
 					}
