@@ -1,6 +1,7 @@
 package pt.cmov.bomberman.model;
 
 import java.util.ArrayList;
+import java.util.Currency;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.net.server.RemotePlayer;
@@ -35,6 +36,8 @@ public class GameBoard {
 	/* Size of players array */
 	protected int max_players; 
 	
+	private volatile int players_killed;
+	
 	/* This player */
 	protected Player player; 
 	
@@ -51,6 +54,7 @@ public class GameBoard {
 		pavement = new Pavement();
 		nRows = rows;
 		nCols = cols;
+		players_killed = 0;
 	}
 
 	public Player findPlayer(int id) {
@@ -145,10 +149,16 @@ public class GameBoard {
 		return nRows;
 	}
 	
+	public void notifyNewKill() {
+		players_killed++;
+	}
+	
 	/* Some player died */
-	public void kill(Player player) {
+	public synchronized void kill(Player player) {
+		Log.d("LevelFileParser", "Killing player " + player);
 		board[player.getX()][player.getY()] = null;
 		players.remove(player);
+		Log.d("LevelFileParser", "players_killed = " + players_killed);
 	}
 	
 	/* This player died */
@@ -171,6 +181,13 @@ public class GameBoard {
 		}
 	}
 	
+	public synchronized void checkGameOver(int current_players) {
+		Log.d("LevelFileParser", "checkGameOver(): current_players = " + current_players + "; players_killed = " + players_killed);
+		if (players_killed == current_players)
+			GameLevel.getInstance().setGameOver();
+	}
+	
+	public void checkGameOver() { }
 	
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 *                   GRAPHICS STUFF

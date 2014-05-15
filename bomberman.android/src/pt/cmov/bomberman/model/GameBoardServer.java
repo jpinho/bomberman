@@ -59,6 +59,11 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	@Override
+	public void checkGameOver() { 
+		checkGameOver(current_players-1);		
+	}
+	
+	@Override
 	/** Called when a player wants to move. */
 	public boolean actionMovePlayer(Player p, int dir) {
 		int v_x, v_y;
@@ -103,6 +108,8 @@ public class GameBoardServer extends GameBoard {
 					} else {
 						kill(p);
 					}
+					notifyNewKill();
+					//checkGameOver(current_players-1);
 					if (killer != p) {
 						killer.incrementScore(GameLevel.getInstance()
 								.getOpponent_score());
@@ -213,6 +220,7 @@ public class GameBoardServer extends GameBoard {
 		positions.append("\n");
 		Server.getInstance().broadcastClearExplosion(positions.toString());
 		author.setPlantedBomb(false);
+		checkGameOver();
 	}
 
 	@Override
@@ -320,8 +328,11 @@ public class GameBoardServer extends GameBoard {
 			for (Player pKilled : playersKilled) {
 				if (pKilled == player)
 					playerDied = true;
-				else
+				else {
 					kill(pKilled);
+				}
+				notifyNewKill();
+				checkGameOver();
 				killMsg.append(" " + pKilled.getPlayer_number());
 			}
 			killMsg.append("\n");
@@ -350,7 +361,7 @@ public class GameBoardServer extends GameBoard {
 			int px = player.getX();
 			int py = player.getY();
 			// TODO refactor. This was a quick, dirty way to fix a bug
-			if (board[px][py] != null && board[px][py] instanceof Player
+			if (board[px][py] != null && board[px][py] instanceof Player && ((Player) board[px][py]) == player
 					&& (enemyX == px || enemyX == px - 1 || enemyX == px + 1)
 					&& (enemyY == py || enemyY == py - 1 || enemyY == py + 1))
 				playersKilled.add(player);

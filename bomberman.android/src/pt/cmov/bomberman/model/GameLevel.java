@@ -3,6 +3,7 @@ package pt.cmov.bomberman.model;
 import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.DONUT)
 public class GameLevel {
@@ -19,9 +20,20 @@ public class GameLevel {
 	private float enemy_speed;
 	private int robot_score;
 	private int opponent_score;
+	
+	private volatile boolean gameOver;
 
 	private GameLevel() {
-
+		gameOver = false;
+	}
+	
+	public synchronized void setGameOver() {
+		Log.d("LevelFileParser", "Game over!!!");
+		gameOver = true;
+	}
+	
+	public synchronized boolean isGameOver() {
+		return gameOver;
 	}
 	
 	public int getPlayerScore() {
@@ -36,6 +48,9 @@ public class GameLevel {
 
 	public synchronized void setTimeLeft(int duration) {
 		this.timeLeft = duration;
+		if (timeLeft == 0) {
+			setGameOver();
+		}
 	}
 
 	public void setLevel_name(String level_name) {

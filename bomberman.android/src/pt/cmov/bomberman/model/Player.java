@@ -127,6 +127,8 @@ public class Player extends GameObject {
 	@Override 
 	public int notifyExplosion(Player responsible) {
 		GameLevel.getInstance().getBoard().kill(getPlayer_number(), "Player " + responsible.getPlayer_number()); // TODO Use player name instead
+		GameLevel.getInstance().getBoard().notifyNewKill();
+		//GameLevel.getInstance().getBoard().checkGameOver();
 		Server.getInstance().broadcastPlayersKilled("die Player" + responsible.getPlayer_number() + " " + getPlayer_number() + "\n");
 		return GameLevel.getInstance().getOpponent_score();
 	}

@@ -1,5 +1,6 @@
 package pt.cmov.bomberman.presenter.view;
 
+import pt.cmov.bomberman.model.GameLevel;
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.util.Log;
@@ -33,7 +34,11 @@ public class MainThread extends Thread {
 				canvas = this.surfaceHolder.lockCanvas();
 			
 				synchronized (surfaceHolder) {
-					this.gamePanel.onDraw(canvas);
+					if (GameLevel.getInstance().isGameOver()) {
+						running = false;
+					} else {
+						this.gamePanel.onDraw(canvas);
+					}
 				}
 			} 
 			finally {
