@@ -1,9 +1,5 @@
 package pt.cmov.bomberman.presenter.activity;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -20,9 +16,7 @@ import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.Channel;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.GroupInfoListener;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.PeerListListener;
 import pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService;
-import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
-import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,7 +27,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -46,7 +39,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -58,13 +50,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	private Channel mChannel = null;
 	private Messenger mService = null;
 	private boolean mBound = false;
-	private SimWifiP2pSocketServer mSrvSocket = null;
-	private static ReceiveCommTask mComm = null;
-	private static OutgoingCommTask mOutComm = null;
-	private static IncommingCommTask mInComm = null;
-	private SimWifiP2pSocket mCliSocket = null;
-	private TextView mTextInput;
-	private TextView mTextOutput;
 	private boolean isGroupOwner;
 	private SimWifiP2pDeviceList devices;
 	private Set<String> inGroupDevices;
@@ -118,7 +103,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		SimWifiP2pBroadcastReceiver receiver = new SimWifiP2pBroadcastReceiver(
 				this);
 		registerReceiver(receiver, filter);
-		mTextInput = (TextView) findViewById(R.id.inputIp);
 		Intent intent = new Intent(this.getBaseContext(),
 				SimWifiP2pService.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -152,13 +136,19 @@ public class GameStartActivity extends Activity implements PeerListListener,
 
 		//
 		// enableButton((Button) v, true);
+		if (mBound) {
+			mManager.requestGroupInfo(mChannel, GameStartActivity.this);
 
+		} else {
+			Toast.makeText(v.getContext(), "Service not bound",
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	private void startCENA() {
 		ArrayList<String> devicesIpList = getDevicesInNetwork(devices,
 				inGroupDevices);
-		final Intent intent = new Intent(this, GameArenaActivity.class);
-		intent.putExtra("BombermanServerIP", devicesIpList.get(0));
-		intent.putExtra("BombermanServerPort", 10001);
-		startGame(intent);
+
 	}
 
 	private void startGame(final Intent intent) {
@@ -267,14 +257,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	 * Listeners associated to buttons
 	 */
 
-	public void wifiOffButton(View v) {
-
-		if (mBound) {
-			unbindService(mConnection);
-			mBound = false;
-		}
-	}
-
 	public void inGroupList(View v) {
 		if (mBound) {
 			mManager.requestGroupInfo(mChannel, GameStartActivity.this);
@@ -283,21 +265,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 					Toast.LENGTH_SHORT).show();
 		}
 
-	}
-
-	public void sendButton(View v) {
-		try {
-			mCliSocket.getOutputStream().write(("merdinha" + "\n").getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void connectButton(View v) {
-		Log.d(TAG, "ip:  " + mTextInput.getText().toString());
-		mOutComm = (OutgoingCommTask) new OutgoingCommTask()
-				.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTextInput
-						.getText().toString());
 	}
 
 	private void enableButton(Button btn, boolean enable) {
@@ -340,151 +307,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		}
 	};
 
-	/*
-	 * Classes implementing chat message exchange
-	 */
-
-	public class IncommingCommTask extends
-			AsyncTask<Void, SimWifiP2pSocket, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			if (isCancelled()) {
-				return null;
-			}
-			Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
-
-			try {
-				mSrvSocket = new SimWifiP2pSocketServer(
-						Integer.parseInt(getString(R.string.port)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			while (!isCancelled()) {
-				try {
-					SimWifiP2pSocket sock = mSrvSocket.accept();
-					if (mCliSocket != null && mCliSocket.isClosed()) {
-						mCliSocket = null;
-					}
-					if (mCliSocket != null) {
-						Log.d(TAG,
-								"Closing accepted socket because mCliSocket still active.");
-						sock.close();
-					} else {
-						publishProgress(sock);
-					}
-				} catch (IOException e) {
-					Log.d("Error accepting socket:", e.getMessage());
-					break;
-					// e.printStackTrace();
-				}
-			}
-			return null;
-		}
-
-		@Override
-		protected void onProgressUpdate(SimWifiP2pSocket... values) {
-			mCliSocket = values[0];
-			mComm = new ReceiveCommTask();
-			mComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mCliSocket);
-		}
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		mComm.cancel(true);
-		mInComm.cancel(true);
-		mOutComm.cancel(true);
-	}
-
-	public void destroyTasks(View v) {
-		// mComm.cancel(true);
-		mInComm.cancel(true);
-		// mOutComm.cancel(true);
-	}
-
-	public class OutgoingCommTask extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected String doInBackground(String... params) {
-			if (isCancelled()) {
-				return null;
-			}
-			Log.d(TAG, "OutgoingCommTask connecting........");
-			try {
-				mCliSocket = new SimWifiP2pSocket(params[0],
-						Integer.parseInt(getString(R.string.port)));
-			} catch (UnknownHostException e) {
-				return "Unknown Host:" + e.getMessage();
-			} catch (IOException e) {
-				return "IO error:" + e.getMessage();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			if (result != null) {
-				mTextOutput.setText(result);
-			} else {
-				mComm = new ReceiveCommTask();
-				mComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-						mCliSocket);
-			}
-		}
-	}
-
-	public class ReceiveCommTask extends
-			AsyncTask<SimWifiP2pSocket, String, Void> {
-		SimWifiP2pSocket s;
-
-		@Override
-		protected Void doInBackground(SimWifiP2pSocket... params) {
-			if (isCancelled()) {
-				return null;
-			}
-			BufferedReader sockIn;
-			String st;
-
-			s = params[0];
-			try {
-				sockIn = new BufferedReader(new InputStreamReader(
-						s.getInputStream()));
-
-				while ((st = sockIn.readLine()) != null) {
-					Log.d(TAG, "merda + " + st);
-					publishProgress(st);
-				}
-			} catch (IOException e) {
-				Log.d("Error reading socket:", e.getMessage());
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPreExecute() {
-
-		}
-
-		@Override
-		protected void onProgressUpdate(String... values) {
-			Log.d(TAG, (values[0] + "\n"));
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			if (!s.isClosed()) {
-				try {
-					s.close();
-				} catch (Exception e) {
-					Log.d("Error closing socket:", e.getMessage());
-				}
-			}
-			s = null;
-		}
-	}
-
 	@Override
 	public void onPeersAvailable(SimWifiP2pDeviceList peers) {
 		StringBuilder peersStr = new StringBuilder();
@@ -513,32 +335,20 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	@Override
 	public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
 			SimWifiP2pInfo groupInfo) {
-		this.devices = devices;
-		this.inGroupDevices = groupInfo.getDevicesInNetwork();
 		Log.d(TAG, "is group Owner:     " + groupInfo.askIsGO());
 		isGroupOwner = groupInfo.askIsGO();
-
-		Log.d(TAG, "is client ------->" + groupInfo.askIsClient());
-		// compile list of network members
-		StringBuilder peersStr = new StringBuilder();
+		ArrayList<String> ipsInNetwork = new ArrayList<String>();
 		for (String deviceName : groupInfo.getDevicesInNetwork()) {
 			SimWifiP2pDevice device = devices.getByName(deviceName);
-			String devstr = "" + deviceName + " ("
-					+ ((device == null) ? "??" : device.getVirtIp()) + ")\n";
-			peersStr.append(devstr);
+			ipsInNetwork.add(device.getVirtIp());
 		}
-
-		// display list of network members
-		new AlertDialog.Builder(this)
-				.setTitle("Devices in WiFi Network")
-				.setMessage(peersStr.toString())
-				.setNeutralButton("Dismiss",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-							}
-						}).show();
+		Log.d(TAG, "ip in network " + ipsInNetwork.get(0));
+		final Intent intent = new Intent(this, GameArenaActivity.class);
+		intent.putExtra("BombermanServerIP", ipsInNetwork.get(0));
+		Toast.makeText(getApplicationContext(),
+				"Host IP" + ipsInNetwork.get(0), Toast.LENGTH_SHORT).show();
+		intent.putExtra("BombermanServerPort", 10001);
+		startGame(intent);
 
 	}
 }
