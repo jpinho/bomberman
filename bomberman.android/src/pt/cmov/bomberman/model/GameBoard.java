@@ -22,30 +22,31 @@ public class GameBoard {
 	 */
 	private double horizontalExcess;
 	private double verticalExcess;
-	
+
 	/* Object width and height in pixels */
 	private int object_width;
 	private int object_height;
-	
+
 	// Stores game objects in world coordinates
-	protected GameObject[][] board; 
+	protected GameObject[][] board;
 
 	protected ArrayList<Player> players;
 	protected ArrayList<Enemy> enemies;
-	
+
 	/* Size of players array */
+
 	protected int max_players; 
 	
 	private volatile int players_killed;
 	
 	/* This player */
-	protected Player player; 
-	
+	protected Player player;
+
 	/* The board's dimensions */
 	protected final int nCols;
 	protected final int nRows;
 	private final Pavement pavement;
-	
+
 	public GameBoard(int rows, int cols, int max_players) {
 		board = new GameObject[rows][cols];
 		players = new ArrayList<Player>(max_players);
@@ -59,73 +60,86 @@ public class GameBoard {
 
 	public Player findPlayer(int id) {
 		int i;
-		for (i = 0; i < players.size() && players.get(i).getPlayer_number() != id; i++);
-		Log.d("LevelFileParser", "findPlayer(" + id + ") -> i == " + i + "; players.size() == " + players.size());
+		for (i = 0; i < players.size()
+				&& players.get(i).getPlayer_number() != id; i++)
+			;
+		Log.d("LevelFileParser", "findPlayer(" + id + ") -> i == " + i
+				+ "; players.size() == " + players.size());
 		return i < players.size() ? players.get(i) : null;
 	}
-	
-	/* Begin: methods used by LevelFileParser to build board
-	 * Do NOT call / use this outside of LevelFileParser 
+
+	/*
+	 * Begin: methods used by LevelFileParser to build board Do NOT call / use
+	 * this outside of LevelFileParser
 	 */
 	public void setPosition(int x, int y, GameObject item) {
 		board[x][y] = item;
 	}
-	
+
 	public void addPlayer(Player p) {
 		players.add(p);
 	}
-	
+
 	public void addEnemy(Enemy e) {
 		enemies.add(e);
 	}
+
 	/* End: methods used by LevelFileParser */
-	
-	
+
 	public void removeEnemy(Enemy e) {
 		board[e.getX()][e.getY()] = null;
 		enemies.remove(e);
 	}
-	
-	
-	/* Overridden methods. These methods are different depending on whether this is a client
-	 * or a server. 
+
+	/*
+	 * Overridden methods. These methods are different depending on whether this
+	 * is a client or a server.
 	 */
 	public boolean actionMovePlayer(Player p, int dir) {
 		return false;
 	}
-	
+
 	public boolean actionMovePlayer(int dir) {
 		return false;
 	}
-	
+
 	public boolean actionPlaceBomb(Player p) {
 		return false;
 	}
-	
+
 	public boolean actionPlaceBomb() {
 		return false;
 	}
 
-	public void startLevel() { }
-	public Player newPlayer() { return null; }
-	public void setPlayerId(int id) { }
+	public void startLevel() {
+	}
+
+	public Player newPlayer() {
+		return null;
+	}
+
+	public void setPlayerId(int id) {
+	}
+
 	/* End methods overridden */
-	
+
 	public boolean actionMovePlayer(int pid, int dir) {
 		return actionMovePlayer(findPlayer(pid), dir);
 	}
-	
+
 	public boolean actionPlaceBomb(int pid) {
 		return actionPlaceBomb(findPlayer(pid));
 	}
 
-	/* Called when a new player wants to join this game. Only useful for GameBoardServer.
-	 * Returns player ID of new player, or -1 if there is no space for a new player.
+	/*
+	 * Called when a new player wants to join this game. Only useful for
+	 * GameBoardServer. Returns player ID of new player, or -1 if there is no
+	 * space for a new player.
 	 */
 	public int join() {
 		return -1;
 	}
-	
+
 	/* Misc. */
 	protected boolean isValidMove(int x_from, int y_from, int v_x, int v_y) {
 		int new_x = x_from + v_x;
@@ -136,7 +150,7 @@ public class GameBoard {
 	protected boolean validPosition(int x, int y) {
 		return inBoard(x, y) && (board[x][y] == null || !board[x][y].isSolid());
 	}
-	
+
 	protected boolean inBoard(int x, int y) {
 		return 0 <= x && x < nRows && 0 <= y && y < nCols;
 	}
@@ -148,11 +162,15 @@ public class GameBoard {
 	public int getRowsCount() {
 		return nRows;
 	}
+<<<<<<< HEAD
 	
 	public void notifyNewKill() {
 		players_killed++;
 	}
 	
+=======
+
+>>>>>>> Removed ingroup button and fix on pause
 	/* Some player died */
 	public synchronized void kill(Player player) {
 		Log.d("LevelFileParser", "Killing player " + player);
@@ -160,14 +178,14 @@ public class GameBoard {
 		players.remove(player);
 		Log.d("LevelFileParser", "players_killed = " + players_killed);
 	}
-	
+
 	/* This player died */
 	public void die(String killer) {
 		kill(player);
 		player = null;
 		GameArenaActivity.getInstance().notifyDied(killer);
 	}
-	
+
 	public void kill(int player, String killer) {
 		synchronized (board) {
 			if (this.player != null && player == this.player.getPlayer_number()) {
@@ -180,6 +198,7 @@ public class GameBoard {
 			kill(p);
 		}
 	}
+<<<<<<< HEAD
 	
 	public synchronized void checkGameOver(int current_players) {
 		Log.d("LevelFileParser", "checkGameOver(): current_players = " + current_players + "; players_killed = " + players_killed);
@@ -211,8 +230,14 @@ public class GameBoard {
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 *                   GRAPHICS STUFF
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
+=======
+
+	/*
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GRAPHICS STUFF
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>>>> Removed ingroup button and fix on pause
 	 */
-	
+
 	/*
 	 * This is called by the level parser routine when it is reading a
 	 * configuration file and finds the map's dimensions. This function will
@@ -254,6 +279,7 @@ public class GameBoard {
 
 	/* The final master piece */
 	public void draw(Canvas canvas) {
+
 		drawBorders(canvas);
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
@@ -308,6 +334,7 @@ public class GameBoard {
 		float x = (float) horizontalExcess;
 		do {
 			x -= object_width;
+
 			canvas.drawBitmap(border, x, y, null);
 		} while (x >= 0);
 		x = (float) horizontalExcess + (nCols - 1) * object_width;
@@ -322,24 +349,31 @@ public class GameBoard {
 			int object_h) {
 		return object_w <= max_width && object_h <= max_height;
 	}
-	
+
 	public void addNewPlayer(RemotePlayer p) {
 		StringBuilder msg = new StringBuilder();
 		msg.append("board ");
-		msg.append("GD=").append(GameLevel.getInstance().getTimeLeft()).append("N");
-		msg.append("ET=").append(GameLevel.getInstance().getExplosion_timeout()).append("N");
-		msg.append("ED=").append(GameLevel.getInstance().getExplosion_duration()).append("N");
-		msg.append("ER=").append(GameLevel.getInstance().getExplosion_range()).append("N");
-		msg.append("PR=").append(GameLevel.getInstance().getRobot_score()).append("N");
-		msg.append("PO=").append(GameLevel.getInstance().getOpponent_score()).append("N");
+		msg.append("GD=").append(GameLevel.getInstance().getTimeLeft())
+				.append("N");
+		msg.append("ET=")
+				.append(GameLevel.getInstance().getExplosion_timeout())
+				.append("N");
+		msg.append("ED=")
+				.append(GameLevel.getInstance().getExplosion_duration())
+				.append("N");
+		msg.append("ER=").append(GameLevel.getInstance().getExplosion_range())
+				.append("N");
+		msg.append("PR=").append(GameLevel.getInstance().getRobot_score())
+				.append("N");
+		msg.append("PO=").append(GameLevel.getInstance().getOpponent_score())
+				.append("N");
 		msg.append("MAP:").append(nRows).append(",").append(nCols).append("N");
 		synchronized (board) {
 			for (int i = 0; i < nRows; i++) {
 				for (int j = 0; j < nCols; j++) {
 					if (board[i][j] == null) {
 						msg.append("-");
-					}
-					else {
+					} else {
 						msg.append(board[i][j].toString());
 					}
 				}
@@ -353,7 +387,7 @@ public class GameBoard {
 			Server.getInstance().addNewClient(p);
 		}
 	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}

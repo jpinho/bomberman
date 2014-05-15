@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     xmlns:tools="http://schemas.android.com/tools"
@@ -110,15 +109,6 @@
 
         tools:ignore="ContentDescription" />
 
-    <Button
-        android:id="@+id/inGroup"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ivSplashImage"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:onClick="inGroupList"
-        android:text="In Group" />
+
 
 </RelativeLayout>

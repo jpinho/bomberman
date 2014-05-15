@@ -12,22 +12,41 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class MainThread extends Thread {
-	
+
 	private static final String TAG = MainThread.class.getSimpleName();
 	private SurfaceHolder surfaceHolder;
-	private MainGamePanel gamePanel; 
+	private MainGamePanel gamePanel;
 	private boolean running;
-	
+	private Object mPauseLock;
+	private boolean mPaused;
+
 	public MainThread(SurfaceHolder surfaceHolder, MainGamePanel gamePanel) {
 		super();
 		this.surfaceHolder = surfaceHolder;
 		this.gamePanel = gamePanel;
+		this.mPauseLock = new Object();
 	}
 
 	public void setRunning(boolean running) {
 		this.running = running;
 	}
-	
+
+	public Object getmPauseLock() {
+		return mPauseLock;
+	}
+
+	public void setmPauseLock(Object mPauseLock) {
+		this.mPauseLock = mPauseLock;
+	}
+
+	public boolean ismPaused() {
+		return mPaused;
+	}
+
+	public void setmPaused(boolean mPaused) {
+		this.mPaused = mPaused;
+	}
+
 	@SuppressLint("WrongCall")
 	@Override
 	public void run() {
@@ -37,7 +56,7 @@ public class MainThread extends Thread {
 			canvas = null;
 			try {
 				canvas = this.surfaceHolder.lockCanvas();
-			
+
 				synchronized (surfaceHolder) {
 					if (GameLevel.getInstance().isGameOver()) {
 						running = false;
@@ -57,12 +76,20 @@ public class MainThread extends Thread {
 						this.gamePanel.onDraw(canvas);
 					}
 				}
-			} 
-			finally {
+			} finally {
 				if (canvas != null) {
 					surfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
+			synchronized (mPauseLock) {
+				while (mPaused) {
+					try {
+						mPauseLock.wait();
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+
 		}
 	}
 }

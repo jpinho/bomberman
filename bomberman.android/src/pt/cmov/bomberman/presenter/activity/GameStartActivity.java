@@ -145,12 +145,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		}
 	}
 
-	private void startCENA() {
-		ArrayList<String> devicesIpList = getDevicesInNetwork(devices,
-				inGroupDevices);
-
-	}
-
 	private void startGame(final Intent intent) {
 		// gets the player name and starts the activity
 		final EditText input = new EditText(this);
@@ -249,20 +243,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 
 			builder.setCancelable(false);
 			builder.show();
-		}
-
-	}
-
-	/*
-	 * Listeners associated to buttons
-	 */
-
-	public void inGroupList(View v) {
-		if (mBound) {
-			mManager.requestGroupInfo(mChannel, GameStartActivity.this);
-		} else {
-			Toast.makeText(v.getContext(), "Service not bound",
-					Toast.LENGTH_SHORT).show();
 		}
 
 	}

@@ -10,10 +10,10 @@ import java.net.UnknownHostException;
 import android.util.Log;
 
 public class ClientThread implements Runnable {
-	
+
 	private String server_ip;
 	private int port;
-	
+
 	public ClientThread(String server_ip, int port) {
 		super();
 		this.server_ip = server_ip;
@@ -22,6 +22,7 @@ public class ClientThread implements Runnable {
 
 	@Override
 	public void run() {
+		Log.d("thread", "socket running");
 		try {
 			Socket socket = new Socket(server_ip, port);
 			Log.d("ClientHost", "Connected to server.");
@@ -29,8 +30,9 @@ public class ClientThread implements Runnable {
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
 			Client.getInstance().setClient(out);
-			
-			// The first message coming from the server is always the current state of the board
+
+			// The first message coming from the server is always the current
+			// state of the board
 			String line;
 			while ((line = in.readLine()) != null) {
 				Client.getInstance().parse_msg(line.split(" "));
