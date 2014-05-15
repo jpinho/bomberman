@@ -53,6 +53,12 @@ public class Client {
 			GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
 		} else if (tokens[0].equalsIgnoreCase("join")) {
 			GameLevel.getInstance().getBoard().addPlayer(new Player(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3])));
+		} else if (tokens[0].equalsIgnoreCase("gameover")) {
+			String winner = tokens[1];
+			int score = Integer.parseInt(tokens[2]);
+			GameLevel.getInstance().setGameWinner(winner);
+			GameLevel.getInstance().setWinnerScore(score);
+			GameLevel.getInstance().setGameOver();
 		}
 	}
 	

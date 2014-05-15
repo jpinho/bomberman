@@ -81,6 +81,10 @@ public class Server {
 		broadcastMsg("join " + newPlayer + " " + x + " " + y + "\n");
 	}
 	
+	public void broadcastGameOver(String winner, int score) {
+		broadcastMsg("gameover " + winner + " " + score + "\n");
+	}
+	
 	public void broadcastMsg(String msg) {
 		synchronized (players) {
 			for (RemotePlayer p : players)

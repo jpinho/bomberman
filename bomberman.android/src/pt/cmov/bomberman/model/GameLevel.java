@@ -22,6 +22,25 @@ public class GameLevel {
 	private int opponent_score;
 	
 	private volatile boolean gameOver;
+	
+	private String game_winner;
+	private int winner_score;
+	
+	public synchronized String getGameWinner() {
+		return game_winner;
+	}
+	
+	public synchronized int getWinnerScore() {
+		return winner_score;
+	}
+	
+	public synchronized void setWinnerScore(int score) {
+		winner_score = score;
+	}
+	
+	public synchronized void setGameWinner(String s) {
+		game_winner = s;
+	}
 
 	private GameLevel() {
 		gameOver = false;

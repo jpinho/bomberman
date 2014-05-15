@@ -185,6 +185,7 @@ public class GameBoard {
 		Log.d("LevelFileParser", "checkGameOver(): current_players = " + current_players + "; players_killed = " + players_killed);
 		if (players_killed == current_players)
 			GameLevel.getInstance().setGameOver();
+		
 	}
 	
 	public void checkGameOver() { }

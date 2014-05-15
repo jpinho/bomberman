@@ -2,6 +2,7 @@ package pt.cmov.bomberman.presenter.view;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.net.server.Server;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,6 +44,8 @@ public class MainThread extends Thread {
 						canvas.drawColor(Color.BLACK);
 						Bitmap gameover = BitmapFactory.decodeResource(gamePanel.getResources(), R.drawable.gameover);
 						canvas.drawBitmap(gameover, 0, 0, null);
+						// TODO figure out winner and his score
+						Server.getInstance().broadcastGameOver("someone", 100);
 					} else {
 						this.gamePanel.onDraw(canvas);
 					}
