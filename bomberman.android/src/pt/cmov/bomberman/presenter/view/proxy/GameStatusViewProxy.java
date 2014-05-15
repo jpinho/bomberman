@@ -41,7 +41,9 @@ public class GameStatusViewProxy {
 			
 			public void onFinish() {
 				txtGameTimeLeft.setText("000");
-				// TODO Gameover
+				gameState.setTimeLeft(0);
+				gameState.getBoard().setWinner();
+				gameState.setGameOver();
 			}
 		}).start();		
 	}

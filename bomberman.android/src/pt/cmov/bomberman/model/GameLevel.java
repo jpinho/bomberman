@@ -44,6 +44,8 @@ public class GameLevel {
 
 	private GameLevel() {
 		gameOver = false;
+		game_winner = null;
+		winner_score = -1;
 	}
 	
 	public synchronized void setGameOver() {
@@ -67,9 +69,6 @@ public class GameLevel {
 
 	public synchronized void setTimeLeft(int duration) {
 		this.timeLeft = duration;
-		if (timeLeft == 0) {
-			setGameOver();
-		}
 	}
 
 	public void setLevel_name(String level_name) {

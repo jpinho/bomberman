@@ -44,8 +44,15 @@ public class MainThread extends Thread {
 						canvas.drawColor(Color.BLACK);
 						Bitmap gameover = BitmapFactory.decodeResource(gamePanel.getResources(), R.drawable.gameover);
 						canvas.drawBitmap(gameover, 0, 0, null);
-						// TODO figure out winner and his score
-						Server.getInstance().broadcastGameOver("someone", 100);
+						Server.getInstance().broadcastGameOver(GameLevel.getInstance().getGameWinner(), GameLevel.getInstance().getWinnerScore());
+						// TODO Show this to the user
+						String gameWinner = GameLevel.getInstance().getGameWinner();
+						int winnerScore = GameLevel.getInstance().getWinnerScore();
+						if (winnerScore != -1) {
+							Log.d("LevelFileParser", "*** Game Over. Winner: " + gameWinner + " (scored " + winnerScore + " points).");
+						} else {
+							Log.d("LevelFileParser", "*** Game Over. No winner!");
+						}
 					} else {
 						this.gamePanel.onDraw(canvas);
 					}

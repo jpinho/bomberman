@@ -190,6 +190,24 @@ public class GameBoard {
 	
 	public void checkGameOver() { }
 	
+	// Called when game duration reaches 0 and there are still players alive
+	public void setWinner() {
+		int maxScore = -1;
+		Player winner = null;
+		synchronized (board) {
+			for (Player p : players) {
+				if (board[p.getX()][p.getY()] == p //If alive
+						&& p.getScore() > maxScore) {
+					maxScore = p.getScore();
+					winner = p;
+				}
+			}
+		}
+		GameLevel.getInstance().setWinnerScore(maxScore);
+		if (winner != null)
+			GameLevel.getInstance().setGameWinner("player" + winner.getPlayer_number());
+	}
+	
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 *                   GRAPHICS STUFF
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
