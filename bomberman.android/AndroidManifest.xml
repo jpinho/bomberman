@@ -7,9 +7,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" ></uses-permission>
-    
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
+    </uses-permission>
 
     <uses-sdk
         android:minSdkVersion="19"
@@ -19,23 +20,29 @@
         android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
-        
-        <activity  
-            android:theme="@style/Theme.Bomberman"
+        <activity
             android:name="pt.cmov.bomberman.presenter.activity.GameArenaActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Bomberman" >
         </activity>
-        
-        <activity 
-            android:theme="@style/Theme.Bomberman"
+        <activity
             android:name="pt.cmov.bomberman.presenter.activity.GameStartActivity"
-            android:label="@string/title_activity_game_start" >
-            
+            android:label="@string/title_activity_game_start"
+            android:theme="@style/Theme.Bomberman" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service android:name="pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService" />
+
+        <activity
+            android:name="pt.cmov.bomberman.presenter.activity.ClientActivity"
+            android:label="@string/title_activity_client"
+            android:theme="@style/Theme.Bomberman"  >
+        </activity>
     </application>
+
 </manifest>

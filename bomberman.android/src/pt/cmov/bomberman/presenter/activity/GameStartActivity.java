@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Set;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
@@ -63,6 +65,9 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	private SimWifiP2pSocket mCliSocket = null;
 	private TextView mTextInput;
 	private TextView mTextOutput;
+	private boolean isGroupOwner;
+	private SimWifiP2pDeviceList devices;
+	private Set<String> inGroupDevices;
 
 	public SimWifiP2pManager getManager() {
 		return mManager;
@@ -118,6 +123,8 @@ public class GameStartActivity extends Activity implements PeerListListener,
 				SimWifiP2pService.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 		mBound = true;
+
+		// turning wifi direct ON
 		mInComm = new IncommingCommTask();
 		if (mInComm.getStatus() == AsyncTask.Status.PENDING) {
 			Log.d(TAG, "Pending!!!!!!!!!!!!!!!!");
@@ -131,22 +138,32 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		enableButton((Button) v, false);
 
 		final Intent intent = new Intent(this, GameArenaActivity.class);
-		intent.putExtra("isHost", true);
+
 		startGame(intent);
 
 		enableButton((Button) v, true);
 	}
 
 	public void btnPlayOnline_DebouncedClick(View v) {
-		enableButton((Button) v, false);
+		// enableButton((Button) v, false);
+		//
+		// // TODO Show form to connect to existing server (temporarily
+		// hardcoded)
+		// final Intent intent = new Intent(this, GameArenaActivity.class);
+		// intent.putExtra("BombermanServerIP", "10.0.2.2");
+		// intent.putExtra("BombermanServerPort", 6000);
+		// startGame(intent);
+		//
+		// enableButton((Button) v, true);
+		Intent intent = new Intent(this, ClientActivity.class);
+		intent.putExtra("groupDeviceList", devices);
+		ArrayList<String> devicesIpList = getDevicesInNetwork(devices,
+				inGroupDevices);
+		for (String elem : devicesIpList) {
+			Log.d(TAG, "ALLLLLL virtual ip's------>" + elem);
 
-		// TODO Show form to connect to existing server (temporarily hardcoded)
-		final Intent intent = new Intent(this, GameArenaActivity.class);
-		intent.putExtra("BombermanServerIP", "10.0.2.2");
-		intent.putExtra("BombermanServerPort", 6000);
-		startGame(intent);
-
-		enableButton((Button) v, true);
+		}
+		startActivity(intent);
 	}
 
 	private void startGame(final Intent intent) {
@@ -165,88 +182,90 @@ public class GameStartActivity extends Activity implements PeerListListener,
 
 	private void queryPlayerName(final Intent intent, final EditText input,
 			final OnClickListener okClickListener) {
-		
+
 		if (intent.getExtras().getBoolean("isHost")) {
 			AlertDialog.Builder builderLevels = new AlertDialog.Builder(this);
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        builderLevels.setTitle("Select level:");
-	        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice);
-	        /* Levels 1-3, as asked in the course page */
-	        arrayAdapter.add("level1");
-	        arrayAdapter.add("level2");
-	        arrayAdapter.add("level3");
-	        /*
-	         Levels 4-8 are used for dev tests
-	        */
-	        /*
-	        arrayAdapter.add("level4");
-	        arrayAdapter.add("level5");
-	        arrayAdapter.add("level6");
-	        arrayAdapter.add("level7");
-	        arrayAdapter.add("level8");
-	        */
-	        builderLevels.setNegativeButton("Cancel",
-	                new DialogInterface.OnClickListener() {
-	
-	                    @Override
-	                    public void onClick(DialogInterface dialog, int which) {
-	                        dialog.dismiss();
-	                    }
-	                });
-	        builderLevels.setAdapter(arrayAdapter,
-	                new DialogInterface.OnClickListener() {
-	
-	                    @Override
-	                    public void onClick(DialogInterface dialog, int which) {
-	                        
-	                		intent.putExtra("levelChosen", arrayAdapter.getItem(which));
-	
-	                        builder.setTitle("Player Name");
-	                        
-	                        input.setInputType(InputType.TYPE_CLASS_TEXT);
-	                        builder.setView(input);
-	                        
-	                        // Set up the buttons
-	                        builder.setPositiveButton("OK", okClickListener);
-	                        
-	                        builder.setNegativeButton("Cancel",
-	                        		new DialogInterface.OnClickListener() {
-	                        	@Override
-	                        	public void onClick(DialogInterface dialog, int which) {
-	                        		dialog.cancel();
-	                        	}
-	                        });
-	                        
-	                        builder.setCancelable(false);
-	                        builder.show();
-	                    }
-	                });
-	        builderLevels.show();
+			builderLevels.setTitle("Select level:");
+			final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+					this, android.R.layout.select_dialog_singlechoice);
+			/* Levels 1-3, as asked in the course page */
+			arrayAdapter.add("level1");
+			arrayAdapter.add("level2");
+			arrayAdapter.add("level3");
+			/*
+			 * Levels 4-8 are used for dev tests
+			 */
+			/*
+			 * arrayAdapter.add("level4"); arrayAdapter.add("level5");
+			 * arrayAdapter.add("level6"); arrayAdapter.add("level7");
+			 * arrayAdapter.add("level8");
+			 */
+			builderLevels.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+			builderLevels.setAdapter(arrayAdapter,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+							intent.putExtra("levelChosen",
+									arrayAdapter.getItem(which));
+
+							builder.setTitle("Player Name");
+
+							input.setInputType(InputType.TYPE_CLASS_TEXT);
+							builder.setView(input);
+
+							// Set up the buttons
+							builder.setPositiveButton("OK", okClickListener);
+
+							builder.setNegativeButton("Cancel",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											dialog.cancel();
+										}
+									});
+
+							builder.setCancelable(false);
+							builder.show();
+						}
+					});
+			builderLevels.show();
 		}
-		
+
 		else {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			
-            builder.setTitle("Player Name");
-            
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-            
-            // Set up the buttons
-            builder.setPositiveButton("OK", okClickListener);
-            
-            builder.setNegativeButton("Cancel",
-            		new DialogInterface.OnClickListener() {
-            	@Override
-            	public void onClick(DialogInterface dialog, int which) {
-            		dialog.cancel();
-            	}
-            });
-            
-            builder.setCancelable(false);
-            builder.show();
+
+			builder.setTitle("Player Name");
+
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			builder.setView(input);
+
+			// Set up the buttons
+			builder.setPositiveButton("OK", okClickListener);
+
+			builder.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+
+			builder.setCancelable(false);
+			builder.show();
 		}
-		
+
 	}
 
 	/*
@@ -290,6 +309,19 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		btn.setEnabled(enable);
 		btn.setClickable(enable);
 		btn.setVisibility(enable ? View.VISIBLE : View.GONE);
+	}
+
+	public ArrayList<String> getDevicesInNetwork(SimWifiP2pDeviceList devices,
+			Set<String> devicesInNetwork) {
+		ArrayList<String> result = new ArrayList<String>();
+		StringBuilder peersStr = new StringBuilder();
+		for (String deviceName : devicesInNetwork) {
+			SimWifiP2pDevice device = devices.getByName(deviceName);
+			result.add(device.getVirtIp());
+		}
+
+		return result;
+
 	}
 
 	private final ServiceConnection mConnection = new ServiceConnection() {
@@ -486,7 +518,12 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	@Override
 	public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
 			SimWifiP2pInfo groupInfo) {
+		this.devices = devices;
+		this.inGroupDevices = groupInfo.getDevicesInNetwork();
+		Log.d(TAG, "is group Owner:     " + groupInfo.askIsGO());
+		isGroupOwner = groupInfo.askIsGO();
 
+		Log.d(TAG, "is client ------->" + groupInfo.askIsClient());
 		// compile list of network members
 		StringBuilder peersStr = new StringBuilder();
 		for (String deviceName : groupInfo.getDevicesInNetwork()) {

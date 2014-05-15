@@ -22,5 +22,7 @@
     <string name="cancelButton">WiFi Off</string>
     <string name="inRangeButton">In Range</string>
     <string name="inGroupButton">In Network</string>
-	<string name="port">10001</string>
+    <string name="port">10001</string>
+    <string name="title_activity_client">ClientActivity</string>
+
 </resources>
