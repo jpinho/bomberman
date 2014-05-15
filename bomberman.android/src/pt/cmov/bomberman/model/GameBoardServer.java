@@ -3,7 +3,7 @@ package pt.cmov.bomberman.model;
 import java.util.ArrayList;
 
 import pt.cmov.bomberman.net.server.Server;
-import pt.cmov.bomberman.net.server.ServerThread;
+import pt.cmov.bomberman.net.server.WDServerThread;
 import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.util.Misc;
@@ -39,9 +39,10 @@ public class GameBoardServer extends GameBoard {
 			public void run() {
 				moveEnemies();
 			}
-		}, enemies_timer_interval = (long) (1000 / GameLevel.getInstance().getEnemy_speed()));
+		}, enemies_timer_interval = (long) (1000 / GameLevel.getInstance()
+				.getEnemy_speed()));
 		player = newPlayer(); // Activates player 1, the game owner
-		Thread server = new Thread(new ServerThread());
+		Thread server = new Thread(new WDServerThread());
 		server.start();
 	}
 
@@ -94,25 +95,36 @@ public class GameBoardServer extends GameBoard {
 
 				board[p.getX()][p.getY()] = null;
 				Player killer;
-				if (board[new_x][new_y] != null && (killer = board[new_x][new_y].isLethal()) != null) {
+				if (board[new_x][new_y] != null
+						&& (killer = board[new_x][new_y].isLethal()) != null) {
 					// TODO Merge these
 					if (p == player) {
-						die("Player" + killer.getPlayer_number());						
+						die("Player" + killer.getPlayer_number());
 					} else {
 						kill(p);
 					}
 					if (killer != p) {
-						killer.incrementScore(GameLevel.getInstance().getOpponent_score());
+						killer.incrementScore(GameLevel.getInstance()
+								.getOpponent_score());
 						if (killer != player)
-							Server.getInstance().updatePlayerScore(killer.getPlayer_number(), GameLevel.getInstance().getOpponent_score());
+							Server.getInstance()
+									.updatePlayerScore(
+											killer.getPlayer_number(),
+											GameLevel.getInstance()
+													.getOpponent_score());
 						else
-							GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
+							GameArenaActivity.getInstance().getGameView()
+									.getGameStateChangeListener()
+									.onStateChange(GameLevel.getInstance());
 					}
-					Server.getInstance().broadcastPlayersKilled("die Player" + killer.getPlayer_number() + " " + p.getPlayer_number() + "\n");
+					Server.getInstance().broadcastPlayersKilled(
+							"die Player" + killer.getPlayer_number() + " "
+									+ p.getPlayer_number() + "\n");
 				} else {
 					board[new_x][new_y] = p;
 					p.setPosition(new_x, new_y, v_x, v_y);
-					Server.getInstance().broadcastPlayerMoved(p.getPlayer_number(), dir);
+					Server.getInstance().broadcastPlayerMoved(
+							p.getPlayer_number(), dir);
 				}
 			}
 		}
@@ -126,30 +138,31 @@ public class GameBoardServer extends GameBoard {
 			return actionMovePlayer(player, dir);
 		return false;
 	}
-	
-	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 *                   BOMB PHYSICS
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
+
+	/*
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BOMB PHYSICS
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
-	
+
 	private void bombExploded(final Bomb b) {
 		board[b.getX()][b.getY()] = new BombFire(b.getAuthor());
 		final ArrayList<Tuple<Integer, Integer>> pos_to_clear;
 		int range = GameLevel.getInstance().getExplosion_range();
 		pos_to_clear = propagateFire(b, b.getX(), b.getY(), range, 1, 0); // Goes
-																		// down
+																			// down
 		pos_to_clear.addAll(propagateFire(b, b.getX(), b.getY(), range, -1, 0)); // Goes
-																				// up
+																					// up
 		pos_to_clear.addAll(propagateFire(b, b.getX(), b.getY(), range, 0, 1)); // Goes
 																				// to
 																				// the
 																				// right
 		pos_to_clear.addAll(propagateFire(b, b.getX(), b.getY(), range, 0, -1)); // Goes
-																				// to
-																				// the
-																				// left
+																					// to
+																					// the
+																					// left
 		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
-		Server.getInstance().broadcastBombExploded(b.getX(), b.getY(), pos_to_clear);
+		Server.getInstance().broadcastBombExploded(b.getX(), b.getY(),
+				pos_to_clear);
 		Handler endExplosion = new Handler();
 		endExplosion.postDelayed(new Runnable() {
 			@Override
@@ -161,29 +174,35 @@ public class GameBoardServer extends GameBoard {
 		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
-	private ArrayList<Tuple<Integer, Integer>> propagateFire(Bomb bomb, int x, int y, int range, int x_step, int y_step) {
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(Bomb bomb, int x,
+			int y, int range, int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		int scoreUpdate = 0;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
-			if (board[x][y] == null || (hit = ((scoreUpdate = board[x][y].notifyExplosion(bomb.getAuthor())) > -1))) {
+			if (board[x][y] == null
+					|| (hit = ((scoreUpdate = board[x][y].notifyExplosion(bomb
+							.getAuthor())) > -1))) {
 				board[x][y] = new BombFire(bomb.getAuthor());
 				positions.add(new Tuple<Integer, Integer>(x, y));
 				if (hit) {
 					bomb.getAuthor().incrementScore(scoreUpdate);
 					if (bomb.getAuthor() != player) {
-						Server.getInstance().updatePlayerScore(bomb.getAuthor().getPlayer_number(), scoreUpdate);
+						Server.getInstance().updatePlayerScore(
+								bomb.getAuthor().getPlayer_number(),
+								scoreUpdate);
 					} else {
-						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
+						GameArenaActivity.getInstance().getGameView()
+								.getGameStateChangeListener()
+								.onStateChange(GameLevel.getInstance());
 					}
 				}
-			}
-			else
+			} else
 				hit = true;
 		}
 		return positions;
 	}
-	
+
 	private void clearFire(ArrayList<Tuple<Integer, Integer>> lst, Player author) {
 		StringBuilder positions = new StringBuilder();
 		positions.append("clear");
@@ -205,16 +224,17 @@ public class GameBoardServer extends GameBoard {
 			final int bomb_y = p.getY() + p.getV_y();
 			bx = bomb_x;
 			by = bomb_y;
-			if ((res = validPosition(bomb_x, bomb_y)) && (GameArenaActivity.GOD_MODE || !p.plantedBomb())) {
-				
+			if ((res = validPosition(bomb_x, bomb_y))
+					&& (GameArenaActivity.GOD_MODE || !p.plantedBomb())) {
+
 				final Bomb b = new Bomb(bomb_x, bomb_y, p);
 				board[bomb_x][bomb_y] = b;
-				
+
 				p.setPlantedBomb(true);
-				
+
 				GameArenaActivity.getInstance().runOnUiThread(new Runnable() {
 					@Override
-					public void run() {						
+					public void run() {
 						Handler bhandler = new Handler();
 						bhandler.postDelayed(new Runnable() {
 							@Override
@@ -223,11 +243,13 @@ public class GameBoardServer extends GameBoard {
 									bombExploded(b);
 								}
 							}
-						}, (long) (GameLevel.getInstance().getExplosion_timeout() * 1000));
+						}, (long) (GameLevel.getInstance()
+								.getExplosion_timeout() * 1000));
 					}
 				});
-				
-				Server.getInstance().broadcastPlayerPlantedBomb(p.getPlayer_number(), bx, by);
+
+				Server.getInstance().broadcastPlayerPlantedBomb(
+						p.getPlayer_number(), bx, by);
 			}
 		}
 		return res;
@@ -242,8 +264,7 @@ public class GameBoardServer extends GameBoard {
 	}
 
 	/*
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-	 * ENEMIES MOVEMENT
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ENEMIES MOVEMENT
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	private synchronized void moveEnemies() {
@@ -256,33 +277,43 @@ public class GameBoardServer extends GameBoard {
 
 		synchronized (board) {
 			for (Enemy e : enemies) {
-				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
+				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(
+						e.getX(), e.getY());
 				board[e.getX()][e.getY()] = null;
 				Player killer;
-				if (board[new_pos.x][new_pos.y] != null && (killer = board[new_pos.x][new_pos.y].isLethal()) != null) {
+				if (board[new_pos.x][new_pos.y] != null
+						&& (killer = board[new_pos.x][new_pos.y].isLethal()) != null) {
 					enemiesKilled.add(e);
-					killed_enemies.append(" ").append(e.getX()).append(" ").append(e.getY());
-					killer.incrementScore(GameLevel.getInstance().getRobot_score());
+					killed_enemies.append(" ").append(e.getX()).append(" ")
+							.append(e.getY());
+					killer.incrementScore(GameLevel.getInstance()
+							.getRobot_score());
 					if (killer != player)
-						Server.getInstance().updatePlayerScore(killer.getPlayer_number(), GameLevel.getInstance().getRobot_score());
+						Server.getInstance().updatePlayerScore(
+								killer.getPlayer_number(),
+								GameLevel.getInstance().getRobot_score());
 					else
-						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener().onStateChange(GameLevel.getInstance());
-				}
-				else {
+						GameArenaActivity.getInstance().getGameView()
+								.getGameStateChangeListener()
+								.onStateChange(GameLevel.getInstance());
+				} else {
 					board[new_pos.x][new_pos.y] = e;
-					new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
+					new_positions.append(" ").append(e.getX()).append(" ")
+							.append(e.getY());
 					e.setPosition(new_pos.x, new_pos.y);
-					new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
+					new_positions.append(" ").append(e.getX()).append(" ")
+							.append(e.getY());
 				}
 				playersKilled.addAll(checkEnemyKill(e.getX(), e.getY()));
 			}
-			
+
 			killed_enemies.append("\n");
 			new_positions.append("\n");
-			Server.getInstance().broadcastEnemiesPositions(new_positions.toString());
+			Server.getInstance().broadcastEnemiesPositions(
+					new_positions.toString());
 			if (enemiesKilled.size() > 0)
 				Server.getInstance().broadcastMsg(killed_enemies.toString());
-			
+
 			boolean playerDied = false;
 			StringBuilder killMsg = new StringBuilder();
 			killMsg.append("die enemy");
@@ -300,11 +331,11 @@ public class GameBoardServer extends GameBoard {
 			}
 			if (playersKilled.size() > 0)
 				Server.getInstance().broadcastPlayersKilled(killMsg.toString());
-			
+
 			for (Enemy e : enemiesKilled)
 				enemies.remove(e);
 		}
-		
+
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -312,27 +343,28 @@ public class GameBoardServer extends GameBoard {
 			}
 		}, enemies_timer_interval);
 	}
-	
+
 	private ArrayList<Player> checkEnemyKill(int enemyX, int enemyY) {
 		ArrayList<Player> playersKilled = new ArrayList<Player>();
 		for (Player player : players) {
 			int px = player.getX();
 			int py = player.getY();
 			// TODO refactor. This was a quick, dirty way to fix a bug
-			if (board[px][py] != null && board[px][py] instanceof Player &&
-				(enemyX == px || enemyX == px-1 || enemyX == px+1) &&
-				(enemyY == py || enemyY == py-1 || enemyY == py+1))
+			if (board[px][py] != null && board[px][py] instanceof Player
+					&& (enemyX == px || enemyX == px - 1 || enemyX == px + 1)
+					&& (enemyY == py || enemyY == py - 1 || enemyY == py + 1))
 				playersKilled.add(player);
 		}
 		return playersKilled;
 	}
 
-	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(int e_x, int e_y) {
+	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(
+			int e_x, int e_y) {
 		int total_attempts = 0;
 		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
-		                  /* | Up | Down | Left | Right */
+		/* | Up | Down | Left | Right */
 		boolean directions_tried[] = { false, false, false, false };
-		                             /* Up     Down   Left   Right */
+		/* Up Down Left Right */
 		int direction;
 		int x;
 		int y;
@@ -344,111 +376,92 @@ public class GameBoardServer extends GameBoard {
 			}
 			x = directions[direction * 2] + e_x;
 			y = directions[direction * 2 + 1] + e_y;
-		} while (total_attempts < directions_tried.length && !validPosition(x, y));
+		} while (total_attempts < directions_tried.length
+				&& !validPosition(x, y));
 
-		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y) : new Tuple<Integer, Integer>(e_x, e_y);
+		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y)
+				: new Tuple<Integer, Integer>(e_x, e_y);
 	}
-	
+
 	/**
-	 * Enemy AI Movement - Unfinished, is too slow! 
-	 *
-	
-	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(Enemy e, int e_x, int e_y) {
-		int x;
-		int y;
-
-		// target reached or no more path to it, let's choose another point for to enemy to focus on.
-		if(e.getTargetPath() == null || e.getTargetPath().isEmpty()){
-			boolean valid_pos = false;
-			
-			while(!valid_pos){
-				e.setTarget_x(Misc.randInt(0, this.nCols-1));
-				e.setTarget_y(Misc.randInt(0, this.nRows-1));
-				valid_pos = validPosition(e.getTarget_x(), e.getTarget_y());
-				
-				// tracing initial route to target.
-				if(valid_pos) 
-					e.setTargetPath(find_path(e_x, e_y, e.getTarget_x(), e.getTarget_y()));
-			}
-		}
-		
-		List<Tuple<Integer, Integer>> path = e.getTargetPath();
-		
-		if(path == null || path.isEmpty())
-			return null;
-		
-		// if route still valid follow it.
-		if(validPosition(path.get(0).x, path.get(0).y)){
-			x = path.get(0).x;
-			y = path.get(0).y;
-		}
-		else return null;
-		
-		// traveled position is removed to allow the enemy to move on down the path.
-		e.setTargetPath(path.subList(1, path.size()));
-		
-		return new Tuple<Integer, Integer>(x, y);
-	}
-		 
-	private List<Tuple<Integer, Integer>> find_path(int e_x, int e_y, int t_x, int t_y){
-	 
-		List<Tuple<Integer, Integer>> path;
-		boolean visit[][] = new boolean[nRows][nCols];
-		
-		do{
-			path = find_path(e_x, e_y, t_x, t_y, visit);
-			
-			if(path.isEmpty())
-				continue;
-		}
-		while(path.get(path.size()-1).x != t_x && path.get(path.size()-1).y != t_y);
-		
-		return path;
-	}
-
-	private List<Tuple<Integer, Integer>> find_path(int e_x, int e_y, int t_x, int t_y, boolean[][] visit) {
-		List<Tuple<Integer, Integer>> result = new LinkedList<Tuple<Integer, Integer>>();
-		
-		if(e_x == t_x && e_y == t_y){
-			result.add(new Tuple<Integer, Integer>(t_x, t_y));
-			return result;
-		}
-		
-		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
-
-		// Up | Down | Left | Right
-		boolean directions_tried[] = { false, false, false, false };
-		int x=0,y=0,direction;
-		int total_attempts=0;
-		
-		while (total_attempts < directions_tried.length) {
-			direction = Misc.randInt(0, directions_tried.length - 1);
-			if (directions_tried[direction] == false) {
-				directions_tried[direction] = true;
-				total_attempts++;
-			}
-			x = directions[direction * 2] + e_x;
-			y = directions[direction * 2 + 1] + e_y;
-			
-			if(!validPosition(x,y))
-				continue;
-			
-			if(visit[x][y])
-				continue;
-		} 
-			
-		// blocked, return empty list to append to the previous call.
-		if(!validPosition(x, y) || (validPosition(x, y) && visit[x][y]))
-			return result;
-		
-		visit[x][y] = true;
-		
-		// add new position to path.
-		result.add(new Tuple<Integer, Integer>(x, y));
-		
-		// keep trying to find the target from the current (x,y) pos.
-		result.addAll(find_path(x, y, t_x, t_y, visit));
-		
-		return result;
-	}*/
+	 * Enemy AI Movement - Unfinished, is too slow!
+	 * 
+	 * 
+	 * private synchronized Tuple<Integer, Integer>
+	 * chooseNextEnemyPosition(Enemy e, int e_x, int e_y) { int x; int y;
+	 * 
+	 * // target reached or no more path to it, let's choose another point for
+	 * to enemy to focus on. if(e.getTargetPath() == null ||
+	 * e.getTargetPath().isEmpty()){ boolean valid_pos = false;
+	 * 
+	 * while(!valid_pos){ e.setTarget_x(Misc.randInt(0, this.nCols-1));
+	 * e.setTarget_y(Misc.randInt(0, this.nRows-1)); valid_pos =
+	 * validPosition(e.getTarget_x(), e.getTarget_y());
+	 * 
+	 * // tracing initial route to target. if(valid_pos)
+	 * e.setTargetPath(find_path(e_x, e_y, e.getTarget_x(), e.getTarget_y())); }
+	 * }
+	 * 
+	 * List<Tuple<Integer, Integer>> path = e.getTargetPath();
+	 * 
+	 * if(path == null || path.isEmpty()) return null;
+	 * 
+	 * // if route still valid follow it. if(validPosition(path.get(0).x,
+	 * path.get(0).y)){ x = path.get(0).x; y = path.get(0).y; } else return
+	 * null;
+	 * 
+	 * // traveled position is removed to allow the enemy to move on down the
+	 * path. e.setTargetPath(path.subList(1, path.size()));
+	 * 
+	 * return new Tuple<Integer, Integer>(x, y); }
+	 * 
+	 * private List<Tuple<Integer, Integer>> find_path(int e_x, int e_y, int
+	 * t_x, int t_y){
+	 * 
+	 * List<Tuple<Integer, Integer>> path; boolean visit[][] = new
+	 * boolean[nRows][nCols];
+	 * 
+	 * do{ path = find_path(e_x, e_y, t_x, t_y, visit);
+	 * 
+	 * if(path.isEmpty()) continue; } while(path.get(path.size()-1).x != t_x &&
+	 * path.get(path.size()-1).y != t_y);
+	 * 
+	 * return path; }
+	 * 
+	 * private List<Tuple<Integer, Integer>> find_path(int e_x, int e_y, int
+	 * t_x, int t_y, boolean[][] visit) { List<Tuple<Integer, Integer>> result =
+	 * new LinkedList<Tuple<Integer, Integer>>();
+	 * 
+	 * if(e_x == t_x && e_y == t_y){ result.add(new Tuple<Integer, Integer>(t_x,
+	 * t_y)); return result; }
+	 * 
+	 * int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
+	 * 
+	 * // Up | Down | Left | Right boolean directions_tried[] = { false, false,
+	 * false, false }; int x=0,y=0,direction; int total_attempts=0;
+	 * 
+	 * while (total_attempts < directions_tried.length) { direction =
+	 * Misc.randInt(0, directions_tried.length - 1); if
+	 * (directions_tried[direction] == false) { directions_tried[direction] =
+	 * true; total_attempts++; } x = directions[direction * 2] + e_x; y =
+	 * directions[direction * 2 + 1] + e_y;
+	 * 
+	 * if(!validPosition(x,y)) continue;
+	 * 
+	 * if(visit[x][y]) continue; }
+	 * 
+	 * // blocked, return empty list to append to the previous call.
+	 * if(!validPosition(x, y) || (validPosition(x, y) && visit[x][y])) return
+	 * result;
+	 * 
+	 * visit[x][y] = true;
+	 * 
+	 * // add new position to path. result.add(new Tuple<Integer, Integer>(x,
+	 * y));
+	 * 
+	 * // keep trying to find the target from the current (x,y) pos.
+	 * result.addAll(find_path(x, y, t_x, t_y, visit));
+	 * 
+	 * return result; }
+	 */
 }

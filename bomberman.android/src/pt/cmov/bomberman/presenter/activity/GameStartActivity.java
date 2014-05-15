@@ -125,12 +125,12 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		mBound = true;
 
 		// turning wifi direct ON
-		mInComm = new IncommingCommTask();
-		if (mInComm.getStatus() == AsyncTask.Status.PENDING) {
-			Log.d(TAG, "Pending!!!!!!!!!!!!!!!!");
-			mInComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-		}
+		// mInComm = new IncommingCommTask();
+		// if (mInComm.getStatus() == AsyncTask.Status.PENDING) {
+		// Log.d(TAG, "Pending!!!!!!!!!!!!!!!!");
+		// mInComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		//
+		// }
 
 	}
 
@@ -138,7 +138,7 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		enableButton((Button) v, false);
 
 		final Intent intent = new Intent(this, GameArenaActivity.class);
-
+		intent.putExtra("isHost", true);
 		startGame(intent);
 
 		enableButton((Button) v, true);
@@ -149,21 +149,16 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		//
 		// // TODO Show form to connect to existing server (temporarily
 		// hardcoded)
-		// final Intent intent = new Intent(this, GameArenaActivity.class);
-		// intent.putExtra("BombermanServerIP", "10.0.2.2");
-		// intent.putExtra("BombermanServerPort", 6000);
-		// startGame(intent);
+
 		//
 		// enableButton((Button) v, true);
-		Intent intent = new Intent(this, ClientActivity.class);
-		intent.putExtra("groupDeviceList", devices);
+
 		ArrayList<String> devicesIpList = getDevicesInNetwork(devices,
 				inGroupDevices);
-		for (String elem : devicesIpList) {
-			Log.d(TAG, "ALLLLLL virtual ip's------>" + elem);
-
-		}
-		startActivity(intent);
+		final Intent intent = new Intent(this, GameArenaActivity.class);
+		intent.putExtra("BombermanServerIP", devicesIpList.get(0));
+		intent.putExtra("BombermanServerPort", 10001);
+		startGame(intent);
 	}
 
 	private void startGame(final Intent intent) {
