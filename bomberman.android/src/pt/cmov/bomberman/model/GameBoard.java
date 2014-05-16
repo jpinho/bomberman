@@ -1,7 +1,6 @@
 package pt.cmov.bomberman.model;
 
 import java.util.ArrayList;
-import java.util.Currency;
 
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.net.server.RemotePlayer;
@@ -35,10 +34,10 @@ public class GameBoard {
 
 	/* Size of players array */
 
-	protected int max_players; 
-	
+	protected int max_players;
+
 	private volatile int players_killed;
-	
+
 	/* This player */
 	protected Player player;
 
@@ -162,15 +161,11 @@ public class GameBoard {
 	public int getRowsCount() {
 		return nRows;
 	}
-<<<<<<< HEAD
-	
+
 	public void notifyNewKill() {
 		players_killed++;
 	}
-	
-=======
 
->>>>>>> Removed ingroup button and fix on pause
 	/* Some player died */
 	public synchronized void kill(Player player) {
 		Log.d("LevelFileParser", "Killing player " + player);
@@ -198,24 +193,25 @@ public class GameBoard {
 			kill(p);
 		}
 	}
-<<<<<<< HEAD
-	
+
 	public synchronized void checkGameOver(int current_players) {
-		Log.d("LevelFileParser", "checkGameOver(): current_players = " + current_players + "; players_killed = " + players_killed);
+		Log.d("LevelFileParser", "checkGameOver(): current_players = "
+				+ current_players + "; players_killed = " + players_killed);
 		if (players_killed == current_players)
 			GameLevel.getInstance().setGameOver();
-		
+
 	}
-	
-	public void checkGameOver() { }
-	
+
+	public void checkGameOver() {
+	}
+
 	// Called when game duration reaches 0 and there are still players alive
 	public void setWinner() {
 		int maxScore = -1;
 		Player winner = null;
 		synchronized (board) {
 			for (Player p : players) {
-				if (board[p.getX()][p.getY()] == p //If alive
+				if (board[p.getX()][p.getY()] == p // If alive
 						&& p.getScore() > maxScore) {
 					maxScore = p.getScore();
 					winner = p;
@@ -224,18 +220,13 @@ public class GameBoard {
 		}
 		GameLevel.getInstance().setWinnerScore(maxScore);
 		if (winner != null)
-			GameLevel.getInstance().setGameWinner("player" + winner.getPlayer_number());
+			GameLevel.getInstance().setGameWinner(
+					"player" + winner.getPlayer_number());
 	}
-	
-	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 *                   GRAPHICS STUFF
-	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                
-=======
 
 	/*
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GRAPHICS STUFF
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>>>> Removed ingroup button and fix on pause
 	 */
 
 	/*
