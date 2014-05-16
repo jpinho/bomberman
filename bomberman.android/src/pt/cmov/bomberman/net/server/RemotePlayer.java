@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 
 public class RemotePlayer {
 	private int player_id;
+	
 	private PrintWriter player_comm;
 	
 	public RemotePlayer(int player_id, PrintWriter player_comm) {
@@ -24,5 +25,5 @@ public class RemotePlayer {
 	}
 	public PrintWriter getPlayer_comm() {
 		return player_comm;
-	}	
+	}
 }

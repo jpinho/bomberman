@@ -154,6 +154,7 @@ public class GameStartActivity extends Activity implements PeerListListener,
 
 				GameLevel.getInstance().setPlayer_name(
 						input.getText().toString());
+
 				startActivity(intent);
 			}
 		});

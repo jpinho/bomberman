@@ -6,12 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.util.Log;
 import pt.cmov.bomberman.model.GameLevel;
 
 public class CommunicationThread implements Runnable {
         private Socket clientSocket;
         private int player_id;
-        public CommunicationThread(Socket clientSocket, int player_id) {
+
+	public CommunicationThread(Socket clientSocket, int player_id) {
             this.clientSocket = clientSocket;
             this.player_id = player_id;
         }
@@ -20,13 +22,24 @@ public class CommunicationThread implements Runnable {
     			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
     			BufferedReader in = new BufferedReader(new InputStreamReader(
     					clientSocket.getInputStream()));
+    			
     			RemotePlayer remotePlayer = new RemotePlayer(player_id, out);
     			GameLevel.getInstance().getBoard().addNewPlayer(remotePlayer);
+    			
     			Server.getInstance().sendPlayerId(remotePlayer);
     			String inputLine;
+    			
     			while ((inputLine = in.readLine()) != null) {
-    				Server.getInstance().parse_msg(inputLine.split(" "));
+    				Log.d("SERVER_REQUEST", inputLine);
+    				String[] tokens = inputLine.split(" ");
+    				String result = Server.getInstance().parse_msg(tokens);
+    				
+    				if(result != null){
+    					String command = tokens[0];
+    					Server.getInstance().sendClientReply(remotePlayer, command+"_response", result);
+    				}
     			}
+    			
     			Server.getInstance().delClient(remotePlayer);
     			clientSocket.close();
     		} 

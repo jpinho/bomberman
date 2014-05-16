@@ -1,5 +1,6 @@
 package pt.cmov.bomberman.model;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.util.Bitmaps;
@@ -17,9 +18,9 @@ public class BombFire extends GameObject {
 		return source;
 	}
 	@Override
-	public void draw(Canvas canvas, float x, float y) {
+	public void draw(Context ctx, Canvas canvas, float x, float y) {
 		canvas.drawBitmap(Bitmaps.getBitmap(R.drawable.pavement), x, y, null);
-		super.draw(canvas, x, y);
+		super.draw(ctx, canvas, x, y);
 	}
 	@Override
 	public String toString() {

@@ -29,14 +29,15 @@ public class ClientThread implements Runnable {
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
-			Client.getInstance().setClient(out);
 
+			Client.getInstance().setClient(out);
 			// The first message coming from the server is always the current
 			// state of the board
 			String line;
 			while ((line = in.readLine()) != null) {
 				Client.getInstance().parse_msg(line.split(" "));
 			}
+
 			socket.close();
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();

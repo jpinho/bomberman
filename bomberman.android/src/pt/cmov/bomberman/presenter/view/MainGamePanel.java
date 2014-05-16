@@ -9,7 +9,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -37,6 +36,7 @@ public class MainGamePanel extends SurfaceView implements
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
 
+		GameLevel.getInstance().setContext(context);
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
 	}
@@ -44,13 +44,13 @@ public class MainGamePanel extends SurfaceView implements
 	public void initAsServer(String level) {
 		isServer = true;
 		this.level = level;
+
 	}
 
 	public void initAsClient(String ip, int port) {
-		isServer = false;
+		this.isServer = false;
 		this.ip = ip;
 		this.port = port;
-		isServer = false;
 	}
 
 	public void onGameStateChange(OnGameStateChange listener) {
@@ -83,6 +83,7 @@ public class MainGamePanel extends SurfaceView implements
 		 */
 		LevelFileParser.setDimensions(getWidth(), getHeight());
 		LevelFileParser.setDoneCallback(this);
+
 		if (isServer) {
 			LevelFileParser.loadLevelFromFile(getResources(), level);
 		} else {
@@ -103,8 +104,6 @@ public class MainGamePanel extends SurfaceView implements
 		getThread().start();
 		gameStateChangeListener.onStateChange(GameLevel.getInstance());
 	}
-	
-	
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {

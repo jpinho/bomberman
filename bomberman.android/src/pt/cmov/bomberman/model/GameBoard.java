@@ -8,13 +8,14 @@ import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.util.Bitmaps;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class GameBoard {
+public abstract class GameBoard {
 	/*
 	 * horizontalExcess and verticalExcess are the top and left offsets of the
 	 * map location in pixels.
@@ -29,7 +30,7 @@ public class GameBoard {
 	// Stores game objects in world coordinates
 	protected GameObject[][] board;
 
-	protected ArrayList<Player> players;
+	private ArrayList<Player> players;
 	protected ArrayList<Enemy> enemies;
 
 	/* Size of players array */
@@ -64,6 +65,7 @@ public class GameBoard {
 			;
 		Log.d("LevelFileParser", "findPlayer(" + id + ") -> i == " + i
 				+ "; players.size() == " + players.size());
+
 		return i < players.size() ? players.get(i) : null;
 	}
 
@@ -110,17 +112,15 @@ public class GameBoard {
 		return false;
 	}
 
-	public void startLevel() {
-	}
+	public abstract boolean actionUpdatePlayerName(int playerID);
+
+	public abstract void startLevel();
 
 	public Player newPlayer() {
 		return null;
 	}
 
-	public void setPlayerId(int id) {
-	}
-
-	/* End methods overridden */
+	public abstract void setPlayerId(int id);
 
 	public boolean actionMovePlayer(int pid, int dir) {
 		return actionMovePlayer(findPlayer(pid), dir);
@@ -269,18 +269,28 @@ public class GameBoard {
 	}
 
 	/* The final master piece */
-	public void draw(Canvas canvas) {
+
+	public void draw(Context ctx, Canvas canvas) {
 
 		drawBorders(canvas);
+
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
 				double x = horizontalExcess + object_width * j;
 				double y = verticalExcess + object_height * i;
+
 				synchronized (board) {
-					if (board[i][j] != null)
-						board[i][j].draw(canvas, (float) x, (float) y);
-					else
-						pavement.draw(canvas, (float) x, (float) y);
+					if (board[i][j] != null) {
+						board[i][j].draw(ctx, canvas, (float) x, (float) y);
+
+						// jp: grab player label and draw it.
+						if (board[i][j] instanceof Player) {
+							((Player) board[i][j]).getLabel().draw(ctx, canvas,
+									i, j, horizontalExcess, verticalExcess,
+									object_width, object_height);
+						}
+					} else
+						pavement.draw(ctx, canvas, (float) x, (float) y);
 				}
 			}
 		}
@@ -381,5 +391,20 @@ public class GameBoard {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	/**
+	 * @return the players
+	 */
+	public ArrayList<Player> getPlayers() {
+		return players;
+	}
+
+	/**
+	 * @param players
+	 *            the players to set
+	 */
+	public void setPlayers(ArrayList<Player> players) {
+		this.players = players;
 	}
 }

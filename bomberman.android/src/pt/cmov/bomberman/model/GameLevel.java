@@ -1,15 +1,16 @@
 package pt.cmov.bomberman.model;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.DONUT)
 public class GameLevel {
-	
+
 	private static GameLevel INSTANCE = new GameLevel();
-	
+
 	private GameBoard board;
 	private int timeLeft;
 	private String player_name;
@@ -20,24 +21,24 @@ public class GameLevel {
 	private float enemy_speed;
 	private int robot_score;
 	private int opponent_score;
-	
+
 	private volatile boolean gameOver;
-	
+
 	private String game_winner;
 	private int winner_score;
-	
+
 	public synchronized String getGameWinner() {
 		return game_winner;
 	}
-	
+
 	public synchronized int getWinnerScore() {
 		return winner_score;
 	}
-	
+
 	public synchronized void setWinnerScore(int score) {
 		winner_score = score;
 	}
-	
+
 	public synchronized void setGameWinner(String s) {
 		game_winner = s;
 	}
@@ -47,16 +48,18 @@ public class GameLevel {
 		game_winner = null;
 		winner_score = -1;
 	}
-	
+
 	public synchronized void setGameOver() {
 		Log.d("LevelFileParser", "Game over!!!");
 		gameOver = true;
 	}
-	
+
 	public synchronized boolean isGameOver() {
 		return gameOver;
 	}
-	
+
+	private Context context;
+
 	public int getPlayerScore() {
 		if (board.getPlayer() != null)
 			return board.getPlayer().getScore();
@@ -101,7 +104,7 @@ public class GameLevel {
 
 	public void draw(Canvas canvas) {
 		if (board != null)
-			board.draw(canvas);
+			board.draw(context, canvas);
 	}
 
 	public synchronized int getTimeLeft() {
@@ -140,17 +143,17 @@ public class GameLevel {
 		return board;
 	}
 
-    public int isJoinable() {
-    	Player p = board.newPlayer();
-    	if (p != null)
-    		return p.getPlayer_number();
-    	else
-    		return -1;
-    }
-    
+	public int isJoinable() {
+		Player p = board.newPlayer();
+		if (p != null)
+			return p.getPlayer_number();
+		else
+			return -1;
+	}
+
 	public static GameLevel getInstance() {
-        return INSTANCE;
-    }
+		return INSTANCE;
+	}
 
 	public String getPlayer_name() {
 		return player_name;
@@ -158,5 +161,9 @@ public class GameLevel {
 
 	public void setPlayer_name(String player_name) {
 		this.player_name = player_name;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
 	}
 }

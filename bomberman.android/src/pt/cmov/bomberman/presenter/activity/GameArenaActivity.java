@@ -64,6 +64,7 @@ public class GameArenaActivity extends Activity {
 		}
 
 		setupGameStatusUpdate();
+
 		setupControls();
 		setupSounds();
 

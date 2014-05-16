@@ -1,7 +1,11 @@
 package pt.cmov.bomberman.model;
 
-public class PlayerScore {
+import java.io.Serializable;
 
+public class PlayerScore implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	private int robotsKilled;
 	private int playersKilled;
 	private int timesKilled;
