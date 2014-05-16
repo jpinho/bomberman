@@ -166,4 +166,8 @@ public class GameLevel {
 	public void setContext(Context context) {
 		this.context = context;
 	}
+	
+	public void reset(){
+		INSTANCE = new GameLevel();
+	}
 }

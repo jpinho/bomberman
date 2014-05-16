@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import pt.cmov.bomberman.model.GameLevel;
 import android.util.Log;
 
 public class ClientThread implements Runnable {
@@ -36,6 +37,9 @@ public class ClientThread implements Runnable {
 			String line;
 			while ((line = in.readLine()) != null) {
 				Client.getInstance().parse_msg(line.split(" "));
+				
+				if(GameLevel.getInstance().isGameOver())
+					break;
 			}
 
 			socket.close();

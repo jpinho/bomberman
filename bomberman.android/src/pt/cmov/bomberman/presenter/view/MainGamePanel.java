@@ -2,6 +2,7 @@ package pt.cmov.bomberman.presenter.view;
 
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.net.client.WDClientThread;
+import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import pt.cmov.bomberman.util.Bitmaps;
 import pt.cmov.bomberman.util.LevelFileParser;
 import android.annotation.TargetApi;
@@ -26,6 +27,7 @@ public class MainGamePanel extends SurfaceView implements
 
 	private final MainThread thread;
 	private OnGameStateChange gameStateChangeListener;
+	private GameArenaActivity gameArenaActivity;
 
 	public static interface OnGameStateChange {
 		public void onStateChange(GameLevel gameLevel);
@@ -37,7 +39,7 @@ public class MainGamePanel extends SurfaceView implements
 		Bitmaps.init(getResources());
 
 		GameLevel.getInstance().setContext(context);
-		thread = new MainThread(getHolder(), this);
+		thread = new MainThread(getHolder(), this, gameArenaActivity);
 		setFocusable(true);
 	}
 
@@ -129,5 +131,9 @@ public class MainGamePanel extends SurfaceView implements
 
 	public MainThread getThread() {
 		return thread;
+	}
+
+	public void setActivity(GameArenaActivity gameArenaActivity) {
+		this.gameArenaActivity = gameArenaActivity;
 	}
 }

@@ -202,9 +202,6 @@ public abstract class GameBoard {
 
 	}
 
-	public void checkGameOver() {
-	}
-
 	// Called when game duration reaches 0 and there are still players alive
 	public void setWinner() {
 		int maxScore = -1;
@@ -406,5 +403,9 @@ public abstract class GameBoard {
 	 */
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
+	}
+
+	public void checkGameOver() {
+
 	}
 }

@@ -1,13 +1,17 @@
 package pt.cmov.bomberman.presenter.activity;
 
 import pt.cmov.bomberman.R;
+import pt.cmov.bomberman.model.GameBoardServer;
 import pt.cmov.bomberman.model.GameLevel;
+import pt.cmov.bomberman.net.server.Server;
 import pt.cmov.bomberman.presenter.view.JoystickView;
 import pt.cmov.bomberman.presenter.view.JoystickView.OnJoystickMoveListener;
 import pt.cmov.bomberman.presenter.view.MainGamePanel;
 import pt.cmov.bomberman.presenter.view.proxy.GameStatusViewProxy;
+import pt.cmov.bomberman.util.LevelFileParser;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -34,6 +38,7 @@ public class GameArenaActivity extends Activity {
 	JoystickView jsv;
 	MediaPlayer playerGameSound;
 	MainGamePanel gameView;
+	private boolean isServer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,9 +56,10 @@ public class GameArenaActivity extends Activity {
 
 		// the surface view where the game is being drawn
 		gameView = (MainGamePanel) this.findViewById(R.id.gameSurface);
-
+		gameView.setActivity(this);
+		
 		Bundle extras = getIntent().getExtras();
-		boolean isServer = extras.getBoolean("isHost");
+		isServer = extras.getBoolean("isHost");
 
 		if (isServer) {
 			gameView.initAsServer(extras.getString("levelChosen"));
@@ -64,7 +70,6 @@ public class GameArenaActivity extends Activity {
 		}
 
 		setupGameStatusUpdate();
-
 		setupControls();
 		setupSounds();
 
@@ -74,7 +79,23 @@ public class GameArenaActivity extends Activity {
 	public static GameArenaActivity getInstance() {
 		return instance;
 	}
-
+ 
+	public void btnExitGame_Click(View v){
+		RelativeLayout panel = (RelativeLayout)this.findViewById(R.id.panelGameOver);
+		panel.setVisibility(View.INVISIBLE);
+		gameView.getThread().setRunning(false);
+		
+		if(isServer){
+			((GameBoardServer)GameLevel.getInstance().getBoard()).getServer().interrupt();
+		}
+		
+		GameLevel.getInstance().reset();
+		
+		final Intent intent = new Intent(this, GameStartActivity.class);
+		startActivity(intent);
+		finish();
+	}
+	
 	public void notifyDied(final String killer) {
 		runOnUiThread(new Runnable() {
 			@Override

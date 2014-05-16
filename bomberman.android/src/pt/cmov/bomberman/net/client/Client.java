@@ -25,6 +25,7 @@ public class Client {
 	}
 
 	public void parse_msg(String[] tokens) {
+		try{
 		if (tokens.length < 1)
 			return;
 
@@ -93,7 +94,10 @@ public class Client {
 		}
 
 		// TODO add other messages
-
+		}
+		catch(NullPointerException e){
+			e.printStackTrace();
+		}
 	}
 
 	public void sendMoveRequest(int pid, int dir) {

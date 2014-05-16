@@ -10,18 +10,18 @@ import android.util.Log;
 import pt.cmov.bomberman.model.GameLevel;
 
 public class CommunicationThread implements Runnable {
-        private Socket clientSocket;
-        private int player_id;
+	private Socket clientSocket;
+	private int player_id;
 
 	public CommunicationThread(Socket clientSocket, int player_id) {
-            this.clientSocket = clientSocket;
-            this.player_id = player_id;
-        }
-        public void run() {
+		this.clientSocket = clientSocket;
+		this.player_id = player_id;
+	}
+
+	public void run() {
     		try {
     			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-    			BufferedReader in = new BufferedReader(new InputStreamReader(
-    					clientSocket.getInputStream()));
+    			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     			
     			RemotePlayer remotePlayer = new RemotePlayer(player_id, out);
     			GameLevel.getInstance().getBoard().addNewPlayer(remotePlayer);
@@ -38,14 +38,23 @@ public class CommunicationThread implements Runnable {
     					String command = tokens[0];
     					Server.getInstance().sendClientReply(remotePlayer, command+"_response", result);
     				}
+    				
+    				if(GameLevel.getInstance().isGameOver())
+    					break;
     			}
     			
     			Server.getInstance().delClient(remotePlayer);
-    			clientSocket.close();
     		} 
-    		catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    		catch (IOException ioEx) {
+    			ioEx.printStackTrace();
+    			
+    			try {
+    				Log.d("CLIENT_SOCKET", "Closing client socket for player id '"+player_id+"'.");
+					clientSocket.close();
+				}
+				catch (IOException ex) {
+					ex.printStackTrace();
+				}
     		}
 		}
-    }
+}

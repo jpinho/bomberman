@@ -53,7 +53,7 @@ public class GameStartActivity extends Activity implements PeerListListener,
 	private boolean isGroupOwner;
 	private SimWifiP2pDeviceList devices;
 	private Set<String> inGroupDevices;
-
+	
 	public SimWifiP2pManager getManager() {
 		return mManager;
 	}
@@ -91,6 +91,11 @@ public class GameStartActivity extends Activity implements PeerListListener,
 					}
 				});
 
+		if(!mBound)
+			setupWiFiDirect();
+	}
+
+	private void setupWiFiDirect() {
 		// initialize the WDSim API
 		SimWifiP2pSocketManager.Init(getApplicationContext());
 
@@ -115,7 +120,6 @@ public class GameStartActivity extends Activity implements PeerListListener,
 		// mInComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		//
 		// }
-
 	}
 
 	public void btnHostGame_DebouncedClick(View v) {

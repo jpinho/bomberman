@@ -3,13 +3,17 @@ package pt.cmov.bomberman.presenter.view;
 import pt.cmov.bomberman.R;
 import pt.cmov.bomberman.model.GameLevel;
 import pt.cmov.bomberman.net.server.Server;
+import pt.cmov.bomberman.presenter.activity.GameArenaActivity;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 public class MainThread extends Thread {
 
@@ -19,11 +23,13 @@ public class MainThread extends Thread {
 	private boolean running;
 	private Object mPauseLock;
 	private boolean mPaused;
+	private GameArenaActivity gameArenaActivity;
 
-	public MainThread(SurfaceHolder surfaceHolder, MainGamePanel gamePanel) {
+	public MainThread(SurfaceHolder surfaceHolder, MainGamePanel gamePanel, GameArenaActivity gameArenaActivity) {
 		super();
 		this.surfaceHolder = surfaceHolder;
 		this.gamePanel = gamePanel;
+		this.gameArenaActivity = gameArenaActivity;
 		this.mPauseLock = new Object();
 	}
 
@@ -58,25 +64,44 @@ public class MainThread extends Thread {
 				canvas = this.surfaceHolder.lockCanvas();
 
 				synchronized (surfaceHolder) {
+
 					if (GameLevel.getInstance().isGameOver()) {
 						running = false;
 						canvas.drawColor(Color.BLACK);
-						Bitmap gameover = BitmapFactory.decodeResource(gamePanel.getResources(), R.drawable.gameover);
-						canvas.drawBitmap(gameover, 0, 0, null);
-						Server.getInstance().broadcastGameOver(GameLevel.getInstance().getGameWinner(), GameLevel.getInstance().getWinnerScore());
+
+						final Activity act = (Activity)gamePanel.getContext();
+						act.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								RelativeLayout panel = (RelativeLayout)act.findViewById(R.id.panelGameOver);
+								panel.setVisibility(View.VISIBLE);
+							}
+						});
+						
+						Server.getInstance().broadcastGameOver(
+								GameLevel.getInstance().getGameWinner(),
+								GameLevel.getInstance().getWinnerScore());
+
 						// TODO Show this to the user
 						String gameWinner = GameLevel.getInstance().getGameWinner();
+
 						int winnerScore = GameLevel.getInstance().getWinnerScore();
+
 						if (winnerScore != -1) {
-							Log.d("LevelFileParser", "*** Game Over. Winner: " + gameWinner + " (scored " + winnerScore + " points).");
-						} else {
+							Log.d("LevelFileParser", "*** Game Over. Winner: " + gameWinner
+									+ " (scored " + winnerScore + " points).");
+						}
+						else {
 							Log.d("LevelFileParser", "*** Game Over. No winner!");
 						}
-					} else {
+					}
+					else {
 						this.gamePanel.onDraw(canvas);
 					}
+
 				}
-			} finally {
+			}
+			finally {
 				if (canvas != null) {
 					surfaceHolder.unlockCanvasAndPost(canvas);
 				}
@@ -85,7 +110,8 @@ public class MainThread extends Thread {
 				while (mPaused) {
 					try {
 						mPauseLock.wait();
-					} catch (InterruptedException e) {
+					}
+					catch (InterruptedException e) {
 					}
 				}
 			}

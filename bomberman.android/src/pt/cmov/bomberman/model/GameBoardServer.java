@@ -27,6 +27,8 @@ public class GameBoardServer extends GameBoard {
 
 	private long enemies_timer_interval;
 
+	private Thread server;
+
 	public GameBoardServer(int rows, int cols, int max_players) {
 		super(rows, cols, max_players);
 		current_players = 1;
@@ -39,13 +41,12 @@ public class GameBoardServer extends GameBoard {
 			public void run() {
 				moveEnemies();
 			}
-		}, enemies_timer_interval = (long) (1000 / GameLevel.getInstance()
-				.getEnemy_speed()));
+		}, enemies_timer_interval = (long) (1000 / GameLevel.getInstance().getEnemy_speed()));
 		player = newPlayer(); // Activates player 1, the game owner
 
 		player.setPlayerName(GameLevel.getInstance().getPlayer_name());
-		Thread server = new Thread(new WDServerThread());
 
+		server = new Thread(new WDServerThread());
 		server.start();
 	}
 
@@ -108,33 +109,30 @@ public class GameBoardServer extends GameBoard {
 					// TODO Merge these
 					if (p == player) {
 						die("Player" + killer.getPlayer_number());
-					} else {
+					}
+					else {
 						kill(p);
 					}
 					notifyNewKill();
 					// checkGameOver(current_players-1);
 					if (killer != p) {
-						killer.incrementScore(GameLevel.getInstance()
-								.getOpponent_score());
+						killer.incrementScore(GameLevel.getInstance().getOpponent_score());
 						if (killer != player)
-							Server.getInstance()
-									.updatePlayerScore(
-											killer.getPlayer_number(),
-											GameLevel.getInstance()
-													.getOpponent_score());
+							Server.getInstance().updatePlayerScore(killer.getPlayer_number(),
+									GameLevel.getInstance().getOpponent_score());
 						else
 							GameArenaActivity.getInstance().getGameView()
 									.getGameStateChangeListener()
 									.onStateChange(GameLevel.getInstance());
 					}
 					Server.getInstance().broadcastPlayersKilled(
-							"die Player" + killer.getPlayer_number() + " "
-									+ p.getPlayer_number() + "\n");
-				} else {
+							"die Player" + killer.getPlayer_number() + " " + p.getPlayer_number()
+									+ "\n");
+				}
+				else {
 					board[new_x][new_y] = p;
 					p.setPosition(new_x, new_y, v_x, v_y);
-					Server.getInstance().broadcastPlayerMoved(
-							p.getPlayer_number(), dir);
+					Server.getInstance().broadcastPlayerMoved(p.getPlayer_number(), dir);
 				}
 			}
 		}
@@ -171,8 +169,7 @@ public class GameBoardServer extends GameBoard {
 																					// the
 																					// left
 		pos_to_clear.add(new Tuple<Integer, Integer>(b.getX(), b.getY()));
-		Server.getInstance().broadcastBombExploded(b.getX(), b.getY(),
-				pos_to_clear);
+		Server.getInstance().broadcastBombExploded(b.getX(), b.getY(), pos_to_clear);
 		Handler endExplosion = new Handler();
 		endExplosion.postDelayed(new Runnable() {
 			@Override
@@ -184,30 +181,29 @@ public class GameBoardServer extends GameBoard {
 		}, GameLevel.getInstance().getExplosion_duration() * 1000);
 	}
 
-	private ArrayList<Tuple<Integer, Integer>> propagateFire(Bomb bomb, int x,
-			int y, int range, int x_step, int y_step) {
+	private ArrayList<Tuple<Integer, Integer>> propagateFire(Bomb bomb, int x, int y, int range,
+			int x_step, int y_step) {
 		ArrayList<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 		boolean hit = false;
 		int scoreUpdate = 0;
 		while (!hit && inBoard(x += x_step, y += y_step) && range-- > 0) {
 			if (board[x][y] == null
-					|| (hit = ((scoreUpdate = board[x][y].notifyExplosion(bomb
-							.getAuthor())) > -1))) {
+					|| (hit = ((scoreUpdate = board[x][y].notifyExplosion(bomb.getAuthor())) > -1))) {
 				board[x][y] = new BombFire(bomb.getAuthor());
 				positions.add(new Tuple<Integer, Integer>(x, y));
 				if (hit) {
 					bomb.getAuthor().incrementScore(scoreUpdate);
 					if (bomb.getAuthor() != player) {
-						Server.getInstance().updatePlayerScore(
-								bomb.getAuthor().getPlayer_number(),
+						Server.getInstance().updatePlayerScore(bomb.getAuthor().getPlayer_number(),
 								scoreUpdate);
-					} else {
-						GameArenaActivity.getInstance().getGameView()
-								.getGameStateChangeListener()
+					}
+					else {
+						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener()
 								.onStateChange(GameLevel.getInstance());
 					}
 				}
-			} else
+			}
+			else
 				hit = true;
 		}
 		return positions;
@@ -254,13 +250,11 @@ public class GameBoardServer extends GameBoard {
 									bombExploded(b);
 								}
 							}
-						}, (long) (GameLevel.getInstance()
-								.getExplosion_timeout() * 1000));
+						}, (long) (GameLevel.getInstance().getExplosion_timeout() * 1000));
 					}
 				});
 
-				Server.getInstance().broadcastPlayerPlantedBomb(
-						p.getPlayer_number(), bx, by);
+				Server.getInstance().broadcastPlayerPlantedBomb(p.getPlayer_number(), bx, by);
 			}
 		}
 		return res;
@@ -288,40 +282,34 @@ public class GameBoardServer extends GameBoard {
 
 		synchronized (board) {
 			for (Enemy e : enemies) {
-				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(
-						e.getX(), e.getY());
+				Tuple<Integer, Integer> new_pos = chooseNextEnemyPosition(e.getX(), e.getY());
 				board[e.getX()][e.getY()] = null;
+
 				Player killer;
 				if (board[new_pos.x][new_pos.y] != null
 						&& (killer = board[new_pos.x][new_pos.y].isLethal()) != null) {
 					enemiesKilled.add(e);
-					killed_enemies.append(" ").append(e.getX()).append(" ")
-							.append(e.getY());
-					killer.incrementScore(GameLevel.getInstance()
-							.getRobot_score());
+					killed_enemies.append(" ").append(e.getX()).append(" ").append(e.getY());
+					killer.incrementScore(GameLevel.getInstance().getRobot_score());
 					if (killer != player)
-						Server.getInstance().updatePlayerScore(
-								killer.getPlayer_number(),
+						Server.getInstance().updatePlayerScore(killer.getPlayer_number(),
 								GameLevel.getInstance().getRobot_score());
 					else
-						GameArenaActivity.getInstance().getGameView()
-								.getGameStateChangeListener()
+						GameArenaActivity.getInstance().getGameView().getGameStateChangeListener()
 								.onStateChange(GameLevel.getInstance());
-				} else {
+				}
+				else {
 					board[new_pos.x][new_pos.y] = e;
-					new_positions.append(" ").append(e.getX()).append(" ")
-							.append(e.getY());
+					new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 					e.setPosition(new_pos.x, new_pos.y);
-					new_positions.append(" ").append(e.getX()).append(" ")
-							.append(e.getY());
+					new_positions.append(" ").append(e.getX()).append(" ").append(e.getY());
 				}
 				playersKilled.addAll(checkEnemyKill(e.getX(), e.getY()));
 			}
 
 			killed_enemies.append("\n");
 			new_positions.append("\n");
-			Server.getInstance().broadcastEnemiesPositions(
-					new_positions.toString());
+			Server.getInstance().broadcastEnemiesPositions(new_positions.toString());
 			if (enemiesKilled.size() > 0)
 				Server.getInstance().broadcastMsg(killed_enemies.toString());
 
@@ -350,12 +338,14 @@ public class GameBoardServer extends GameBoard {
 				enemies.remove(e);
 		}
 
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				moveEnemies();
-			}
-		}, enemies_timer_interval);
+		if (!GameLevel.getInstance().isGameOver()) {
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					moveEnemies();
+				}
+			}, enemies_timer_interval);
+		}
 	}
 
 	private ArrayList<Player> checkEnemyKill(int enemyX, int enemyY) {
@@ -373,8 +363,7 @@ public class GameBoardServer extends GameBoard {
 		return playersKilled;
 	}
 
-	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(
-			int e_x, int e_y) {
+	private synchronized Tuple<Integer, Integer> chooseNextEnemyPosition(int e_x, int e_y) {
 		int total_attempts = 0;
 		int directions[] = { -1, 0, 1, 0, 0, -1, 0, 1 };
 		/* | Up | Down | Left | Right */
@@ -392,8 +381,7 @@ public class GameBoardServer extends GameBoard {
 			x = directions[direction * 2] + e_x;
 			y = directions[direction * 2 + 1] + e_y;
 
-		} while (total_attempts < directions_tried.length
-				&& !validPosition(x, y));
+		} while (total_attempts < directions_tried.length && !validPosition(x, y));
 
 		return validPosition(x, y) ? new Tuple<Integer, Integer>(x, y)
 				: new Tuple<Integer, Integer>(e_x, e_y);
@@ -410,4 +398,10 @@ public class GameBoardServer extends GameBoard {
 		return false;
 	}
 
+	/**
+	 * @return the server
+	 */
+	public Thread getServer() {
+		return server;
+	}
 }
