@@ -1,6 +1,7 @@
 package pt.cmov.bomberman.model;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 
@@ -19,9 +20,10 @@ public class GameLevel {
 	private int enemy_speed;
 	private int robot_score;
 	private int opponent_score;
+	private Context context;
 
 	private GameLevel() {
-
+		
 	}
 	
 	public int getPlayerScore() {
@@ -68,7 +70,7 @@ public class GameLevel {
 
 	public void draw(Canvas canvas) {
 		if (board != null)
-			board.draw(canvas);
+			board.draw(context, canvas);
 	}
 
 	public synchronized int getTimeLeft() {
@@ -125,5 +127,9 @@ public class GameLevel {
 
 	public void setPlayer_name(String player_name) {
 		this.player_name = player_name;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
 	}
 }

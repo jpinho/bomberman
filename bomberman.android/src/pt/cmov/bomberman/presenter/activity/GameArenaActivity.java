@@ -63,6 +63,7 @@ public class GameArenaActivity extends Activity
 	    else {
 	    	String ip = extras.getString("BombermanServerIP");
 	    	int port = extras.getInt("BombermanServerPort");
+	    	
 	    	gameView.initAsClient(ip, port);
 	    }
 	    

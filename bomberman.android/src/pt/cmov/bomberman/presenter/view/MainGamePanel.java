@@ -33,20 +33,20 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		super(context, attributeSet);
 		getHolder().addCallback(this);
 		Bitmaps.init(getResources());
+		GameLevel.getInstance().setContext(context);
 		
 		thread = new MainThread(getHolder(), this);
 		setFocusable(true);
 	}
 	
 	public void initAsServer() {
-		isServer = true;
+		this.isServer = true;
 	}
 	
 	public void initAsClient(String ip, int port) {
-		isServer = false;
+		this.isServer = false;
 		this.ip = ip;
 		this.port = port;
-		isServer = false;
 	}
 
 	public void onGameStateChange(OnGameStateChange listener){
@@ -74,6 +74,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 		 */
 		LevelFileParser.setDimensions(getWidth(), getHeight());
 		LevelFileParser.setDoneCallback(this);
+		
 		if (isServer) {
 			LevelFileParser.loadLevelFromFile(getResources(), "level1");
 		} else {

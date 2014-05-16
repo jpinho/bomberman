@@ -25,17 +25,17 @@ public class LevelFileParser {
 	private static int width;
 	private static int height;
 	private static MainGamePanel gPanel;
-	
+
 	public static void setDimensions(int w, int h) {
 		width = w;
 		height = h;
 	}
-	
+
 	public static void setDoneCallback(MainGamePanel panel) {
 		gPanel = panel;
 	}
-	
-	public static void loadLevelFromFile(Resources res, String levelFile) {		
+
+	public static void loadLevelFromFile(Resources res, String levelFile) {
 		InputStream levelConf;
 		try {
 			levelConf = res.getAssets().open(levelFile);
@@ -47,19 +47,20 @@ public class LevelFileParser {
 			throw new InternalError("Can't read level input file: " + e.getMessage());
 		}
 	}
-	
+
 	public static void loadLevelFromString(String levelRep) {
 		Log.d("LevelFileParser", "Level representation: " + levelRep);
 		BufferedReader reader = new BufferedReader(new StringReader(levelRep));
 		try {
 			buildLevel(reader, false);
 			gPanel.levelParsedCallback();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// Should never happen
 			throw new InternalError("Unable to read level representation string.");
 		}
 	}
-	
+
 	private static void buildLevel(BufferedReader reader, boolean isServer) throws IOException {
 		int rows, cols;
 		int max_players = 0;
@@ -95,20 +96,25 @@ public class LevelFileParser {
 			}
 		}
 		int i;
-		for (i = 4; line.charAt(i) != ','; i++);
+		for (i = 4; line.charAt(i) != ','; i++)
+			;
 		rows = Integer.parseInt(line.substring(4, i));
-		cols = Integer.parseInt(line.substring(i+1, line.length()));
+		cols = Integer.parseInt(line.substring(i + 1, line.length()));
 		GameBoard board = process_map(rows, cols, reader, max_players, isServer);
 		board.setScreenDimensions(width, height);
 		level.setBoard(board);
 	}
-	private static GameBoard process_map(int rows, int cols, BufferedReader reader, int max_players, boolean isServer) throws IOException {
+
+	private static GameBoard process_map(int rows, int cols, BufferedReader reader,
+			int max_players, boolean isServer) throws IOException {
 		GameBoard board;
 		ArrayList<BFDescriptor> bombAndFireToShow = new ArrayList<BFDescriptor>();
+
 		if (isServer)
 			board = new GameBoardServer(rows, cols, max_players);
 		else
 			board = new GameBoardClient(rows, cols, max_players);
+
 		int row = 0;
 		for (String map_entry = reader.readLine(); map_entry != null; map_entry = reader.readLine(), row++) {
 			bombAndFireToShow.addAll(process_map_line(map_entry, row, board));
@@ -118,73 +124,81 @@ public class LevelFileParser {
 		}
 		return board;
 	}
+
 	private static ArrayList<BFDescriptor> process_map_line(String line, int row, GameBoard board) {
 		int p;
 		ArrayList<BFDescriptor> bombAndFireToShow = new ArrayList<BFDescriptor>();
 		for (int col = 0, y = 0; col < line.length(); col++, y++) {
 			char c = line.charAt(col);
-	    	if (c == '-') {
+			if (c == '-') {
 				board.setPosition(row, y, null);
-	    	}
-	    	else if (c == 'R') {
-	    		board.setPosition(row, y, new Rock());
-	    	}
-	    	else if (c == 'W') {
-	    		board.setPosition(row, y, new Wall());
-	    	}
-	    	else if (c == 'E') {
-	    		Enemy e = new Enemy(row, y);
-	    		board.setPosition(row, y, e);
-	    		board.addEnemy(e);
-	    	} else if (Character.isDigit(c)) {
-	    		p = Character.getNumericValue(c);
-	    		Player player = new Player(p, row, y);
+			}
+			else if (c == 'R') {
+				board.setPosition(row, y, new Rock());
+			}
+			else if (c == 'W') {
+				board.setPosition(row, y, new Wall());
+			}
+			else if (c == 'E') {
+				Enemy e = new Enemy(row, y);
+				board.setPosition(row, y, e);
+				board.addEnemy(e);
+			}
+			else if (Character.isDigit(c)) {
+				p = Character.getNumericValue(c);
+				Player player = new Player(p, row, y);
 				board.addPlayer(player);
-	    	}
-	    	// These are not part of the map file, but can be sent by a server to a new client
-	    	else if (c == 'B') {
-	    		int bombAuthor = Character.getNumericValue(line.charAt(y+1));
-	    		bombAndFireToShow.add(new BombDescriptor(row, y, bombAuthor));
-	    		col++;
-	    	} else if (c == 'F') {
-	    		int fireAuthor = Character.getNumericValue(line.charAt(y+1));
-	    		bombAndFireToShow.add(new FireDescriptor(row, y, fireAuthor));
-	    		col++;
-	    	}
+			}
+			// These are not part of the map file, but can be sent by a server
+			// to a new client
+			else if (c == 'B') {
+				int bombAuthor = Character.getNumericValue(line.charAt(y + 1));
+				bombAndFireToShow.add(new BombDescriptor(row, y, bombAuthor));
+				col++;
+			}
+			else if (c == 'F') {
+				int fireAuthor = Character.getNumericValue(line.charAt(y + 1));
+				bombAndFireToShow.add(new FireDescriptor(row, y, fireAuthor));
+				col++;
+			}
 		}
 		return bombAndFireToShow;
 	}
 }
 
- class BFDescriptor {
+class BFDescriptor {
 	protected int x;
 	protected int y;
 	protected int player;
+
 	public BFDescriptor(int x, int y, int player) {
 		this.x = x;
 		this.y = y;
 		this.player = player;
 	}
-	public void addToBoard(GameBoard board) { }
- }
- 
- class BombDescriptor extends BFDescriptor {
-	 public BombDescriptor(int x, int y, int player) {
-		super(x, y, player);
-	}
-	@Override
-	 public void addToBoard(GameBoard board) {
-		 board.setPosition(x, y, new Bomb(x, y, board.findPlayer(player)));
-	 }
- }
- 
- class FireDescriptor extends BFDescriptor {
-	 public FireDescriptor(int x, int y, int player) {
-		super(x, y, player);
-	}
-	@Override
-	 public void addToBoard(GameBoard board) {
-		 board.setPosition(x, y, new BombFire(board.findPlayer(player)));
-	 }
- }
 
+	public void addToBoard(GameBoard board) {
+	}
+}
+
+class BombDescriptor extends BFDescriptor {
+	public BombDescriptor(int x, int y, int player) {
+		super(x, y, player);
+	}
+
+	@Override
+	public void addToBoard(GameBoard board) {
+		board.setPosition(x, y, new Bomb(x, y, board.findPlayer(player)));
+	}
+}
+
+class FireDescriptor extends BFDescriptor {
+	public FireDescriptor(int x, int y, int player) {
+		super(x, y, player);
+	}
+
+	@Override
+	public void addToBoard(GameBoard board) {
+		board.setPosition(x, y, new BombFire(board.findPlayer(player)));
+	}
+}

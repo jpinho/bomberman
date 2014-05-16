@@ -77,7 +77,6 @@ public class GameStartActivity extends Activity {
 		queryPlayerName(intent, input, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-
 				GameLevel.getInstance().setPlayer_name(input.getText().toString());
 				startActivity(intent);
 			}
