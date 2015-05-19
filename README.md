@@ -1,8 +1,13 @@
-CMOV Repository
-===============
+## Bomberman Android Game
 
-66047 - João Pinho
-68211 - Diogo Rosa
-70592 - Filipe Gonçalves
+Done just for the fun! Good effects, a couple of explosions and a fun game all-in-all! 
 
+Try it and give us a call :).
 
+# Contributors
+
+João Pinho
+
+Diogo Rosa
+
+Filipe Gonçalves
